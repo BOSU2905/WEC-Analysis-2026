@@ -1,0 +1,9 @@
+- who hypercar's team has the most win 
+- who LMGT3 team has the most win
+- tyres manufacturers that cars uses the most
+- percentage of mean lap times (hue with each class)
+- perbedaan rata rata kecepatan kpj tiap tahunnya tiap kelas
+- best lap time each class di tiap tahunnya
+- what car that dominates each year and each class
+- winners each track and their laptime setiap tahun
+- fastest car in the race each track and each year
