@@ -39,7 +39,26 @@ st.markdown("""
 # Load data with caching
 @st.cache_data
 def load_data():
-    df = pd.read_csv('Data/raw/wec_data.csv')
+    import os
+    # Try multiple paths for compatibility
+    possible_paths = [
+        'Data/raw/wec_data.csv',
+        'data/raw/wec_data.csv',
+        './Data/raw/wec_data.csv',
+        os.path.join(os.path.dirname(__file__), 'Data', 'raw', 'wec_data.csv')
+    ]
+    
+    df = None
+    for path in possible_paths:
+        try:
+            df = pd.read_csv(path)
+            break
+        except FileNotFoundError:
+            continue
+    
+    if df is None:
+        st.error("❌ Could not find wec_data.csv. Please check file path.")
+        st.stop()
     
     # Data cleaning
     df['class'] = df['class'].replace({
