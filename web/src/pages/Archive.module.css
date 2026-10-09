@@ -1,0 +1,68 @@
+.archive {
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  color: var(--color-primary);
+  padding-top: 10vh; /* Account for fixed header */
+}
+
+.header {
+  padding: 4rem 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 4vw, 4rem);
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.intro {
+  font-family: var(--font-body);
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: var(--color-secondary);
+}
+
+.futureSection {
+  padding: 4rem 2rem 8rem;
+  display: flex;
+  justify-content: center;
+}
+
+.placeholder {
+  max-width: 600px;
+  text-align: center;
+  padding: 4rem 2rem;
+  border: 1px dashed var(--color-border);
+  background-color: rgba(255, 255, 255, 0.02);
+  position: relative;
+}
+
+.placeholder h2 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.placeholder p {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--color-secondary);
+  line-height: 1.6;
+}
+
+.comingSoon {
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  padding: 4px 12px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 600;
+}

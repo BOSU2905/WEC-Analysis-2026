@@ -17,15 +17,22 @@ type NodeData = {
   clusterY: number;
   x?: number;
   y?: number;
-  vx?: number;
-  vy?: number;
+};
+
+const RGB_COLORS: Record<string, string> = {
+  "Top Class (LMP1/Hypercar)": "232, 231, 227",
+  LMP2: "146, 145, 141",
+  "GT (GTE Pro/Am)": "85, 85, 85",
+  Experimental: "42, 42, 41",
 };
 
 export default function ScaleScatter({ progress }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const nodesRef = useRef<NodeData[]>([]);
+  const radiusRef = useRef(2);
 
   // 1. Handle ResizeObserver
   useEffect(() => {
@@ -48,23 +55,38 @@ export default function ScaleScatter({ progress }: Props) {
   const clusters: Record<string, { x: number; y: number }> = useMemo(() => {
     return isMobile
       ? {
-        "Top Class (LMP1/Hypercar)": { x: width * 0.5, y: height * 0.3 },
-        LMP2: { x: width * 0.5, y: height * 0.45 },
-        "GT (GTE Pro/Am)": { x: width * 0.5, y: height * 0.65 },
-        Experimental: { x: width * 0.5, y: height * 0.8 },
-      }
+          "Top Class (LMP1/Hypercar)": { x: width * 0.5, y: height * 0.3 },
+          LMP2: { x: width * 0.5, y: height * 0.45 },
+          "GT (GTE Pro/Am)": { x: width * 0.5, y: height * 0.65 },
+          Experimental: { x: width * 0.5, y: height * 0.8 },
+        }
       : {
-        "Top Class (LMP1/Hypercar)": { x: width * 0.35, y: height * 0.4 },
-        LMP2: { x: width * 0.65, y: height * 0.4 },
-        "GT (GTE Pro/Am)": { x: width * 0.5, y: height * 0.65 },
-        Experimental: { x: width * 0.25, y: height * 0.7 },
-      };
+          "Top Class (LMP1/Hypercar)": { x: width * 0.35, y: height * 0.4 },
+          LMP2: { x: width * 0.65, y: height * 0.4 },
+          "GT (GTE Pro/Am)": { x: width * 0.5, y: height * 0.65 },
+          Experimental: { x: width * 0.25, y: height * 0.7 },
+        };
   }, [isMobile, width, height]);
 
-  // 2. Pre-calculate deterministic layout when dimensions change
+  // 2. Pre-calculate deterministic layout and setup canvas
   useEffect(() => {
-    if (width === 0 || height === 0 || !svgRef.current) return;
+    if (width === 0 || height === 0 || !canvasRef.current || !svgRef.current)
+      return;
 
+    // High DPI Canvas Setup
+    const dpr = window.devicePixelRatio || 1;
+    const canvas = canvasRef.current;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      ctx.scale(dpr, dpr);
+    }
+
+    // Set SVG size explicitly to match
     const svg = d3.select(svgRef.current);
     svg.attr("width", width).attr("height", height);
 
@@ -90,6 +112,7 @@ export default function ScaleScatter({ progress }: Props) {
       Math.floor(Math.sqrt(safeArea / data.length) / 2) - padding,
     );
     const radius = Math.min(maxRadius, 8);
+    radiusRef.current = radius;
 
     const cols = Math.floor(Math.sqrt(data.length * (width / height)));
     const rows = Math.ceil(data.length / cols);
@@ -122,49 +145,75 @@ export default function ScaleScatter({ progress }: Props) {
     sim.tick(100);
 
     data.forEach((d) => {
-      // Bounding box constraint to ensure it NEVER leaves container visually
+      // Bounding box constraint
       d.clusterX = Math.max(radius, Math.min(width - radius, d.x || 0));
       d.clusterY = Math.max(radius, Math.min(height - radius, d.y || 0));
     });
 
     nodesRef.current = data;
-
-    // Colors
-    const colorScale = d3
-      .scaleOrdinal<string>()
-      .domain([
-        "Top Class (LMP1/Hypercar)",
-        "LMP2",
-        "GT (GTE Pro/Am)",
-        "Experimental",
-      ])
-      .range(["#E8E7E3", "#92918D", "#555555", "#2A2A29"]);
-
-    // Render DOM nodes initially
-    const circles = svg.selectAll("circle").data(data, (d: any) => d.id);
-
-    circles
-      .enter()
-      .append("circle")
-      .attr("r", radius)
-      .attr("fill", (d) => colorScale(d.class))
-      .merge(circles as any)
-      .attr("cx", (d) => d.gridX)
-      .attr("cy", (d) => d.gridY);
-
-    circles.exit().remove();
-  }, [dimensions, clusters]);
+  }, [width, height, clusters]);
 
   const tRef = useRef(0);
   const timeRef = useRef(0);
   const pointerRef = useRef({ x: -1000, y: -1000, active: false });
   const stimulusRef = useRef({ x: -1000, y: -1000, strength: 0 });
   const activeClusterRef = useRef<string | null>(null);
+  const clusterIntensitiesRef = useRef<Record<string, number>>({});
 
-  // 3. Continuous Animation & Interpolation Loop
+  // Optimized pointer tracking: Cache bounding rect to prevent layout thrashing
+  const canvasRectRef = useRef({ left: 0, top: 0 });
+
   useEffect(() => {
+    const updateRect = () => {
+      if (canvasRef.current) {
+        const rect = canvasRef.current.getBoundingClientRect();
+        canvasRectRef.current = { left: rect.left, top: rect.top };
+      }
+    };
+    updateRect();
+    window.addEventListener("scroll", updateRect, { passive: true });
+    window.addEventListener("resize", updateRect, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", updateRect);
+      window.removeEventListener("resize", updateRect);
+    };
+  }, [width, height]);
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    pointerRef.current = {
+      x: e.clientX - canvasRectRef.current.left,
+      y: e.clientY - canvasRectRef.current.top,
+      active: true,
+    };
+  };
+
+  const handlePointerLeave = () => {
+    pointerRef.current.active = false;
+  };
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    const touch = e.touches[0];
+    pointerRef.current = {
+      x: touch.clientX - canvasRectRef.current.left,
+      y: touch.clientY - canvasRectRef.current.top,
+      active: true,
+    };
+  };
+
+  const handleTouchEnd = () => {
+    pointerRef.current.active = false;
+  };
+
+  // 3. Continuous Animation & Interpolation Loop (Canvas Renderer)
+  useEffect(() => {
+    if (width === 0 || height === 0 || nodesRef.current.length === 0) return;
+
+    const ctx = canvasRef.current?.getContext("2d");
+    if (!ctx) return;
+
     const syncNodes = (v: number) => {
-      if (!svgRef.current || nodesRef.current.length === 0) return;
+      const nodes = nodesRef.current;
+      const radius = radiusRef.current;
 
       const start = 0.3;
       const end = 0.7;
@@ -181,98 +230,81 @@ export default function ScaleScatter({ progress }: Props) {
       const time = timeRef.current;
       const stimulus = stimulusRef.current;
 
-      const svg = d3.select(svgRef.current);
+      ctx.clearRect(0, 0, width, height);
 
-      svg
-        .selectAll<SVGCircleElement, NodeData>("circle")
-        .attr("cx", (d, i) => {
-          // Staggered node entrance for cinematic scroll
-          let nodeT = 0;
-          const stagger = (i % 100) / 100; // 0 to 1
-          const nodeStart = stagger * 0.3;
-          if (t > nodeStart) {
-            nodeT = (t - nodeStart) / 0.7;
-          }
-          if (nodeT > 1) nodeT = 1;
-          const easedT =
-            nodeT < 0.5 ? 2 * nodeT * nodeT : -1 + (4 - 2 * nodeT) * nodeT;
+      // Fast single-pass drawing
+      for (let i = 0; i < nodes.length; i++) {
+        const d = nodes[i];
 
-          // 1. Base deterministic position
-          let base = d.gridX + (d.clusterX - d.gridX) * easedT;
-
-          // 2. Ambient Motion (deterministic noise)
-          const phaseX = i * 0.1;
-          const ambient = Math.sin(time * 0.001 + phaseX) * 2.5;
-          base += ambient;
-
-          // 3. Stimulus Reaction
-          if (stimulus.strength > 0.01) {
-            const ambientY = Math.cos(time * 0.0008 + phaseX) * 2.5;
-            const dy =
-              d.gridY + (d.clusterY - d.gridY) * easedT + ambientY - stimulus.y;
-            const dx = base - stimulus.x;
-            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-            const influence = 200;
-            if (dist < influence) {
-              const gap = 60;
-              const push =
-                gap * Math.pow(1 - dist / influence, 2) * stimulus.strength;
-              base += (dx / dist) * push;
-            }
-          }
-          return base;
-        })
-        .attr("cy", (d, i) => {
-          let nodeT = 0;
-          const stagger = (i % 100) / 100;
-          const nodeStart = stagger * 0.3;
-          if (t > nodeStart) nodeT = (t - nodeStart) / 0.7;
-          if (nodeT > 1) nodeT = 1;
-          const easedT =
-            nodeT < 0.5 ? 2 * nodeT * nodeT : -1 + (4 - 2 * nodeT) * nodeT;
-
-          let base = d.gridY + (d.clusterY - d.gridY) * easedT;
-          const phaseY = i * 0.1;
-          const ambient = Math.cos(time * 0.0008 + phaseY) * 2.5;
-          base += ambient;
-
-          if (stimulus.strength > 0.01) {
-            const ambientX = Math.sin(time * 0.001 + phaseY) * 2.5;
-            const dx =
-              d.gridX + (d.clusterX - d.gridX) * easedT + ambientX - stimulus.x;
-            const dy = base - stimulus.y;
-            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-            const influence = 200;
-            if (dist < influence) {
-              const gap = 60;
-              const push =
-                gap * Math.pow(1 - dist / influence, 2) * stimulus.strength;
-              base += (dy / dist) * push;
-            }
-          }
-          return base;
-        })
-        .attr("opacity", (d) => {
-          if (t === 0) return 1;
-          const isActive = d.class === activeClusterRef.current;
-          return 1.0 - (isActive ? 0 : stimulus.strength * 0.6);
-        });
-
-      // Position active text exactly at the stimulus void
-      svg.selectAll("g.label-group").each(function () {
-        const group = d3.select(this);
-        const className = group.attr("data-class") as string;
-        if (
-          className === activeClusterRef.current &&
-          stimulus.strength > 0.01 &&
-          t > 0.1
-        ) {
-          group.attr("transform", `translate(${stimulus.x}, ${stimulus.y})`);
-          group.style("opacity", stimulus.strength * t);
-        } else {
-          group.style("opacity", 0);
+        // Staggered node entrance for cinematic scroll
+        let nodeT = 0;
+        const stagger = (i % 100) / 100;
+        const nodeStart = stagger * 0.3;
+        if (t > nodeStart) {
+          nodeT = (t - nodeStart) / 0.7;
         }
-      });
+        if (nodeT > 1) nodeT = 1;
+        const easedT =
+          nodeT < 0.5 ? 2 * nodeT * nodeT : -1 + (4 - 2 * nodeT) * nodeT;
+
+        let baseX = d.gridX + (d.clusterX - d.gridX) * easedT;
+        let baseY = d.gridY + (d.clusterY - d.gridY) * easedT;
+
+        // Ambient Motion (deterministic noise)
+        const phase = i * 0.1;
+        baseX += Math.sin(time * 0.001 + phase) * 2.5;
+        baseY += Math.cos(time * 0.0008 + phase) * 2.5;
+
+        // Stimulus Reaction
+        if (stimulus.strength > 0.01) {
+          const dx = baseX - stimulus.x;
+          const dy = baseY - stimulus.y;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          const influence = 200;
+          if (dist < influence) {
+            const gap = 60;
+            const push =
+              gap * Math.pow(1 - dist / influence, 2) * stimulus.strength;
+            baseX += (dx / dist) * push;
+            baseY += (dy / dist) * push;
+          }
+        }
+
+        const H = clusterIntensitiesRef.current[d.class] || 0;
+        const maxOp = 0.75;
+        const minOp = 0.25;
+        const opacity =
+          t === 0
+            ? maxOp
+            : maxOp - (maxOp - minOp) * (1 - H) * stimulus.strength;
+
+        ctx.fillStyle = `rgba(${RGB_COLORS[d.class]}, ${opacity})`;
+        ctx.beginPath();
+        ctx.arc(baseX, baseY, radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Position active text exactly at the stimulus void in the overlay SVG
+      if (svgRef.current) {
+        const svg = d3.select(svgRef.current);
+        svg.selectAll("g.label-group").each(function () {
+          const group = d3.select(this);
+          const className = group.attr("data-class") as string;
+          const H = clusterIntensitiesRef.current[className] || 0;
+
+          if (H > 0.01 && t > 0.1) {
+            if (className === activeClusterRef.current) {
+              group.attr(
+                "transform",
+                `translate(${stimulus.x}, ${stimulus.y})`,
+              );
+            }
+            group.style("opacity", H * stimulus.strength * t);
+          } else {
+            group.style("opacity", 0);
+          }
+        });
+      }
     };
 
     const timer = d3.timer((elapsed) => {
@@ -307,59 +339,60 @@ export default function ScaleScatter({ progress }: Props) {
         activeClusterRef.current = closest;
       }
 
+      for (const className of Object.keys(clusters)) {
+        const currentH = clusterIntensitiesRef.current[className] || 0;
+        const targetH =
+          p.active &&
+          s.strength > 0.01 &&
+          className === activeClusterRef.current
+            ? 1
+            : 0;
+        const rate = targetH > currentH ? 0.045 : 0.04;
+        clusterIntensitiesRef.current[className] =
+          currentH + (targetH - currentH) * rate;
+      }
+
       syncNodes(progress.get());
     });
 
     const unsubscribe = progress.on("change", () => {
-      // React to scroll instantly by letting framer-motion update its internal value.
-      // syncNodes happens naturally in the d3.timer every frame!
+      // Handled entirely by the d3.timer reading progress.get()
     });
 
     return () => {
       unsubscribe();
       timer.stop();
     };
-  }, [progress, dimensions, clusters]);
-
-  const handlePointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
-    if (!svgRef.current) return;
-    const svgRect = svgRef.current.getBoundingClientRect();
-    pointerRef.current = {
-      x: e.clientX - svgRect.left,
-      y: e.clientY - svgRect.top,
-      active: true,
-    };
-  };
-
-  const handlePointerLeave = () => {
-    pointerRef.current.active = false;
-  };
-
-  const handleTouchStart = (e: React.TouchEvent<SVGSVGElement>) => {
-    if (!svgRef.current) return;
-    const svgRect = svgRef.current.getBoundingClientRect();
-    const touch = e.touches[0];
-    pointerRef.current = {
-      x: touch.clientX - svgRect.left,
-      y: touch.clientY - svgRect.top,
-      active: true,
-    };
-  };
-
-  const handleTouchEnd = () => {
-    pointerRef.current.active = false;
-  };
+  }, [width, height, clusters, progress]);
 
   return (
-    <div className={styles.container} ref={containerRef}>
+    <div
+      className={styles.container}
+      ref={containerRef}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handlePointerLeave}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
+    >
+      <canvas
+        ref={canvasRef}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          pointerEvents: "none",
+        }}
+      />
       <svg
         ref={svgRef}
         className={styles.svg}
-        onPointerMove={handlePointerMove}
-        onPointerLeave={handlePointerLeave}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        onTouchCancel={handleTouchEnd}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          pointerEvents: "none",
+        }}
       >
         <title>
           Scatter plot representing {datasetScale.total_entries} entries across{" "}
@@ -396,7 +429,7 @@ export default function ScaleScatter({ progress }: Props) {
                 >
                   {
                     datasetScale.classes[
-                    className as keyof typeof datasetScale.classes
+                      className as keyof typeof datasetScale.classes
                     ]
                   }
                 </text>

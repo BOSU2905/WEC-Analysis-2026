@@ -1,0 +1,92 @@
+.chapter {
+  position: relative;
+  min-height: 90vh; /* Reduced from 150vh to eliminate oversized blank regions */
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  background-color: var(--color-bg);
+  border-top: 1px solid var(--color-border);
+}
+
+@media (min-width: 768px) {
+  .chapter {
+    grid-template-columns: 1fr 2fr;
+  }
+}
+
+.stickyContainer {
+  position: relative;
+  height: 100%;
+}
+
+.header {
+  position: sticky;
+  top: 15vh;
+  padding: 4rem 2rem;
+  background-color: var(
+    --color-bg
+  ); /* Opaque background as per previous chapter fixes */
+  z-index: 10;
+}
+
+.chapterNumber {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  margin-bottom: 1rem;
+}
+
+.chapterTitle {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--color-primary);
+  margin-bottom: 1.5rem;
+}
+
+.chapterIntro {
+  font-family: var(--font-body);
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--color-secondary);
+  max-width: 400px;
+}
+
+.content {
+  padding: 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .content {
+    position: sticky;
+    top: 15vh;
+  }
+}
+
+.visualizationBlock {
+  width: 100%;
+  max-width: 100%; /* Occupy more of intended section */
+  margin: 0 auto;
+}
+
+.caption {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-secondary);
+  max-width: 600px;
+}
+
+.caption strong {
+  color: var(--color-primary);
+  font-weight: 500;
+}

@@ -1,0 +1,47 @@
+[
+  {
+    "file": "oreca-07-gibson.jpg",
+    "model": "Oreca 07 - Gibson",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Oreca_07_-_Gibson_-_IDEC_Sport_Racing_-_2019_24_Hours_of_Le_Mans.jpg",
+    "photographer": "David Merrett",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0/",
+    "modifications": "Cropped and optimized for web layout."
+  },
+  {
+    "file": "aston-martin-vantage-v8.jpg",
+    "model": "Aston Martin Vantage V8",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Aston_Martin_Vantage_V8_2012_WEC_Fuji.jpg",
+    "photographer": "Morio",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "modifications": "Cropped and optimized for web layout."
+  },
+  {
+    "file": "porsche-911-rsr.jpg",
+    "model": "Porsche 911 RSR",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Porsche_GT_Team_-_Porsche_911_RSR_-92_(28098279377).jpg",
+    "photographer": "Kevin Decherf",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0/",
+    "modifications": "Cropped and optimized for web layout."
+  },
+  {
+    "file": "toyota-ts050-hybrid.jpg",
+    "model": "Toyota TS050 - Hybrid",
+    "source_url": "https://commons.wikimedia.org/wiki/File:No.8_Toyota_TS050_Hybrid.jpg",
+    "photographer": "Takayuki Suzuki",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0/",
+    "modifications": "Cropped and optimized for web layout."
+  },
+  {
+    "file": "porsche-919-hybrid.jpg",
+    "model": "Porsche 919 Hybrid",
+    "source_url": "https://commons.wikimedia.org/wiki/File:2015_Porsche_919_Hybrid_(19809197974).jpg",
+    "photographer": "Edvvc",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0/",
+    "modifications": "Cropped and optimized for web layout."
+  }
+]

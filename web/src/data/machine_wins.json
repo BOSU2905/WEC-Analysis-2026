@@ -1,0 +1,37 @@
+[
+  {
+    "vehicle": "Oreca 07 - Gibson",
+    "class_wins": 42,
+    "primary_class": "LMP2",
+    "first_win": "2017",
+    "last_win": "2023"
+  },
+  {
+    "vehicle": "Aston Martin Vantage V8",
+    "class_wins": 31,
+    "primary_class": "LMGTE Am",
+    "first_win": "2012",
+    "last_win": "2016"
+  },
+  {
+    "vehicle": "Porsche 911 RSR",
+    "class_wins": 22,
+    "primary_class": "LMGTE Am",
+    "first_win": "2013",
+    "last_win": "2019-2020"
+  },
+  {
+    "vehicle": "Toyota TS050 - Hybrid",
+    "class_wins": 19,
+    "primary_class": "LMP1",
+    "first_win": "2016",
+    "last_win": "2019-2020"
+  },
+  {
+    "vehicle": "Porsche 919 Hybrid",
+    "class_wins": 17,
+    "primary_class": "LMP1",
+    "first_win": "2014",
+    "last_win": "2017"
+  }
+]

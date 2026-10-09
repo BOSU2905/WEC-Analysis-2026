@@ -12,7 +12,7 @@ export default function Chapter02() {
   });
 
   return (
-    <article className={styles.chapter}>
+    <article id="chapter-02" className={styles.chapter}>
       <header className={styles.header}>
         <h2 className={styles.chapterNumber}>Chapter 02</h2>
         <h3 className={styles.chapterTitle}>The Last Manufacturer Standing</h3>

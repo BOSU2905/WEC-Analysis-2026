@@ -1,0 +1,141 @@
+.chapter {
+  position: relative;
+  background-color: var(--color-bg);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+}
+
+.gridContainer {
+  position: relative;
+  min-height: 90vh;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .gridContainer {
+    grid-template-columns: 1fr 2fr;
+  }
+}
+
+.stickyContainer {
+  position: relative;
+}
+
+.header {
+  position: sticky;
+  top: 15vh;
+  padding: 4rem 2rem;
+  background-color: var(--color-bg);
+  z-index: 10;
+}
+
+.chapterNumber {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  margin-bottom: 1rem;
+}
+
+.chapterTitle {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--color-primary);
+  margin-bottom: 1.5rem;
+}
+
+.chapterIntro {
+  font-family: var(--font-body);
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--color-secondary);
+  max-width: 400px;
+}
+
+.content {
+  padding: 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .content {
+    position: sticky;
+    top: 15vh;
+  }
+}
+
+.visualizationBlock {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.caption {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-secondary);
+  max-width: 600px;
+}
+
+.caption strong {
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.closingSection {
+  padding: 10rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to bottom, var(--color-bg), #050505);
+}
+
+.closingContent {
+  max-width: 700px;
+  text-align: center;
+}
+
+.divider {
+  width: 2px;
+  height: 60px;
+  background-color: var(--color-primary);
+  margin: 0 auto 3rem auto;
+  opacity: 0.5;
+}
+
+.closingContent h3 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3vw, 2.5rem);
+  font-weight: 500;
+  color: var(--color-primary);
+  margin-bottom: 2rem;
+}
+
+.closingContent p {
+  font-family: var(--font-body);
+  font-size: 1.25rem;
+  line-height: 1.8;
+  color: var(--color-secondary);
+  margin-bottom: 2rem;
+}
+
+.closingContent .finalThought {
+  margin-top: 4rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 400;
+  color: var(--color-primary);
+  letter-spacing: -0.02em;
+}

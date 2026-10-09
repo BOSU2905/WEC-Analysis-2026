@@ -16,7 +16,7 @@ export default function Chapter01() {
   });
 
   return (
-    <article className={styles.chapter}>
+    <article id="chapter-01" className={styles.chapter}>
       <header className={styles.header}>
         <h2 className={styles.chapterNumber}>Chapter 01</h2>
         <h3 className={styles.chapterTitle}>The Anatomy</h3>

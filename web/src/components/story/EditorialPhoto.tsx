@@ -6,6 +6,8 @@ type Props = {
   alt: string;
   caption?: string;
   direction?: "left" | "right";
+  duration?: number;
+  viewportMargin?: string;
 };
 
 export default function EditorialPhoto({
@@ -13,22 +15,36 @@ export default function EditorialPhoto({
   alt,
   caption,
   direction = "left",
+  viewportMargin = "0px",
+  duration = 1.2,
 }: Props) {
   return (
     <div className={styles.container}>
       <motion.div
         className={styles.imageWrapper}
-        initial={{
-          x: direction === "left" ? "-10%" : "10%",
-          opacity: 0,
-          clipPath:
-            direction === "left" ? "inset(0 100% 0 0)" : "inset(0 0 0 100%)",
-        }}
-        whileInView={{ x: 0, opacity: 1, clipPath: "inset(0 0 0 0)" }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: viewportMargin }}
       >
-        <img src={src} alt={alt} className={styles.image} />
+        <motion.img
+          src={src}
+          alt={alt}
+          className={styles.image}
+          variants={{
+            hidden: {
+              x: direction === "left" ? "-10%" : "10%",
+              opacity: 0,
+              clipPath:
+                direction === "left" ? "inset(0% 100% 0% 0%)" : "inset(0% 0% 0% 100%)",
+            },
+            visible: {
+              x: 0,
+              opacity: 1,
+              clipPath: "inset(0% 0% 0% 0%)",
+              transition: { duration, ease: [0.16, 1, 0.3, 1] },
+            },
+          }}
+        />
       </motion.div>
       {caption && (
         <motion.div

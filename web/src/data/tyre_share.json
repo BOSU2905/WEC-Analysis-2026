@@ -1,0 +1,110 @@
+[
+  {
+    "season": "2011",
+    "michelin_pct": 69.6,
+    "dunlop_pct": 28.6,
+    "goodyear_pct": 0.0,
+    "other_pct": 1.8,
+    "total_entries": 56,
+    "michelin_count": 39
+  },
+  {
+    "season": "2012",
+    "michelin_pct": 55.9,
+    "dunlop_pct": 41.2,
+    "goodyear_pct": 0.0,
+    "other_pct": 2.9,
+    "total_entries": 272,
+    "michelin_count": 152
+  },
+  {
+    "season": "2013",
+    "michelin_pct": 71.0,
+    "dunlop_pct": 29.0,
+    "goodyear_pct": 0.0,
+    "other_pct": 0.0,
+    "total_entries": 262,
+    "michelin_count": 186
+  },
+  {
+    "season": "2014",
+    "michelin_pct": 86.5,
+    "dunlop_pct": 13.5,
+    "goodyear_pct": 0.0,
+    "other_pct": 0.0,
+    "total_entries": 245,
+    "michelin_count": 212
+  },
+  {
+    "season": "2015",
+    "michelin_pct": 73.4,
+    "dunlop_pct": 26.6,
+    "goodyear_pct": 0.0,
+    "other_pct": 0.0,
+    "total_entries": 274,
+    "michelin_count": 201
+  },
+  {
+    "season": "2016",
+    "michelin_pct": 54.3,
+    "dunlop_pct": 45.7,
+    "goodyear_pct": 0.0,
+    "other_pct": 0.0,
+    "total_entries": 317,
+    "michelin_count": 172
+  },
+  {
+    "season": "2017",
+    "michelin_pct": 46.7,
+    "dunlop_pct": 53.3,
+    "goodyear_pct": 0.0,
+    "other_pct": 0.0,
+    "total_entries": 276,
+    "michelin_count": 129
+  },
+  {
+    "season": "2018-2019",
+    "michelin_pct": 85.2,
+    "dunlop_pct": 14.8,
+    "goodyear_pct": 0.0,
+    "other_pct": 0.0,
+    "total_entries": 325,
+    "michelin_count": 277
+  },
+  {
+    "season": "2019-2020",
+    "michelin_pct": 91.5,
+    "dunlop_pct": 0.0,
+    "goodyear_pct": 8.5,
+    "other_pct": 0.0,
+    "total_entries": 234,
+    "michelin_count": 214
+  },
+  {
+    "season": "2021",
+    "michelin_pct": 62.5,
+    "dunlop_pct": 0.0,
+    "goodyear_pct": 37.5,
+    "other_pct": 0.0,
+    "total_entries": 224,
+    "michelin_count": 140
+  },
+  {
+    "season": "2022",
+    "michelin_pct": 60.2,
+    "dunlop_pct": 0.0,
+    "goodyear_pct": 39.8,
+    "other_pct": 0.0,
+    "total_entries": 246,
+    "michelin_count": 148
+  },
+  {
+    "season": "2023",
+    "michelin_pct": 66.8,
+    "dunlop_pct": 0.0,
+    "goodyear_pct": 33.2,
+    "other_pct": 0.0,
+    "total_entries": 280,
+    "michelin_count": 187
+  }
+]

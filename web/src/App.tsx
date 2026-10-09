@@ -1,23 +1,34 @@
+import { useState, useEffect } from "react";
 import SiteHeader from "./components/layout/SiteHeader";
-import Hero from "./components/story/Hero";
-import Chapter01 from "./chapters/chapter-01/Chapter01";
-import Chapter02 from "./chapters/chapter-02/Chapter02";
-import ChapterTransition from "./components/story/ChapterTransition";
+import Footer from "./components/layout/Footer";
+import Story from "./pages/Story";
+import Archive from "./pages/Archive";
 
 function App() {
+  const [currentView, setCurrentView] = useState<"story" | "archive">("story");
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (hash === "archive") {
+        setCurrentView("archive");
+      } else {
+        setCurrentView("story");
+      }
+    };
+
+    // Initial check
+    handleHashChange();
+
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
   return (
     <>
-      <SiteHeader />
-      <main>
-        <Hero />
-        <Chapter01 />
-        <Chapter02 />
-        <ChapterTransition
-          teaserText="If Toyota outlasted everyone, how did they actually do it?"
-          nextChapterNumber="03"
-          nextChapterTitle="The Architecture of Dominance"
-        />
-      </main>
+      <SiteHeader currentView={currentView} />
+      {currentView === "story" ? <Story /> : <Archive />}
+      <Footer />
     </>
   );
 }

@@ -2,6 +2,11 @@ import { motion, useReducedMotion } from "framer-motion";
 import type { Variants } from "framer-motion";
 import styles from "./Hero.module.css";
 
+import img1 from "../../assets/filmstrip/01.jpg";
+import img2 from "../../assets/filmstrip/02.jpg";
+import img3 from "../../assets/filmstrip/03.jpg";
+import img4 from "../../assets/filmstrip/04.jpg";
+
 export default function Hero() {
   const shouldReduceMotion = useReducedMotion();
 
@@ -14,24 +19,56 @@ export default function Hero() {
     },
   };
 
-  const fadeVariant: Variants = {
-    hidden: { opacity: 0 },
+  const filmstripVariant: Variants = {
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : -20 },
     visible: {
-      opacity: 1,
-      transition: { duration: 1.5, ease: "easeOut", delay: 0.2 },
+      opacity: 0.25, // visually subordinate
+      y: 0,
+      transition: { duration: 2, ease: "easeOut", delay: 0.1 },
     },
   };
 
+  // Duplicate arrays to create a seamless infinite loop
+  const topRow = [img1, img2, img3, img4, img1, img2, img3, img4];
+  const bottomRow = [img3, img4, img1, img2, img3, img4, img1, img2];
+
   return (
     <section className={styles.hero}>
+      {/* Cinematic Filmstrip Background */}
       <motion.div
-        className={styles.imagePlaceholder}
+        className={styles.filmstripContainer}
         initial="hidden"
         animate="visible"
-        variants={fadeVariant}
+        variants={filmstripVariant}
       >
-        <div className={styles.overlay} />
+        <div className={`${styles.filmstripRow} ${styles.scrollLeft}`}>
+          {topRow.map((src, i) => (
+            <img
+              key={`top-${i}`}
+              src={src}
+              className={styles.filmstripImage}
+              alt=""
+              aria-hidden="true"
+            />
+          ))}
+        </div>
+        <div className={`${styles.filmstripRow} ${styles.scrollRight}`}>
+          {bottomRow.map((src, i) => (
+            <img
+              key={`bot-${i}`}
+              src={src}
+              className={styles.filmstripImage}
+              alt=""
+              aria-hidden="true"
+            />
+          ))}
+        </div>
       </motion.div>
+
+      {/* Overlays for fading, masking and texture */}
+      <div className={styles.grainOverlay} />
+      <div className={styles.vignetteOverlay} />
+      <div className={styles.overlay} />
 
       <div className={styles.content}>
         <motion.div

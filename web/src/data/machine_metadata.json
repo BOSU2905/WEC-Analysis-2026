@@ -1,0 +1,120 @@
+{
+  "Oreca 07 - Gibson": {
+    "historical_insight": "The Oreca 07 became the undisputed standard in LMP2, rendering the class nearly a spec series due to its overwhelmingly superior aerodynamic and mechanical performance.",
+    "representative_entry": {
+      "team": "Jackie Chan DC Racing",
+      "season": "2017",
+      "drivers": ["Ho-Pin Tung", "Oliver Jarvis", "Thomas Laurent"],
+      "significance": "This entry nearly won the 2017 24 Hours of Le Mans overall, finishing second—an unprecedented achievement for an LMP2 car."
+    },
+    "specs": [
+      {
+        "label": "Engine",
+        "value": "Gibson GK428 4.2L V8 (Naturally Aspirated)"
+      },
+      { "label": "Chassis", "value": "Carbon fibre & honeycomb monocoque" },
+      { "label": "Power", "value": "~600 hp (subject to regulation limits)" },
+      { "label": "Class", "value": "LMP2" }
+    ],
+    "image": {
+      "placeholder": false,
+      "url": "/assets/machines/oreca-07-gibson.jpg",
+      "credit": "Wikimedia / CC BY-SA 4.0"
+    },
+    "side_view_url": "/assets/machines/oreca-07-gibson-side.png"
+  },
+  "Aston Martin Vantage V8": {
+    "historical_insight": "Derived directly from the Vantage road car, the V8 GTE was a thunderous presence in WEC, known for its bonded aluminium chassis and roaring naturally aspirated V8 engine.",
+    "representative_entry": {
+      "team": "Aston Martin Racing",
+      "season": "2014",
+      "drivers": [
+        "Kristian Poulsen",
+        "David Heinemeier Hansson",
+        "Nicki Thiim"
+      ],
+      "significance": "A class-winning entry that dominated LMGTE Am, capturing the essence of Aston Martin's GT endurance pedigree."
+    },
+    "specs": [
+      { "label": "Engine", "value": "4.5L V8 (Naturally Aspirated)" },
+      { "label": "Chassis", "value": "Bonded aluminium spaceframe" },
+      { "label": "Power", "value": "~450 hp (BOP dependent)" },
+      { "label": "Class", "value": "LMGTE Pro / LMGTE Am" }
+    ],
+    "image": {
+      "placeholder": false,
+      "url": "/assets/machines/aston-martin-vantage-v8.jpg",
+      "credit": "All-Free-Photos.com"
+    },
+    "side_view_url": "/assets/machines/aston-martin-vantage-v8-side.png"
+  },
+  "Porsche 911 RSR": {
+    "historical_insight": "The RSR continuously evolved the iconic 911 platform. In its later iterations (like the 2019 RSR-19), Porsche radically shifted the engine ahead of the rear axle, transforming it into a mid-engined GT powerhouse.",
+    "representative_entry": {
+      "team": "Porsche GT Team",
+      "season": "2018-2019",
+      "drivers": ["Kévin Estre", "Michael Christensen", "Laurens Vanthoor"],
+      "significance": "The 'Pink Pig' liveried RSR secured a dominant LMGTE Pro victory at Le Mans, cementing the mid-engined variant's legacy."
+    },
+    "specs": [
+      {
+        "label": "Engine",
+        "value": "4.0L - 4.2L Flat-6 (Naturally Aspirated)"
+      },
+      { "label": "Layout", "value": "Mid-engine, Rear-wheel drive" },
+      { "label": "Power", "value": "~515 hp (BOP dependent)" },
+      { "label": "Class", "value": "LMGTE Pro / LMGTE Am" }
+    ],
+    "image": {
+      "placeholder": false,
+      "url": "/assets/machines/porsche-911-rsr.png",
+      "credit": "Stuttcars / Porsche AG"
+    },
+    "side_view_url": "/assets/machines/porsche-911-rsr-side.png"
+  },
+  "Toyota TS050 - Hybrid": {
+    "historical_insight": "The TS050 was a technological tour de force. After heartbreaking near-misses, its 8-megajoule hybrid system ultimately delivered Toyota's long-awaited overall victory at Le Mans.",
+    "representative_entry": {
+      "team": "Toyota Gazoo Racing",
+      "season": "2018-2019",
+      "drivers": ["Sébastien Buemi", "Kazuki Nakajima", "Fernando Alonso"],
+      "significance": "This lineup secured Toyota's maiden overall victory at the 2018 24 Hours of Le Mans, breaking a decades-long curse."
+    },
+    "specs": [
+      { "label": "Engine", "value": "2.4L Twin-Turbo V6" },
+      { "label": "Hybrid System", "value": "8MJ Dual-Axle Energy Recovery" },
+      { "label": "Total Power", "value": "~1000 hp (Combined)" },
+      { "label": "Class", "value": "LMP1-H" }
+    ],
+    "image": {
+      "placeholder": false,
+      "url": "/assets/machines/toyota-ts050-hybrid.jpg",
+      "credit": "Takayuki Suzuki / CC BY-SA 2.0"
+    },
+    "side_view_url": "/assets/machines/toyota-ts050-hybrid-side.png"
+  },
+  "Porsche 919 Hybrid": {
+    "historical_insight": "The 919 Hybrid defined the LMP1 golden era. Combining a compact V4 engine with advanced dual energy recovery systems, it secured a remarkable three consecutive overall Le Mans wins.",
+    "representative_entry": {
+      "team": "Porsche Team",
+      "season": "2015",
+      "drivers": ["Earl Bamber", "Nick Tandy", "Nico Hülkenberg"],
+      "significance": "This entry claimed Porsche's 17th overall Le Mans victory, marking their triumphant return to the top step of the podium."
+    },
+    "specs": [
+      { "label": "Engine", "value": "2.0L Turbo V4" },
+      {
+        "label": "Hybrid System",
+        "value": "8MJ KERS (Front Axle) & Exhaust Energy Recovery"
+      },
+      { "label": "Total Power", "value": "~900 hp (Combined)" },
+      { "label": "Class", "value": "LMP1-H" }
+    ],
+    "image": {
+      "placeholder": false,
+      "url": "/assets/machines/porsche-919-hybrid.jpg",
+      "credit": "Edvvc / CC BY 2.0"
+    },
+    "side_view_url": "/assets/machines/porsche-919-hybrid-side.png"
+  }
+}

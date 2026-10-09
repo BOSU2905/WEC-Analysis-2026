@@ -1,0 +1,79 @@
+[
+  {
+    "season": "2011",
+    "GT (GTE Pro/Am)": 238.876,
+    "LMP2": 221.536,
+    "Top Class (LMP1/Hypercar)": 205.289
+  },
+  {
+    "season": "2012",
+    "Experimental": 225.737,
+    "GT (GTE Pro/Am)": 234.928,
+    "LMP2": 218.803,
+    "Top Class (LMP1/Hypercar)": 204.189
+  },
+  {
+    "season": "2013",
+    "GT (GTE Pro/Am)": 234.639,
+    "LMP2": 218.059,
+    "Top Class (LMP1/Hypercar)": 202.746
+  },
+  {
+    "season": "2014",
+    "Experimental": 230.352,
+    "GT (GTE Pro/Am)": 233.763,
+    "LMP2": 217.787,
+    "Top Class (LMP1/Hypercar)": 202.567
+  },
+  {
+    "season": "2015",
+    "GT (GTE Pro/Am)": 234.246,
+    "LMP2": 216.679,
+    "Top Class (LMP1/Hypercar)": 197.475
+  },
+  {
+    "season": "2016",
+    "Experimental": 226.131,
+    "GT (GTE Pro/Am)": 231.514,
+    "LMP2": 216.259,
+    "Top Class (LMP1/Hypercar)": 201.445
+  },
+  {
+    "season": "2017",
+    "GT (GTE Pro/Am)": 230.95,
+    "LMP2": 208.632,
+    "Top Class (LMP1/Hypercar)": 198.604
+  },
+  {
+    "season": "2018-2019",
+    "GT (GTE Pro/Am)": 229.448,
+    "LMP2": 207.2,
+    "Top Class (LMP1/Hypercar)": 197.658
+  },
+  {
+    "season": "2019-2020",
+    "GT (GTE Pro/Am)": 230.321,
+    "LMP2": 207.508,
+    "Top Class (LMP1/Hypercar)": 199.264
+  },
+  {
+    "season": "2021",
+    "Experimental": 217.066,
+    "GT (GTE Pro/Am)": 227.501,
+    "LMP2": 211.096,
+    "Top Class (LMP1/Hypercar)": 207.607
+  },
+  {
+    "season": "2022",
+    "GT (GTE Pro/Am)": 228.356,
+    "LMP2": 210.918,
+    "Top Class (LMP1/Hypercar)": 207.749
+  },
+  {
+    "season": "2023",
+    "Experimental": 230.512,
+    "GT (GTE Pro/Am)": 230.439,
+    "LMP2": 216.043,
+    "Top Class (LMP1/Hypercar)": 207.218
+  }
+]

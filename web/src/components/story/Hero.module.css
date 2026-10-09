@@ -1,5 +1,6 @@
 .hero {
   position: relative;
+  z-index: 1;
   min-height: 85vh;
   display: flex;
   flex-direction: column;
@@ -9,14 +10,91 @@
   background-color: var(--color-bg);
 }
 
-.imagePlaceholder {
+.filmstripContainer {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+  display: flex;
+  flex-direction: column;
   z-index: 0;
+  pointer-events: none; /* Prevent interception of Hero interactions */
+}
+
+.filmstripRow {
+  display: flex;
+  height: 50%;
+  width: max-content;
+  will-change: transform;
+}
+
+.filmstripImage {
+  height: 100%;
+  width: auto;
+  aspect-ratio: 3/2;
+  object-fit: cover;
+  filter: grayscale(80%) contrast(1.2); /* Muted, gritty tonal treatment */
+}
+
+.scrollLeft {
+  animation: scrollLeft 100s linear infinite;
+}
+
+.scrollRight {
+  animation: scrollRight 100s linear infinite;
+}
+
+@keyframes scrollLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%); /* Shifts half the array to loop perfectly */
+  }
+}
+
+@keyframes scrollRight {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrollLeft,
+  .scrollRight {
+    animation: none;
+    transform: translateX(-10%); /* Static offset to show middle images */
+  }
+}
+
+.grainOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+  z-index: 1;
+}
+
+.vignetteOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 30%,
+    var(--color-bg) 100%
+  );
+  z-index: 2;
 }
 
 .overlay {
@@ -26,6 +104,7 @@
   width: 100%;
   height: 60%;
   background: linear-gradient(to top, var(--color-bg) 0%, transparent 100%);
+  z-index: 3;
 }
 
 .content {
@@ -59,6 +138,7 @@
   line-height: 1.1;
   color: var(--color-primary);
   margin: 0;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8); /* Maintain contrast over filmstrip */
 }
 
 .line {
@@ -75,6 +155,7 @@
   line-height: 1.6;
   color: var(--color-secondary);
   margin-bottom: 2rem;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
 }
 
 .metadata {
