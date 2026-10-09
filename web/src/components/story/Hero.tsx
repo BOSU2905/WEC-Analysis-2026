@@ -1,11 +1,11 @@
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 import type { Variants } from "framer-motion";
 import styles from "./Hero.module.css";
 
-import img1 from "../../assets/filmstrip/01.jpg";
-import img2 from "../../assets/filmstrip/02.jpg";
-import img3 from "../../assets/filmstrip/03.jpg";
-import img4 from "../../assets/filmstrip/04.jpg";
+import img1 from "../../assets/filmstrip/01.webp";
+import img2 from "../../assets/filmstrip/02.webp";
+import img3 from "../../assets/filmstrip/03.webp";
+import img4 from "../../assets/filmstrip/04.webp";
 
 export default function Hero() {
   const shouldReduceMotion = useReducedMotion();
@@ -35,7 +35,7 @@ export default function Hero() {
   return (
     <section className={styles.hero}>
       {/* Cinematic Filmstrip Background */}
-      <motion.div
+      <m.div
         className={styles.filmstripContainer}
         initial="hidden"
         animate="visible"
@@ -49,6 +49,11 @@ export default function Hero() {
               className={styles.filmstripImage}
               alt=""
               aria-hidden="true"
+              fetchPriority={i < 2 ? "high" : "auto"}
+              loading={i < 4 ? "eager" : "lazy"}
+              decoding="async"
+              width="800"
+              height="533"
             />
           ))}
         </div>
@@ -60,10 +65,14 @@ export default function Hero() {
               className={styles.filmstripImage}
               alt=""
               aria-hidden="true"
+              loading={i >= 4 ? "eager" : "lazy"}
+              decoding="async"
+              width="800"
+              height="533"
             />
           ))}
         </div>
-      </motion.div>
+      </m.div>
 
       {/* Overlays for fading, masking and texture */}
       <div className={styles.grainOverlay} />
@@ -71,7 +80,7 @@ export default function Hero() {
       <div className={styles.overlay} />
 
       <div className={styles.content}>
-        <motion.div
+        <m.div
           className={styles.titleGroup}
           initial="hidden"
           animate="visible"
@@ -82,9 +91,9 @@ export default function Hero() {
             <span className={styles.line}>Hundreds of Races.</span>
             <span className={styles.line}>One Evolving Championship.</span>
           </h1>
-        </motion.div>
+        </m.div>
 
-        <motion.div
+        <m.div
           className={styles.editorialGroup}
           initial="hidden"
           animate="visible"
@@ -101,7 +110,7 @@ export default function Hero() {
           <div className={styles.metadata}>
             <span>Analytical Record: 2011 — 2023</span>
           </div>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import styles from "./EditorialPhoto.module.css";
 
 type Props = {
@@ -8,6 +8,7 @@ type Props = {
   direction?: "left" | "right";
   duration?: number;
   viewportMargin?: string;
+  priority?: boolean;
 };
 
 export default function EditorialPhoto({
@@ -17,19 +18,23 @@ export default function EditorialPhoto({
   direction = "left",
   viewportMargin = "0px",
   duration = 1.2,
+  priority = false,
 }: Props) {
   return (
     <div className={styles.container}>
-      <motion.div
+      <m.div
         className={styles.imageWrapper}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: viewportMargin }}
       >
-        <motion.img
+        <m.img
           src={src}
           alt={alt}
           className={styles.image}
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : "auto"}
+          decoding="async"
           variants={{
             hidden: {
               x: direction === "left" ? "-10%" : "10%",
@@ -45,9 +50,9 @@ export default function EditorialPhoto({
             },
           }}
         />
-      </motion.div>
+      </m.div>
       {caption && (
-        <motion.div
+        <m.div
           className={styles.caption}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -55,7 +60,7 @@ export default function EditorialPhoto({
           transition={{ duration: 0.8, delay: 0.6 }}
         >
           {caption}
-        </motion.div>
+        </m.div>
       )}
     </div>
   );

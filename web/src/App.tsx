@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { LazyMotion, domAnimation } from "framer-motion";
 import SiteHeader from "./components/layout/SiteHeader";
 import Footer from "./components/layout/Footer";
 import Story from "./pages/Story";
@@ -25,11 +26,11 @@ function App() {
   }, []);
 
   return (
-    <>
+    <LazyMotion features={domAnimation}>
       <SiteHeader currentView={currentView} />
       {currentView === "story" ? <Story /> : <Archive />}
       <Footer />
-    </>
+    </LazyMotion>
   );
 }
 

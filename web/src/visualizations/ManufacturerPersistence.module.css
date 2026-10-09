@@ -44,3 +44,47 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
+
+/* Hover States for O(1) DOM updates */
+.svg.isHovering .visibleLine {
+  opacity: 0.15;
+}
+.svg.isHovering .visibleLine.isToyota {
+  opacity: 0.3;
+}
+.svg.isHovering .visibleLine.isHovered {
+  opacity: 1 !important;
+  stroke-width: 3px !important;
+}
+.svg.isHovering .visibleLine.isToyota.isHovered {
+  stroke-width: 4px !important;
+}
+
+.svg.isHovering .visibleDot {
+  opacity: 0.15;
+}
+.svg.isHovering .visibleDot.isToyota {
+  opacity: 0.3;
+}
+.svg.isHovering .visibleDot.isHovered {
+  opacity: 1 !important;
+  r: 5px !important;
+}
+.svg.isHovering .visibleDot.isToyota.isHovered {
+  r: 6px !important;
+}
+
+.svg.isHovering .visibleLabel {
+  opacity: 0.15;
+  font-weight: normal;
+}
+.svg.isHovering .visibleLabel.isToyota {
+  opacity: 0.3;
+}
+.svg.isHovering .visibleLabel.isHovered {
+  opacity: 1 !important;
+  font-weight: 600 !important;
+}
+.svg.isHovering .visibleLabel.isToyota.isHovered {
+  font-weight: 500 !important;
+}

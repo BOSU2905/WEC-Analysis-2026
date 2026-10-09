@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useMemo } from "react";
 import * as d3 from "d3";
-import { MotionValue } from "framer-motion";
+import { MotionValue, useInView } from "framer-motion";
 import dataUrl from "../data/entry_dots.csv?url";
 import styles from "./ArmadaScatter.module.css";
 
@@ -52,12 +52,17 @@ export default function ArmadaScatter({ progress }: Props) {
   const annotationsRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [data, setData] = useState<DataRow[]>([]);
+  const [isLayoutReady, setIsLayoutReady] = useState(false);
   const nodesRef = useRef<NodeData[]>([]);
 
   const tRef = useRef(0);
   const timeRef = useRef(0);
 
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
   useEffect(() => {
+    // Fetch data immediately when the component mounts (which is pre-fetched at 1000px)
+    // This removes the network delay when the user actually reaches 600px.
     d3.csv(dataUrl).then((res) => {
       setData(res as unknown as DataRow[]);
     });
@@ -104,8 +109,21 @@ export default function ArmadaScatter({ progress }: Props) {
 
   // Initial layout calculation
   useEffect(() => {
-    if (width === 0 || height === 0 || !svgRef.current || data.length === 0)
+    if (width === 0 || height === 0 || data.length === 0 || !canvasRef.current || !svgRef.current)
       return;
+
+    // High DPI Canvas Setup
+    const dpr = window.devicePixelRatio || 1;
+    const canvas = canvasRef.current;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      ctx.scale(dpr, dpr);
+    }
 
     const svg = d3.select(svgRef.current);
     svg.attr("width", width).attr("height", height);
@@ -141,76 +159,102 @@ export default function ArmadaScatter({ progress }: Props) {
       .force("collide", d3.forceCollide(radius + 0.5).iterations(2))
       .stop();
 
-    simStart.tick(150);
-    nodes.forEach((d) => {
-      d.startX = d.x || width / 2;
-      d.startY = d.y || height / 2;
-    });
+    let cancelled = false;
 
-    // Target simulation: cluster by team
-    nodes.forEach((d) => {
-      d.x = d.startX;
-      d.y = d.startY;
-    });
+    const runLayoutAsync = async () => {
+      // Chunk initial simulation
+      for (let i = 0; i < 15; i++) {
+        if (cancelled) return;
+        simStart.tick(10);
+        await new Promise((r) => setTimeout(r, 0));
+      }
 
-    const simTarget = d3
-      .forceSimulation(nodes)
-      .force(
-        "x",
-        d3
-          .forceX<NodeData>((d) => clusters[d.team as keyof typeof clusters].x)
-          .strength(0.2),
-      )
-      .force(
-        "y",
-        d3
-          .forceY<NodeData>((d) => clusters[d.team as keyof typeof clusters].y)
-          .strength(0.2),
-      )
-      .force("collide", d3.forceCollide(radius + 1).iterations(2))
-      .stop();
+      nodes.forEach((d) => {
+        d.startX = d.x || width / 2;
+        d.startY = d.y || height / 2;
+        d.x = d.startX;
+        d.y = d.startY;
+      });
 
-    simTarget.tick(200);
-    nodes.forEach((d) => {
-      d.targetX = d.x || 0;
-      d.targetY = d.y || 0;
-    });
+      const simTarget = d3
+        .forceSimulation(nodes)
+        .force(
+          "x",
+          d3
+            .forceX<NodeData>((d) => clusters[d.team as keyof typeof clusters].x)
+            .strength(0.2),
+        )
+        .force(
+          "y",
+          d3
+            .forceY<NodeData>((d) => clusters[d.team as keyof typeof clusters].y)
+            .strength(0.2),
+        )
+        .force("collide", d3.forceCollide(radius + 1).iterations(2))
+        .stop();
 
-    nodesRef.current = nodes;
+      // Chunk target simulation
+      for (let i = 0; i < 20; i++) {
+        if (cancelled) return;
+        simTarget.tick(10);
+        await new Promise((r) => setTimeout(r, 0));
+      }
+
+      nodes.forEach((d) => {
+        d.targetX = d.x || 0;
+        d.targetY = d.y || 0;
+      });
+
+      if (!cancelled) {
+        nodesRef.current = nodes;
+        setIsLayoutReady(true);
+      }
+    };
+
+    setIsLayoutReady(false);
+    runLayoutAsync();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [data, dimensions, clusters, width, height]);
+
+  // Continuous animation loop (matches Chapter 1's ambient motion style)
+  const isAnimated = useInView(containerRef, { margin: "0px" });
+  const isAnimatedRef = useRef(false);
+  const syncNodesRef = useRef<() => void>(() => {});
+  const animationStartTime = useRef<number | null>(null);
+  const prefersReducedMotionRef = useRef(
+    typeof window !== "undefined"
+      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      : false,
+  );
+
+  useEffect(() => {
+    isAnimatedRef.current = isAnimated;
+  }, [isAnimated]);
+
+  useEffect(() => {
+    if (width === 0 || height === 0 || data.length === 0 || !isLayoutReady) return;
+
+    const ctx = canvasRef.current?.getContext("2d");
+    if (!ctx) return;
 
     const colorScale = (team: string) => {
       if (team === "AF Corse" || team === "Aston Martin Racing")
-        return "#E8E7E3";
+        return "232, 231, 227"; // #E8E7E3
       if (
         team === "Toyota Gazoo Racing" ||
         team === "Audi Sport Team Joest" ||
         team === "Porsche GT Team" ||
         team === "Rebellion Racing"
       )
-        return "#92918D";
-      return "#2A2A29";
+        return "146, 145, 141"; // #92918D
+      return "42, 42, 41"; // #2A2A29
     };
 
-    const circles = svg.selectAll("circle").data(nodes, (d: any) => d.id);
-
-    circles
-      .enter()
-      .append("circle")
-      .attr("r", radius)
-      .attr("fill", (d) => colorScale(d.team))
-      .merge(circles as any)
-      .attr("cx", (d) => d.startX)
-      .attr("cy", (d) => d.startY);
-
-    circles.exit().remove();
-  }, [data, dimensions, clusters, width, height]);
-
-  // Continuous animation loop (matches Chapter 1's ambient motion style)
-  useEffect(() => {
-    if (width === 0 || height === 0 || data.length === 0) return;
-
     const syncNodes = () => {
-      if (!svgRef.current || nodesRef.current.length === 0) return;
+      if (nodesRef.current.length === 0) return;
 
       const v = tRef.current;
       const time = timeRef.current;
@@ -225,51 +269,92 @@ export default function ArmadaScatter({ progress }: Props) {
         t = (v - start) / (end - start);
       }
 
-      const easedT = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-      const svg = d3.select(svgRef.current);
+      if (isAnimatedRef.current && animationStartTime.current === null) {
+        animationStartTime.current = timeRef.current;
+      }
 
-      svg
-        .selectAll<SVGCircleElement, NodeData>("circle")
-        .attr("cx", (d, i) => {
-          let base = d.startX + (d.targetX - d.startX) * easedT;
-          const phaseX = i * 0.1;
-          const ambient = Math.sin(time * 0.001 + phaseX) * 2.5;
-          base += ambient;
-          return base;
-        })
-        .attr("cy", (d, i) => {
-          let base = d.startY + (d.targetY - d.startY) * easedT;
-          const phaseY = i * 0.1;
-          const ambient = Math.cos(time * 0.0008 + phaseY) * 2.5;
-          base += ambient;
-          return base;
-        })
-        .attr("opacity", (d) => {
-          if (d.team === "Other") return 0.2 + 0.3 * (1 - easedT);
-          return 0.75 + 0.25 * easedT;
-        });
+      const easedT = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+      
+      ctx.clearRect(0, 0, width, height);
+
+      const padding = 2;
+      const safeArea = width * height;
+      const maxRadius = Math.max(1, Math.floor(Math.sqrt(safeArea / nodesRef.current.length) / 2) - padding);
+      const rBase = Math.min(maxRadius, 8);
+
+      for (let i = 0; i < nodesRef.current.length; i++) {
+        const d = nodesRef.current[i];
+        let cx = d.startX + (d.targetX - d.startX) * easedT;
+        const phaseX = i * 0.1;
+        cx += Math.sin(time * 0.001 + phaseX) * 2.5;
+
+        let cy = d.startY + (d.targetY - d.startY) * easedT;
+        const phaseY = i * 0.1;
+        cy += Math.cos(time * 0.0008 + phaseY) * 2.5;
+
+        let opacity = 0.75 + 0.25 * easedT;
+        if (d.team === "Other") opacity = 0.2 + 0.3 * (1 - easedT);
+
+        let currentRadius = rBase;
+
+        if (prefersReducedMotionRef.current) {
+          // Keep original base values
+        } else if (animationStartTime.current !== null) {
+          const elapsed = timeRef.current - animationStartTime.current;
+          const staggerDelay = (i / nodesRef.current.length) * 100;
+          const dotElapsed = elapsed - staggerDelay;
+          let dotEnterT = 0;
+          if (dotElapsed > 0) dotEnterT = Math.min(1, dotElapsed / 250);
+          
+          const enterEase = d3.easeCubicOut(dotEnterT);
+          opacity *= (0.3 + 0.7 * enterEase);
+          currentRadius = rBase * (0.5 + 0.5 * enterEase);
+        } else {
+          opacity *= 0.3;
+          currentRadius = rBase * 0.5;
+        }
+
+        if (opacity > 0) {
+          ctx.fillStyle = `rgba(${colorScale(d.team)}, ${opacity})`;
+          ctx.beginPath();
+          ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
 
       if (annotationsRef.current) {
-        // Use a threshold to pop them in when settled, or fade them smoothly
         d3.select(annotationsRef.current).style(
           "opacity",
           easedT > 0.1 ? easedT : 0,
         );
       }
     };
+    
+    syncNodesRef.current = syncNodes;
 
-    const timer = d3.timer((elapsed) => {
-      timeRef.current = elapsed;
+    let timer: d3.Timer | null = null;
+    
+    if (isAnimated) {
+      timer = d3.timer((elapsed) => {
+        timeRef.current = elapsed;
+        syncNodes();
+      });
+    } else {
+      // Draw static frame when out of view
       syncNodes();
-    });
+    }
 
-    return () => timer.stop();
-  }, [width, height, data]);
+    return () => {
+      if (timer) timer.stop();
+    };
+  }, [isAnimated, isLayoutReady, width, height, data]);
 
   // Progress tracking
   useEffect(() => {
     const unsubscribe = progress.on("change", (v) => {
       tRef.current = v;
+      // Do NOT call syncNodesRef.current() here when offscreen, 
+      // as it forces a full canvas redraw on every scroll event while out of view.
     });
     tRef.current = progress.get();
     return () => unsubscribe();
@@ -335,7 +420,25 @@ export default function ArmadaScatter({ progress }: Props) {
 
   return (
     <div className={styles.container} ref={containerRef}>
-      <svg className={styles.svg} ref={svgRef}></svg>
+      <canvas
+        ref={canvasRef}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          pointerEvents: "none",
+        }}
+      />
+      <svg
+        className={styles.svg}
+        ref={svgRef}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          pointerEvents: "none",
+        }}
+      ></svg>
 
       <div
         className={styles.annotationsOverlay}

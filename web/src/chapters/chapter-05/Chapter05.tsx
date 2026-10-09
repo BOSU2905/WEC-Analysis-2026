@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { m, useScroll, useTransform } from "framer-motion";
 import styles from "./Chapter05.module.css";
 import EvolutionLineChart from "../../visualizations/EvolutionLineChart";
 
@@ -18,7 +18,7 @@ export default function Chapter05() {
     <article id="chapter-05" className={styles.chapter} ref={containerRef}>
       <div className={styles.gridContainer}>
         <div className={styles.stickyContainer}>
-          <motion.header className={styles.header} style={{ opacity, y }}>
+          <m.header className={styles.header} style={{ opacity, y }}>
             <h2 className={styles.chapterNumber}>Chapter 05</h2>
             <h3 className={styles.chapterTitle}>The Evolution of Speed</h3>
             <p className={styles.chapterIntro}>
@@ -26,7 +26,7 @@ export default function Chapter05() {
               ultimate proving ground, engineering warfare pushed lap times
               relentlessly downward. But progress is rarely a straight line.
             </p>
-          </motion.header>
+          </m.header>
         </div>
 
         <div className={styles.content}>
@@ -53,7 +53,7 @@ export default function Chapter05() {
       </div>
 
       <div className={styles.closingSection}>
-        <motion.div
+        <m.div
           className={styles.closingContent}
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -78,7 +78,7 @@ export default function Chapter05() {
           <p className={styles.finalThought}>
             Speed is essential. But survival is paramount.
           </p>
-        </motion.div>
+        </m.div>
       </div>
     </article>
   );

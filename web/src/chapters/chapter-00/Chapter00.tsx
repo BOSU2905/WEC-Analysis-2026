@@ -1,9 +1,9 @@
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { m, useScroll, useTransform } from "framer-motion";
 import styles from "./Chapter00.module.css";
 import EditorialPhoto from "../../components/story/EditorialPhoto";
-import photoGrid from "../../assets/filmstrip/04.jpg"; // Starting Grid placeholder
-import photoPit from "../../assets/filmstrip/03.jpg"; // Pit stop placeholder
+import photoGrid from "../../assets/filmstrip/04.webp"; // Starting Grid placeholder
+import photoPit from "../../assets/filmstrip/03.webp"; // Pit stop placeholder
 
 export default function Chapter00() {
   const containerRef = useRef<HTMLElement>(null);
@@ -19,7 +19,7 @@ export default function Chapter00() {
   return (
     <article id="chapter-00" className={styles.chapter} ref={containerRef}>
       <div className={styles.stickyContainer}>
-        <motion.header className={styles.header} style={{ opacity, y }}>
+        <m.header className={styles.header} style={{ opacity, y }}>
           <h2 className={styles.chapterNumber}>Chapter 00</h2>
           <h3 className={styles.chapterTitle}>Understanding WEC</h3>
           <p className={styles.chapterIntro}>
@@ -27,7 +27,7 @@ export default function Chapter00() {
             World Endurance Championship (WEC) is a global series where speed is
             only a prerequisite—endurance is the true test.
           </p>
-        </motion.header>
+        </m.header>
       </div>
 
       <div className={styles.content}>
@@ -49,6 +49,7 @@ export default function Chapter00() {
           direction="left"
           viewportMargin="0px 0px 200px 0px"
           duration={0.6}
+          priority={true}
         />
 
         <div className={styles.proseBlock}>

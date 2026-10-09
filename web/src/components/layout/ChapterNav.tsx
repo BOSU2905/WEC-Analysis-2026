@@ -18,7 +18,8 @@ export default function ChapterNav() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setActiveId(entry.target.id);
+            const id = entry.target.id.replace("-wrap", "");
+            setActiveId(id);
           }
         });
       },
@@ -26,7 +27,7 @@ export default function ChapterNav() {
     );
 
     CHAPTERS.forEach((chapter) => {
-      const el = document.getElementById(chapter.id);
+      const el = document.getElementById(chapter.id) || document.getElementById(`${chapter.id}-wrap`);
       if (el) observer.observe(el);
     });
 
@@ -35,7 +36,7 @@ export default function ChapterNav() {
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
-    const el = document.getElementById(id);
+    const el = document.getElementById(id) || document.getElementById(`${id}-wrap`);
     if (el) {
       el.scrollIntoView({ behavior: "smooth" });
     }

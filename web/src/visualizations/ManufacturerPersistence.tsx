@@ -1,12 +1,8 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import * as d3 from "d3";
-import { MotionValue } from "framer-motion";
+import { useInView } from "framer-motion";
 import dataUrl from "../data/mfg_season_wins.csv?url";
 import styles from "./ManufacturerPersistence.module.css";
-
-type Props = {
-  progress: MotionValue<number>;
-};
 
 type DataRow = {
   season: string;
@@ -15,209 +11,103 @@ type DataRow = {
   cumulativeWins: number;
 };
 
-export default function ManufacturerPersistence({ progress }: Props) {
+// Preload and parse data at module evaluation time
+let preprocessedData: DataRow[] | null = null;
+const dataPromise = d3.csv(dataUrl).then((raw) => {
+  const mfgMap = new Map<string, number>();
+
+  const processed: DataRow[] = raw.map((d) => {
+    const mfg = d.manufacturer!;
+    const wins = +d.wins!;
+    const currentTotal = (mfgMap.get(mfg) || 0) + wins;
+    mfgMap.set(mfg, currentTotal);
+    return {
+      season: d.season!,
+      manufacturer: mfg,
+      wins,
+      cumulativeWins: currentTotal,
+    };
+  });
+
+  const seasons = Array.from(new Set(processed.map((d) => d.season)));
+  const manufacturers = Array.from(
+    new Set(processed.map((d) => d.manufacturer)),
+  );
+
+  const fullSeries: DataRow[] = [];
+  manufacturers.forEach((mfg) => {
+    let cumulative = 0;
+    seasons.forEach((season) => {
+      const point = processed.find(
+        (p) => p.manufacturer === mfg && p.season === season,
+      );
+      if (point) {
+        cumulative = point.cumulativeWins;
+      }
+      fullSeries.push({
+        season,
+        manufacturer: mfg,
+        wins: point ? point.wins : 0,
+        cumulativeWins: cumulative,
+      });
+    });
+  });
+
+  preprocessedData = fullSeries;
+  return fullSeries;
+});
+
+export default function ManufacturerPersistence() {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
-  const [data, setData] = useState<DataRow[]>([]);
+  const [data, setData] = useState<DataRow[]>(preprocessedData || []);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const renderStateRef = useRef({ pathsRendered: false });
   const hoveredMfgRef = useRef<string | null>(null);
+  const previousHoveredMfgRef = useRef<string | null>(null);
 
-  const syncChart = useCallback((v: number) => {
-    if (!svgRef.current || !renderStateRef.current.pathsRendered) return;
+  // INSTRUMENTATION
+  const renderCount = useRef(0);
+  
+  useEffect(() => {
+    renderCount.current++;
+    console.log(`[Ch2] Component Render ${renderCount.current} at ${performance.now().toFixed(1)}ms`);
+  });
+
+  const isInView = useInView(containerRef, { once: true, margin: "200px" });
+
+  const updateHoverState = useCallback(() => {
+    if (!svgRef.current) return;
     const svg = d3.select(svgRef.current);
+    
+    const currentHover = hoveredMfgRef.current;
+    const previousHover = previousHoveredMfgRef.current;
+    
+    if (currentHover === previousHover) return;
 
-    // v: 0.0 -> 0.3 (Intro)
-    // v: 0.3 -> 0.6 (Draw lines step 1)
-    // v: 0.6 -> 0.9 (Highlight Toyota step 2)
+    if (previousHover) {
+      const cls = previousHover.replace(/\s+/g, "");
+      svg.selectAll(`.line-${cls}, .dot-${cls}, .label-${cls}`).classed(styles.isHovered, false);
+    }
 
-    let drawT = 0;
-    if (v > 0.3 && v <= 0.6) drawT = (v - 0.3) / 0.3;
-    else if (v > 0.6) drawT = 1;
-
-    let highlightT = 0;
-    if (v > 0.6 && v <= 0.9) highlightT = (v - 0.6) / 0.3;
-    else if (v > 0.9) highlightT = 1;
-
-    svg.selectAll("path.visible-line").each(function () {
-      const path = d3.select(this);
-      const mfgClass = path.attr("class");
-      const isToyota = mfgClass.includes("Toyota");
-      const currentHover = hoveredMfgRef.current;
-      const hoverActive = currentHover !== null;
-      const isHovered =
-        currentHover && mfgClass.includes(currentHover.replace(/\\s+/g, ""));
-
-      const pathLength = (this as SVGPathElement).getTotalLength();
-      path.attr("stroke-dashoffset", pathLength * (1 - drawT));
-
-      let baseOpacity = isToyota
-        ? drawT > 0
-          ? 1
-          : 0
-        : drawT > 0
-          ? 0.3 - highlightT * 0.2
-          : 0;
-
-      if (hoverActive) {
-        if (isHovered) {
-          baseOpacity = 1;
-        } else {
-          baseOpacity = isToyota
-            ? highlightT > 0
-              ? 0.3
-              : drawT > 0
-                ? 0.15
-                : 0
-            : drawT === 1
-              ? 0.15
-              : 0;
-        }
-      }
-
-      path.attr("opacity", baseOpacity);
-      path.attr(
-        "stroke-width",
-        isHovered
-          ? isToyota
-            ? 2 + highlightT * 2
-            : 3
-          : isToyota
-            ? 2 + highlightT * 2
-            : 2,
-      );
-    });
-
-    svg.selectAll("circle").each(function () {
-      const dot = d3.select(this);
-      const mfgClass = dot.attr("class");
-      const isToyota = mfgClass.includes("Toyota");
-      const currentHover = hoveredMfgRef.current;
-      const hoverActive = currentHover !== null;
-      const isHovered =
-        currentHover && mfgClass.includes(currentHover.replace(/\\s+/g, ""));
-
-      let baseOpacity = isToyota
-        ? highlightT > 0
-          ? 1
-          : 0
-        : drawT === 1
-          ? 0.3 - highlightT * 0.2
-          : 0;
-
-      if (hoverActive) {
-        if (isHovered) {
-          baseOpacity = 1;
-        } else {
-          baseOpacity = isToyota
-            ? highlightT > 0
-              ? 0.3
-              : 0
-            : drawT === 1
-              ? 0.15
-              : 0;
-        }
-      }
-
-      dot.attr("opacity", baseOpacity);
-      dot.attr(
-        "r",
-        isHovered
-          ? isToyota
-            ? 3 + highlightT * 3
-            : 5
-          : isToyota
-            ? 3 + highlightT * 3
-            : 3,
-      );
-    });
-
-    svg.selectAll("text[class*='label-']").each(function () {
-      const text = d3.select(this);
-      const mfgClass = text.attr("class");
-      const isToyota = mfgClass.includes("Toyota");
-      const currentHover = hoveredMfgRef.current;
-      const hoverActive = currentHover !== null;
-      const isHovered =
-        currentHover && mfgClass.includes(currentHover.replace(/\\s+/g, ""));
-
-      const textNode = this as SVGTextElement;
-      const currentText = textNode.textContent;
-      const baseY = +(text.attr("data-base-y") || 0);
-
-      if (isToyota) {
-        if (highlightT > 0.5 && currentText === "Toyota") {
-          textNode.textContent = "Toyota: 44 Wins";
-          text.attr("class", `label-Toyota visible-label ${styles.annotation}`);
-          text.attr("y", baseY - 8); // Shift up slightly for larger font
-        } else if (highlightT <= 0.5 && currentText !== "Toyota") {
-          textNode.textContent = "Toyota";
-          text.attr("class", `label-Toyota visible-label ${styles.subLabel}`);
-          text.attr("y", baseY);
-        }
-
-        let op = highlightT > 0 ? 1 : 0;
-        if (hoverActive && !isHovered) op = highlightT > 0 ? 0.3 : 0;
-        text.attr("opacity", op);
-      } else {
-        let op = drawT === 1 ? 0.3 - highlightT * 0.2 : 0;
-        if (hoverActive) {
-          op = isHovered ? 1 : drawT === 1 ? 0.15 : 0;
-        }
-
-        // Boost size and weight slightly for hover
-        if (isHovered) {
-          text.style("font-weight", "600");
-        } else {
-          text.style("font-weight", "normal");
-        }
-
-        text.attr("opacity", op);
-      }
-    });
+    if (currentHover) {
+      svg.classed(styles.isHovering, true);
+      const cls = currentHover.replace(/\s+/g, "");
+      svg.selectAll(`.line-${cls}, .dot-${cls}, .label-${cls}`).classed(styles.isHovered, true);
+      
+      // Raise hovered line to front to prevent occlusion
+      svg.select(`.line-${cls}`).each(function() {
+        const node = this as unknown as SVGPathElement;
+        if (node.parentNode) node.parentNode.appendChild(node);
+      });
+    } else {
+      svg.classed(styles.isHovering, false);
+    }
+    
+    previousHoveredMfgRef.current = currentHover;
   }, []);
 
   useEffect(() => {
-    d3.csv(dataUrl).then((raw) => {
-      const mfgMap = new Map<string, number>();
-
-      const processed: DataRow[] = raw.map((d) => {
-        const mfg = d.manufacturer!;
-        const wins = +d.wins!;
-        const currentTotal = (mfgMap.get(mfg) || 0) + wins;
-        mfgMap.set(mfg, currentTotal);
-        return {
-          season: d.season!,
-          manufacturer: mfg,
-          wins,
-          cumulativeWins: currentTotal,
-        };
-      });
-
-      const seasons = Array.from(new Set(processed.map((d) => d.season)));
-      const manufacturers = Array.from(
-        new Set(processed.map((d) => d.manufacturer)),
-      );
-
-      const fullSeries: DataRow[] = [];
-      manufacturers.forEach((mfg) => {
-        let cumulative = 0;
-        seasons.forEach((season) => {
-          const point = processed.find(
-            (p) => p.manufacturer === mfg && p.season === season,
-          );
-          if (point) {
-            cumulative = point.cumulativeWins;
-          }
-          fullSeries.push({
-            season,
-            manufacturer: mfg,
-            wins: point ? point.wins : 0,
-            cumulativeWins: cumulative,
-          });
-        });
-      });
-
+    dataPromise.then((fullSeries) => {
       setData(fullSeries);
     });
   }, []);
@@ -226,9 +116,18 @@ export default function ManufacturerPersistence({ progress }: Props) {
     if (!containerRef.current) return;
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        setDimensions({
-          width: entry.contentRect.width,
-          height: entry.contentRect.height,
+        setDimensions((prev) => {
+          if (
+            prev.width === entry.contentRect.width &&
+            prev.height === entry.contentRect.height
+          ) {
+            return prev;
+          }
+          console.log(`[Ch2] ResizeObserver triggered: ${entry.contentRect.width}x${entry.contentRect.height} at ${performance.now().toFixed(1)}ms`);
+          return {
+            width: entry.contentRect.width,
+            height: entry.contentRect.height,
+          };
         });
       }
     });
@@ -238,12 +137,16 @@ export default function ManufacturerPersistence({ progress }: Props) {
 
   useEffect(() => {
     if (
+      !isInView ||
       dimensions.width === 0 ||
       dimensions.height === 0 ||
       data.length === 0 ||
       !svgRef.current
     )
       return;
+
+    console.log(`[Ch2] Starting D3 layout and transition setup at ${performance.now().toFixed(1)}ms`);
+    const layoutStart = performance.now();
 
     const { width, height } = dimensions;
     const margin = { top: 60, right: 140, bottom: 80, left: 80 };
@@ -331,104 +234,152 @@ export default function ManufacturerPersistence({ progress }: Props) {
     const pathsGroup = chart.append("g").attr("class", "paths");
     const labelsGroup = chart.append("g").attr("class", "labels");
 
-    Array.from(grouped).forEach(([mfg, dataPoints]) => {
+    Array.from(grouped).forEach(([mfg, dataPoints], index) => {
+      const isToyota = mfg === "Toyota";
+      
       const path = pathsGroup
         .append("path")
         .datum(dataPoints)
-        .attr("class", `visible-line line-${mfg.replace(/\\s+/g, "")}`)
+        .attr("class", `${styles.visibleLine} ${isToyota ? styles.isToyota : ""} line-${mfg.replace(/\s+/g, "")}`)
         .attr("d", line)
         .attr("fill", "none")
         .attr(
           "stroke",
-          mfg === "Toyota" ? "var(--color-primary)" : "var(--color-secondary)",
+          isToyota ? "var(--color-primary)" : "var(--color-secondary)",
         )
-        .attr("stroke-width", 2)
-        .attr("opacity", 0)
-        .style("transition", "opacity 0.25s ease, stroke-width 0.25s ease");
+        .attr("stroke-width", isToyota ? 4 : 2);
 
-      const pathLength = (path.node() as SVGPathElement).getTotalLength();
+      const pathNode = path.node() as any;
+
+      let pathLength = 0;
+      for (let i = 1; i < dataPoints.length; i++) {
+        const p0 = dataPoints[i - 1];
+        const p1 = dataPoints[i];
+        const dx = Math.abs((xScale(p1.season) || 0) - (xScale(p0.season) || 0));
+        const dy = Math.abs(yScale(p1.cumulativeWins) - yScale(p0.cumulativeWins));
+        pathLength += dx + dy;
+      }
+
+      if (pathNode) {
+        pathNode._mfg = mfg;
+        pathNode._isToyota = isToyota;
+        pathNode._pathLength = pathLength;
+      }
+
       path
         .attr("stroke-dasharray", pathLength)
-        .attr("stroke-dashoffset", pathLength);
+        .attr("stroke-dashoffset", pathLength)
+        .attr("opacity", isToyota ? 1 : 0.3)
+        .style("transition", `stroke-dashoffset 2000ms linear ${isToyota ? 1000 : (index * 150) % 1500}ms`);
+
+      // Trigger CSS transition on next frame
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (pathNode) {
+            pathNode.style.strokeDashoffset = "0";
+          }
+        });
+      });
 
       // Invisible hit area for hover interaction
-      pathsGroup
+      const hitPath = pathsGroup
         .append("path")
         .datum(dataPoints)
         .attr("d", line)
         .attr("fill", "none")
         .attr("stroke", "transparent")
-        .attr("stroke-width", 30) // forgiving hit area
-        .style("cursor", "pointer")
+        .attr("stroke-width", 15) // Reduced from 30 to prevent massive overlapping occlusion
+        .style("pointer-events", "stroke")
+        .style("cursor", "pointer");
+        
+      hitPath
         .on("mouseenter", () => {
           hoveredMfgRef.current = mfg;
-          syncChart(progress.get());
+          updateHoverState();
         })
         .on("mouseleave", () => {
           hoveredMfgRef.current = null;
-          syncChart(progress.get());
+          updateHoverState();
         })
         .on("touchstart", () => {
-          // allow scroll, just highlight
           if (hoveredMfgRef.current === mfg) {
             hoveredMfgRef.current = null;
           } else {
             hoveredMfgRef.current = mfg;
           }
-          syncChart(progress.get());
+          updateHoverState();
         });
 
       const lastPoint = dataPoints[dataPoints.length - 1];
 
-      labelsGroup
+      // A group to handle the fade-in independently of hover state
+      const entryFadeGroup = labelsGroup
+        .append("g")
+        .attr("opacity", 0)
+        .style("transition", `opacity 500ms linear ${isToyota ? 3000 : 2000 + ((index * 150) % 1500)}ms`);
+        
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (entryFadeGroup.node()) {
+            (entryFadeGroup.node() as any).style.opacity = "1";
+          }
+        });
+      });
+
+      const dot = entryFadeGroup
         .append("circle")
-        .attr("class", `dot-${mfg.replace(/\\s+/g, "")}`)
+        .attr("class", `${styles.visibleDot} ${isToyota ? styles.isToyota : ""} dot-${mfg.replace(/\s+/g, "")}`)
         .attr("cx", xScale(lastPoint.season) || 0)
         .attr("cy", yScale(lastPoint.cumulativeWins))
-        .attr("r", 3)
+        .attr("r", isToyota ? 6 : 3)
         .attr(
           "fill",
-          mfg === "Toyota" ? "var(--color-primary)" : "var(--color-secondary)",
+          isToyota ? "var(--color-primary)" : "var(--color-secondary)",
         )
-        .attr("opacity", 0);
+        .attr("opacity", isToyota ? 1 : 0.3);
 
-      labelsGroup
+      const dotNode = dot.node() as any;
+      if (dotNode) {
+        dotNode._mfg = mfg;
+        dotNode._isToyota = isToyota;
+      }
+
+      const text = entryFadeGroup
         .append("text")
         .attr(
           "class",
-          `label-${mfg.replace(/\\s+/g, "")} visible-label ${styles.subLabel}`,
+          isToyota
+            ? `${styles.visibleLabel} ${styles.isToyota} ${styles.annotation} label-${mfg.replace(/\s+/g, "")}`
+            : `${styles.visibleLabel} ${styles.subLabel} label-${mfg.replace(/\s+/g, "")}`,
         )
         .attr(
           "x",
-          mfg === "Toyota"
+          isToyota
             ? xScale(lastPoint.season) || 0
             : (xScale(lastPoint.season) || 0) + 24,
         )
         .attr(
           "y",
-          mfg === "Toyota"
-            ? yScale(lastPoint.cumulativeWins) - 16
+          isToyota
+            ? yScale(lastPoint.cumulativeWins) - 24
             : yScale(lastPoint.cumulativeWins) + 4,
         )
-        .attr(
-          "data-base-y",
-          mfg === "Toyota"
-            ? yScale(lastPoint.cumulativeWins) - 16
-            : yScale(lastPoint.cumulativeWins) + 4,
-        )
-        .attr("text-anchor", mfg === "Toyota" ? "middle" : "start")
-        .text(mfg)
-        .attr("opacity", 0);
+        .attr("text-anchor", isToyota ? "middle" : "start")
+        .text(isToyota ? "Toyota: 44 Wins" : mfg)
+        .attr("opacity", isToyota ? 1 : 0.3);
+
+      const textNode = text.node() as any;
+      if (textNode) {
+        textNode._mfg = mfg;
+        textNode._isToyota = isToyota;
+        textNode._baseY = isToyota ? yScale(lastPoint.cumulativeWins) - 24 : yScale(lastPoint.cumulativeWins) + 4;
+      }
     });
 
-    renderStateRef.current.pathsRendered = true;
-    syncChart(progress.get());
-  }, [data, dimensions, progress, syncChart]);
+    console.log(`[Ch2] D3 setup completed in ${(performance.now() - layoutStart).toFixed(1)}ms`);
+  }, [data, dimensions, isInView, updateHoverState]);
 
-  useEffect(() => {
-    const unsubscribe = progress.on("change", syncChart);
-    return () => unsubscribe();
-  }, [progress, syncChart]);
+
 
   return (
     <div className={styles.container} ref={containerRef}>

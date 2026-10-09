@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import styles from "./MachinesExperience.module.css";
 import machineData from "../../data/machine_wins.json";
 import editorialData from "../../data/machine_metadata.json";
@@ -44,7 +44,7 @@ export default function MachinesExperience() {
 
       <div className={styles.stage}>
         <AnimatePresence mode="wait">
-          <motion.div
+          <m.div
             key={activeMachine.vehicle}
             className={styles.carStage}
             initial={{ opacity: 0, x: 50 }}
@@ -75,7 +75,7 @@ export default function MachinesExperience() {
                 </div>
               )}
               {editorial.side_view_url ? (
-                <motion.div
+                <m.div
                   className={styles.sideViewContainer}
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -86,7 +86,7 @@ export default function MachinesExperience() {
                     alt={`${activeMachine.vehicle} side profile`}
                     className={`${styles.sideViewImage} ${activeMachine.vehicle === 'Porsche 911 RSR' ? styles.enlargedSideView : ''}`}
                   />
-                </motion.div>
+                </m.div>
               ) : (
                 <div className={styles.silhouettePlaceholder}>
                   <div className={styles.assetNotice}>
@@ -159,7 +159,7 @@ export default function MachinesExperience() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         </AnimatePresence>
       </div>
     </section>

@@ -1,5 +1,7 @@
+import { lazy, Suspense } from "react";
 import styles from "./Archive.module.css";
-import MachinesExperience from "../components/archive/MachinesExperience";
+
+const MachinesExperience = lazy(() => import("../components/archive/MachinesExperience"));
 
 export default function Archive() {
   return (
@@ -12,7 +14,9 @@ export default function Archive() {
         </p>
       </header>
 
-      <MachinesExperience />
+      <Suspense fallback={<div style={{ minHeight: "50vh" }} />}>
+        <MachinesExperience />
+      </Suspense>
 
       <section className={styles.futureSection}>
         <div className={styles.placeholder}>

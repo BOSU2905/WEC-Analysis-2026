@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useMemo } from "react";
 import * as d3 from "d3";
-import { MotionValue } from "framer-motion";
+import { MotionValue, useInView } from "framer-motion";
 import datasetScale from "../data/dataset_scale.json";
 import styles from "./ScaleScatter.module.css";
 
@@ -31,6 +31,8 @@ export default function ScaleScatter({ progress }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const isInView = useInView(containerRef, { once: true, margin: "600px" });
+  const [isLayoutReady, setIsLayoutReady] = useState(false);
   const nodesRef = useRef<NodeData[]>([]);
   const radiusRef = useRef(2);
 
@@ -70,7 +72,7 @@ export default function ScaleScatter({ progress }: Props) {
 
   // 2. Pre-calculate deterministic layout and setup canvas
   useEffect(() => {
-    if (width === 0 || height === 0 || !canvasRef.current || !svgRef.current)
+    if (!isInView || width === 0 || height === 0 || !canvasRef.current || !svgRef.current)
       return;
 
     // High DPI Canvas Setup
@@ -141,17 +143,35 @@ export default function ScaleScatter({ progress }: Props) {
       .force("collide", d3.forceCollide(radius + 1).iterations(2))
       .stop();
 
-    // Advance simulation silently
-    sim.tick(100);
+    let cancelled = false;
 
-    data.forEach((d) => {
-      // Bounding box constraint
-      d.clusterX = Math.max(radius, Math.min(width - radius, d.x || 0));
-      d.clusterY = Math.max(radius, Math.min(height - radius, d.y || 0));
-    });
+    const runLayoutAsync = async () => {
+      // Advance simulation silently in chunks
+      for (let i = 0; i < 10; i++) {
+        if (cancelled) return;
+        sim.tick(10);
+        await new Promise((r) => setTimeout(r, 0));
+      }
 
-    nodesRef.current = data;
-  }, [width, height, clusters]);
+      data.forEach((d) => {
+        // Bounding box constraint
+        d.clusterX = Math.max(radius, Math.min(width - radius, d.x || 0));
+        d.clusterY = Math.max(radius, Math.min(height - radius, d.y || 0));
+      });
+
+      if (!cancelled) {
+        nodesRef.current = data;
+        setIsLayoutReady(true);
+      }
+    };
+
+    setIsLayoutReady(false);
+    runLayoutAsync();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isInView, width, height, clusters]);
 
   const tRef = useRef(0);
   const timeRef = useRef(0);
@@ -160,29 +180,10 @@ export default function ScaleScatter({ progress }: Props) {
   const activeClusterRef = useRef<string | null>(null);
   const clusterIntensitiesRef = useRef<Record<string, number>>({});
 
-  // Optimized pointer tracking: Cache bounding rect to prevent layout thrashing
-  const canvasRectRef = useRef({ left: 0, top: 0 });
-
-  useEffect(() => {
-    const updateRect = () => {
-      if (canvasRef.current) {
-        const rect = canvasRef.current.getBoundingClientRect();
-        canvasRectRef.current = { left: rect.left, top: rect.top };
-      }
-    };
-    updateRect();
-    window.addEventListener("scroll", updateRect, { passive: true });
-    window.addEventListener("resize", updateRect, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", updateRect);
-      window.removeEventListener("resize", updateRect);
-    };
-  }, [width, height]);
-
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     pointerRef.current = {
-      x: e.clientX - canvasRectRef.current.left,
-      y: e.clientY - canvasRectRef.current.top,
+      x: e.nativeEvent.offsetX,
+      y: e.nativeEvent.offsetY,
       active: true,
     };
   };
@@ -192,10 +193,15 @@ export default function ScaleScatter({ progress }: Props) {
   };
 
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    // Touch events do not have nativeEvent.offsetX, so we must calculate it manually
+    // But since touch interactions are rare/different, we can compute the rect here ONCE per touch start
+    // instead of binding to the scroll event for the entire page lifecycle.
+    if (!canvasRef.current) return;
+    const rect = canvasRef.current.getBoundingClientRect();
     const touch = e.touches[0];
     pointerRef.current = {
-      x: touch.clientX - canvasRectRef.current.left,
-      y: touch.clientY - canvasRectRef.current.top,
+      x: touch.clientX - rect.left,
+      y: touch.clientY - rect.top,
       active: true,
     };
   };
@@ -205,8 +211,21 @@ export default function ScaleScatter({ progress }: Props) {
   };
 
   // 3. Continuous Animation & Interpolation Loop (Canvas Renderer)
+  const isAnimated = useInView(containerRef, { margin: "0px" }); // Only animate when actually visible
+  const isAnimatedRef = useRef(false);
+  const animationStartTime = useRef<number | null>(null);
+  const prefersReducedMotionRef = useRef(
+    typeof window !== "undefined"
+      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      : false,
+  );
+
   useEffect(() => {
-    if (width === 0 || height === 0 || nodesRef.current.length === 0) return;
+    isAnimatedRef.current = isAnimated;
+  }, [isAnimated]);
+
+  useEffect(() => {
+    if (!isInView || width === 0 || height === 0 || nodesRef.current.length === 0 || !isLayoutReady) return;
 
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) return;
@@ -229,6 +248,10 @@ export default function ScaleScatter({ progress }: Props) {
 
       const time = timeRef.current;
       const stimulus = stimulusRef.current;
+
+      if (isAnimatedRef.current && animationStartTime.current === null) {
+        animationStartTime.current = timeRef.current;
+      }
 
       ctx.clearRect(0, 0, width, height);
 
@@ -273,15 +296,40 @@ export default function ScaleScatter({ progress }: Props) {
         const H = clusterIntensitiesRef.current[d.class] || 0;
         const maxOp = 0.75;
         const minOp = 0.25;
-        const opacity =
+        let opacity =
           t === 0
             ? maxOp
             : maxOp - (maxOp - minOp) * (1 - H) * stimulus.strength;
 
-        ctx.fillStyle = `rgba(${RGB_COLORS[d.class]}, ${opacity})`;
-        ctx.beginPath();
-        ctx.arc(baseX, baseY, radius, 0, Math.PI * 2);
-        ctx.fill();
+        let currentRadius = radius;
+
+        // Entrance Animation
+        if (prefersReducedMotionRef.current) {
+          // Do nothing, keep original radius and opacity
+        } else if (animationStartTime.current !== null) {
+          const elapsed = timeRef.current - animationStartTime.current;
+          const staggerDelay = (i / nodes.length) * 200; // 200ms stagger over all dots
+          const dotElapsed = elapsed - staggerDelay;
+          
+          let dotEnterT = 0;
+          if (dotElapsed > 0) {
+            dotEnterT = Math.min(1, dotElapsed / 300); // 300ms per dot
+          }
+          
+          const easedDotEnter = d3.easeCubicOut(dotEnterT);
+          currentRadius = radius * (0.5 + 0.5 * easedDotEnter);
+          opacity *= (0.3 + 0.7 * easedDotEnter);
+        } else {
+          opacity *= 0.3;
+          currentRadius = radius * 0.5;
+        }
+
+        if (opacity > 0) {
+          ctx.fillStyle = `rgba(${RGB_COLORS[d.class]}, ${opacity})`;
+          ctx.beginPath();
+          ctx.arc(baseX, baseY, currentRadius, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
 
       // Position active text exactly at the stimulus void in the overlay SVG
@@ -307,63 +355,70 @@ export default function ScaleScatter({ progress }: Props) {
       }
     };
 
-    const timer = d3.timer((elapsed) => {
-      timeRef.current = elapsed;
+    let timer: d3.Timer | null = null;
+    
+    if (isAnimated) {
+      timer = d3.timer((elapsed) => {
+        timeRef.current = elapsed;
 
-      const p = pointerRef.current;
-      const s = stimulusRef.current;
+        const p = pointerRef.current;
+        const s = stimulusRef.current;
 
-      if (p.active) {
-        if (s.strength < 0.01) {
-          s.x = p.x;
-          s.y = p.y;
-        } else {
-          s.x += (p.x - s.x) * 0.15;
-          s.y += (p.y - s.y) * 0.15;
-        }
-      }
-
-      const targetStrength = p.active ? 1 : 0;
-      s.strength += (targetStrength - s.strength) * 0.04;
-
-      if (s.strength > 0.01) {
-        let minDist = Infinity;
-        let closest = null;
-        for (const [className, center] of Object.entries(clusters)) {
-          const dSq = (center.x - s.x) ** 2 + (center.y - s.y) ** 2;
-          if (dSq < minDist) {
-            minDist = dSq;
-            closest = className;
+        if (p.active) {
+          if (s.strength < 0.01) {
+            s.x = p.x;
+            s.y = p.y;
+          } else {
+            s.x += (p.x - s.x) * 0.15;
+            s.y += (p.y - s.y) * 0.15;
           }
         }
-        activeClusterRef.current = closest;
-      }
 
-      for (const className of Object.keys(clusters)) {
-        const currentH = clusterIntensitiesRef.current[className] || 0;
-        const targetH =
-          p.active &&
-          s.strength > 0.01 &&
-          className === activeClusterRef.current
-            ? 1
-            : 0;
-        const rate = targetH > currentH ? 0.045 : 0.04;
-        clusterIntensitiesRef.current[className] =
-          currentH + (targetH - currentH) * rate;
-      }
+        const targetStrength = p.active ? 1 : 0;
+        s.strength += (targetStrength - s.strength) * 0.04;
 
+        if (s.strength > 0.01) {
+          let minDist = Infinity;
+          let closest = null;
+          for (const [className, center] of Object.entries(clusters)) {
+            const dSq = (center.x - s.x) ** 2 + (center.y - s.y) ** 2;
+            if (dSq < minDist) {
+              minDist = dSq;
+              closest = className;
+            }
+          }
+          activeClusterRef.current = closest;
+        }
+
+        for (const className of Object.keys(clusters)) {
+          const currentH = clusterIntensitiesRef.current[className] || 0;
+          const targetH =
+            p.active &&
+            s.strength > 0.01 &&
+            className === activeClusterRef.current
+              ? 1
+              : 0;
+          const rate = targetH > currentH ? 0.045 : 0.04;
+          clusterIntensitiesRef.current[className] =
+            currentH + (targetH - currentH) * rate;
+        }
+
+        syncNodes(progress.get());
+      });
+    } else {
+      // Draw static frame when offscreen
       syncNodes(progress.get());
-    });
+    }
 
     const unsubscribe = progress.on("change", () => {
-      // Handled entirely by the d3.timer reading progress.get()
+      // Handled entirely by the d3.timer reading progress.get() when visible
     });
 
     return () => {
       unsubscribe();
-      timer.stop();
+      if (timer) timer.stop();
     };
-  }, [width, height, clusters, progress]);
+  }, [isAnimated, isInView, isLayoutReady, width, height, clusters, progress]);
 
   return (
     <div

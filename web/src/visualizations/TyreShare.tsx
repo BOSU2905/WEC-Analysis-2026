@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import * as d3 from "d3";
+import { useInView } from "framer-motion";
 import tyreData from "../data/tyre_share.json";
 import styles from "./TyreShare.module.css";
 
@@ -22,9 +23,10 @@ export default function TyreShare({
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const isInView = useInView(containerRef, { once: true, margin: "600px" });
 
   useEffect(() => {
-    if (!containerRef.current || !svgRef.current) return;
+    if (!isInView || !containerRef.current || !svgRef.current) return;
 
     const width = containerRef.current.clientWidth;
     const height = 550; // Increased height for visualization
@@ -124,7 +126,7 @@ export default function TyreShare({
       .attr("stroke", "var(--color-border)")
       .attr("stroke-dasharray", "4,4")
       .attr("opacity", 0.3);
-  }, []);
+  }, [isInView]);
 
   return (
     <div className={styles.container} ref={containerRef}>

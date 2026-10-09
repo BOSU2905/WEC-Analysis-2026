@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { m, useScroll, useTransform } from "framer-motion";
 import styles from "./Chapter04.module.css";
 import TyreShare from "../../visualizations/TyreShare";
 
@@ -17,7 +17,7 @@ export default function Chapter04() {
   return (
     <article id="chapter-04" className={styles.chapter} ref={containerRef}>
       <div className={styles.stickyContainer}>
-        <motion.header className={styles.header} style={{ opacity, y }}>
+        <m.header className={styles.header} style={{ opacity, y }}>
           <h2 className={styles.chapterNumber}>Chapter 04</h2>
           <h3 className={styles.chapterTitle}>The Grip</h3>
           <p className={styles.chapterIntro}>
@@ -25,7 +25,7 @@ export default function Chapter04() {
             WEC's history, one supplier dominated the field, capturing 68.3% of
             all tyre assignments across 13 years: <strong>Michelin</strong>.
           </p>
-        </motion.header>
+        </m.header>
       </div>
 
       <div className={styles.content}>

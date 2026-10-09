@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import * as d3 from "d3";
+import { useInView } from "framer-motion";
 import lapData from "../data/circuit_evolution_lemans.json";
 import styles from "./EvolutionLineChart.module.css";
 
@@ -16,9 +17,10 @@ const data = lapData as LapDatum[];
 export default function EvolutionLineChart() {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const isInView = useInView(containerRef, { once: true, margin: "600px" });
 
   useEffect(() => {
-    if (!containerRef.current || !svgRef.current) return;
+    if (!isInView || !containerRef.current || !svgRef.current) return;
 
     const width = containerRef.current.clientWidth;
     const height = 500;
@@ -88,7 +90,7 @@ export default function EvolutionLineChart() {
         .transition()
         .duration(2000)
         .delay(i * 300)
-        .ease(d3.easeCubicOut)
+        .ease(d3.easeLinear)
         .attr("stroke-dashoffset", 0);
 
       // Add circles
@@ -182,7 +184,7 @@ export default function EvolutionLineChart() {
       .attr("stroke", "var(--color-border)")
       .attr("stroke-dasharray", "2,4")
       .attr("opacity", 0.3);
-  }, []);
+  }, [isInView]);
 
   return (
     <div className={styles.container} ref={containerRef}>

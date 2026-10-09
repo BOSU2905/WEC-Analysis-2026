@@ -1,15 +1,9 @@
 import { useRef } from "react";
-import { useScroll } from "framer-motion";
 import ManufacturerPersistence from "../../visualizations/ManufacturerPersistence";
 import styles from "./Chapter02.module.css";
 
 export default function Chapter02() {
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  });
 
   return (
     <article id="chapter-02" className={styles.chapter}>
@@ -21,7 +15,7 @@ export default function Chapter02() {
       <div className={styles.scrollyContainer} ref={containerRef}>
         <div className={styles.graphicContainer}>
           <div className={styles.graphicSticky}>
-            <ManufacturerPersistence progress={scrollYProgress} />
+            <ManufacturerPersistence />
           </div>
         </div>
 
