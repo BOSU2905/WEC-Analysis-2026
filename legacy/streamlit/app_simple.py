@@ -14,12 +14,12 @@ st.title("🏁 WEC Racing Analysis Dashboard 2026")
 @st.cache_data
 def load_data():
     try:
-        df = pd.read_csv('Data/raw/wec_data.csv')
+        df = pd.read_csv('../../data/raw/wec_data.csv')
         st.success(f"✅ Data loaded: {len(df)} rows")
         return df
     except Exception as e:
         st.error(f"❌ Error loading data: {str(e)}")
-        st.info("📁 Looking for: Data/raw/wec_data.csv")
+        st.info("📁 Looking for: ../../data/raw/wec_data.csv")
         st.stop()
 
 df = load_data()

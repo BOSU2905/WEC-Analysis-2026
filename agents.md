@@ -1038,10 +1038,10 @@ Current state:
 
 ```text
 PROJECT STATUS:
-Phase 2A Story Architecture approved and blueprint generated. Ready for Frontend technical planning.
+Phase 3C Refinement 5 completed. The ScaleScatter visualization has been transformed into a living system. A continuous `d3.timer` interpolation loop now provides subtle, deterministic ambient motion (via sinusoidal noise) to all data points at all times. Hovering acts as a global stimulus, creating a smooth, organic repulsive force field around the pointer. Instead of a hard toggle, populations organically deform away from the cursor while maintaining cohesion, creating negative space for the data labels. The entrance animation was significantly slowed down and staggered to feel cinematic and organic as the reader scrolls.
 
 CURRENT PHASE:
-Phase 2A → Phase 2B
+Phase 3C Refinement 5 → Phase 3D (Chapter 03)
 
 COMPLETED:
 - Project concept established
@@ -1058,6 +1058,12 @@ COMPLETED:
 - Phase 1.1 Analytical Integrity Remediation completed
 - Phase 1.2 Final Analytical Reconciliation completed
 - Phase 2A Analytical Story Architecture generated
+- Phase 2A.5 Repository Organization & Legacy Separation completed
+- Phase 2B Frontend Product Architecture & Scaffolding completed
+- Phase 3A First Editorial Vertical Slice completed
+- Phase 3A.1 Editorial Refinement completed
+- Phase 3B Chapter 02 Implementation completed
+- Phase 3C Scrollytelling Refinement completed
 
 
 
@@ -1236,8 +1242,173 @@ External Context Requirements Identified:
 - Hypercar regulation origins (convergence/cost-capping).
 - Pro/Am FIA driver categorisation rules.
 
+## 2026-10-09 — Agent / Gemini 3.1 Pro (Phase 2A.5 Repository Organization)
+
+Phase: Phase 2A.5
+Task: Repository Organization & Legacy Separation
+
+Completed:
+- Audited the entire file tree to separate the current analytical pipeline from historical prototype artifacts.
+- Created `legacy/` directory and isolated Streamlit and Dash implementations into `legacy/streamlit/` and `legacy/dash/`.
+- Moved the canonical notebook to `analysis/notebooks/wec_analytical_foundation.ipynb`.
+- Audited and updated all broken absolute/relative paths globally, preserving the integrity of the data pipeline.
+- Re-executed the canonical notebook to verify no disruptions occurred to the Phase 1.2 locked metrics (85 events, 85 overall winners, 44 Toyota Top-Class wins, 68.3% Michelin share). 
+- Generated `docs/repository_map.md` and `docs/repository_organization_report.md`.
+- Rewrote the global `README.md` to reflect the interactive editorial data story identity and direct users to `AGENTS.md`.
+
+Development Rules Added:
+- **Legacy UI Rule**: Do not treat the legacy Streamlit or Dash code as the current frontend architecture. They are historical reference only. Do not deploy or modify them.
+- **Source-of-Truth Rule**: `AGENTS.md` and the canonical analytical exports in `data/processed/` remain the absolute source of truth.
+
 Next step:
-- Transition to Phase 2B: Technical setup of the web frontend (e.g., selecting Next.js/Vite, UI framework) based on the Story Blueprint requirements.
+- Transition to Phase 3: Implementation of the interactive story (Chapter 01, etc.) using the established scaffolding.
+
+## 2026-10-09 — Agent / Gemini 3.1 Pro (Phase 2B Frontend Product Architecture & Scaffolding)
+
+Phase: Phase 2B
+Task: Frontend Product Architecture & Technical Scaffolding
+
+Completed:
+- Designed and documented the frontend architecture for the interactive editorial data story in `docs/frontend_architecture.md`.
+- Chose **Vite + React + TypeScript** as the framework (fast, robust static SPA without unnecessary SSR complexity).
+- Chose **CSS Modules + Vanilla CSS Variables** for lightweight, strictly scoped design tokens (defined Dark/Light themes and typography scales).
+- Chose **D3.js** for bespoke analytical visualization, keeping logic deeply semantic rather than obscured by generic chart wrappers.
+- Chose **Framer Motion** for performant, accessible scroll-driven animations and state transitions.
+- Defined a strict **Frontend Data Contract** in `docs/frontend_data_contract.md`, ensuring the React frontend strictly consumes `wec_analytical_foundation.ipynb` outputs and performs zero analytical recalculation.
+- Mapped out the component hierarchy (`docs/frontend_component_map.md`) and scrollytelling interaction mechanics (`docs/frontend_interaction_architecture.md`).
+- Scaffolded the frontend inside `web/` with strict directory structures (`components`, `chapters`, `visualizations`, `data`, `styles`).
+- Set up a testing and validation foundation via **Vitest**.
+- Executed `npm run format:check`, `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build`. The build pipeline successfully produces a static HTML/JS/CSS artifact without errors.
+
+Next step:
+- Transition to Phase 3: Component and Story Implementation. Begin actively implementing the chapters, starting with Chapter 01 (The Anatomy).
+
+## 2026-10-09 — Agent / Gemini 3.1 Pro (Phase 3A First Editorial Vertical Slice)
+
+Phase: Phase 3A
+Task: First Editorial Vertical Slice (Hero + Chapter 01)
+
+Completed:
+- Created the **Global Navigation** (`SiteHeader`) with minimal, restrained styling.
+- Built the **Hero component** featuring a placeholder image composition with a gradient overlay, restrained cinematic entrances via Framer Motion, and precise typography mimicking a premium data publication.
+- Extended the analytical notebook `wec_analytical_foundation.ipynb` to securely export `dataset_scale.json` and `entry_dots.csv` directly into the frontend `web/src/data` folder.
+- Developed the **Chapter 01 (The Anatomy)** narrative section with full scroll-driven state derivation via Intersection Observers.
+- Implemented **ScaleScatter**, a React/D3 visualization that physically renders 3,011 SVG circles. On scroll step 0, it renders as a massive grid indicating the sheer volume of valid entries. On step 1, a D3 force simulation animates the dots into distinct class clusters (GT, LMP2, Top Class, Experimental) with CSS-animated annotations.
+- Implemented **ChapterTransition**, ensuring a smooth editorial handoff toward Chapter 02.
+- Validated mobile-first CSS architecture for the sticky/overlay scrollytelling container.
+- Execution pipeline (`format`, `lint`, `typecheck`, `test`, `build`) passes flawlessly.
+
+Known Limitations / Caveats:
+- Visual QA via the automated browser subagent failed due to a Playwright driver (404) environment error. Human visual verification is required.
+- Hero imagery relies on a programmatic placeholder pending final asset acquisition.
+
+Next step:
+- Transition to Phase 3B: Chapter 02 Implementation (The Last Manufacturer Standing), focusing on the longitudinal Toyota step-chart.
+
+## 2026-10-09 — Agent / Gemini 3.1 Pro (Phase 3A.1 & Phase 3B)
+
+Phase: Phase 3B
+Task: Phase 3A.1 Editorial Refinement + Phase 3B Chapter 02
+
+Completed (3A.1):
+- Refined Hero spacing by decreasing `min-height` to `85vh` and centering the content, eliminating the massive vertical gap.
+- Improved `ScaleScatter` typography legibility by applying deep text-shadows (`rgba(0,0,0,0.8)`) and a subtle translucent radial gradient backdrop to the annotation nodes, solving the contrast issue against moving dots.
+- Tightened scroll/narrative synchronization by switching the `IntersectionObserver` to trigger strictly at the viewport center (`rootMargin: "-40% 0px -40% 0px"`).
+
+Completed (3B):
+- Extended canonical exports in `wec_analytical_foundation.ipynb` to generate `mfg_season_wins.csv` (mapping Toyota's 44 overall top-class wins cumulatively against rivals).
+- Created **Chapter 02 (The Last Manufacturer Standing)** highlighting the Toyota persistence narrative.
+- Built **ManufacturerPersistence**, a new D3 visualization plotting cumulative wins over time. Unveils all competitors in Step 1, then highlights Toyota reaching 44 wins in Step 2.
+- Cleanly integrated the new chapter into `App.tsx` following the established strict layout hierarchy.
+- Confirmed full QA pipeline (`format`, `lint`, `typecheck`, `test`, `build`) passes.
+
+Next step:
+- Transition to Phase 3C: Chapter 03 Implementation (The Architecture of Dominance).
+
+## 2026-10-09 — Agent / Gemini 3.1 Pro (Phase 3C)
+
+Phase: Phase 3C
+Task: Scrollytelling Refinement, ScaleScatter Redesign, and Chapter 02 Chart Polish
+
+Completed:
+- Re-architected `Chapter01` and `ScaleScatter` interaction model using `framer-motion`'s `useScroll` hook to map scroll progression deterministically to the D3 visualization frame-by-frame. Reverse, fast, and slow scrolling now maintain perfect narrative sync.
+- Improved `ScaleScatter` responsiveness. The node radius scales dynamically based on container area size via `ResizeObserver`. Pre-calculated D3 force layout ensures optimal rendering bounds, and nodes visually never escape the container boundaries.
+- Re-designed the `ScaleScatter` annotation UI into editorial technical telemetry panels. Utilizing monospace typography, thin translucent borders, and robust structural containers that fade in deterministically.
+- Improved `ManufacturerPersistence` (Chapter 02 D3 Chart). Reconfigured X/Y margins to eliminate origin tick collisions. Appended precise "Season" and "Cumulative Top-Class Wins" axis labels.
+- Added direct line labeling for Chapter 02 (Toyota highlighted, rivals correctly identified as subdued telemetry tails) enhancing immediate readability.
+- Retained strict boundaries across the dataset contract and preserved the dark cinematic identity. Full automated suite tested and passed.
+
+Next step:
+- Transition to Phase 3D: Chapter 03 Implementation (The Architecture of Dominance).
+
+## 2026-10-09 — Agent / Gemini 3.1 Pro (Phase 3C Refinement)
+
+Phase: Phase 3C Refinement
+Task: ScaleScatter Interaction, Chapter 02 Sync & Spacing
+
+Completed:
+- Increased `ScaleScatter` safe area container bounds multiplier from 0.6 to 0.85, retaining responsivenes while increasing physical node sizing.
+- Added mouse and touch hover interactions to `ScaleScatter` semantic cluster annotations, executing a D3 opacity transition across unhovered nodes to emphasize the target cluster.
+- Re-architected `Chapter02.tsx` to utilize `framer-motion` `useScroll`, completely replacing `IntersectionObserver` step logic. Passed `progress` into `ManufacturerPersistence.tsx` for fully deterministic stroke drawing and Toyota highlighting based on scrolling position.
+- Repaired the 2017 -> 2021 gap in `ManufacturerPersistence.tsx`. Discovered the analytical artifact natively exported `2018-2019` strings but the visualization improperly attempted to cast these into Numbers (`NaN`), causing them to drop out of continuous linearity. Replaced `scaleLinear` with `scalePoint` across the raw string categorical domain, explicitly honoring the WEC super seasons and preserving chronological integrity without visually distorting the gap.
+- Increased Manufacturer label standoff margin from +12 to +24 for layout precision.
+- Changed scrollytelling steps from strict `100vh` to `min-height: 40vh` padded by `50vh` terminal spacers. This massively improved paragraph density and narrative continuity without deleting vertical rhythm space.
+- Cleanly passed validation suite (`format:check`, `lint`, `typecheck`, `test`, `build`).
+
+Next step:
+- Transition to Chapter 03 Implementation (The Architecture of Dominance).
+
+## 2026-10-09 — Agent / Gemini 3.1 Pro (Phase 3C Refinement 2)
+
+Phase: Phase 3C Refinement 2
+Task: ScaleScatter Native Focus Reveal, Scroll Pacing & Editorial Photography
+
+Completed:
+- Restored `ScaleScatter` radius scaling to its original impact footprint by setting `safeArea` natively against `width * height`, capping `maxRadius` safely to 4.
+- Completely removed HTML/DOM annotation panels from `ScaleScatter`, replacing them with native SVG `<g>` groups and text labels synced directly to the cluster centroids.
+- Re-architected hover interactions inside `syncNodes`. On pointer move, the nearest cluster is identified, triggering a smooth dimming (`0.25s` opacity transition) on unselected groups, while actively hovered nodes are organically repelled outward by 20% from their centroid, creating a "blooming" analytical reveal that respects strict determinism.
+- Added explicit "Experimental / Prototype" labeling to the formerly isolated bottom-left cluster.
+- Implemented `EditorialPhoto` generic component using `framer-motion` `whileInView`, introducing cinematic delayed image reveals between narrative blocks.
+- Added a `150vh` `.releaseZone` at the end of Chapter 01 to allow the user a persistent reading window while the animation sequence locks at 100%.
+- Refined Toyota's end-line label in `ManufacturerPersistence.tsx` to center cleanly above the final scatter coordinate, resolving boundary collision issues.
+- Cleanly passed validation suite.
+
+Next step:
+- Transition to Phase 3D: Chapter 03 Implementation (The Architecture of Dominance).
+
+## 2026-10-09 — Agent / Gemini 3.1 Pro (Phase 3C Refinement 3)
+
+Phase: Phase 3C Refinement 3
+Task: ScaleScatter Bloom Animation & Interactive Manufacturer Lines
+
+Completed:
+- ScaleScatter radius bounding was raised to `Math.min(maxRadius, 8)`, successfully restoring the original majestic visual scale of the scatter layout.
+- Rewrote the hover behavior in `syncNodes` to incorporate a genuine *bloom* interaction. When hovered, the nodes calculate their vector relative to the cluster centroid and push radially outward by `50px` plus a fractional displacement, creating an organic central void perfectly sized for the native SVG text labels.
+- Adjusted hit-area logic for ScaleScatter to measure distance-to-cluster-centroid against unbloomed node coordinates (`d.gridX` / `d.clusterX`), entirely eliminating hover flicker.
+- Formatted `ScaleScatter` SVG text into a stark three-tier hierarchy (Category → Large Value → "ENTRIES").
+- Modified `ManufacturerPersistence.tsx` to include an invisible `30px` hit-area path for every line, introducing robust interactivity across all manufacturers.
+- Built a non-destructive state overlay mapping `hoveredMfgRef.current` against the existing `drawT` and `highlightT` progression variables. This ensures hovering Porsche dims Toyota smoothly without permanently altering Toyota's unique narrative Step 2 emphasis.
+- Ensured validation suite (lint, typecheck, build) continues to pass cleanly.
+
+Next step:
+- Transition to Phase 3D: Chapter 03 Implementation (The Architecture of Dominance).
+
+## 2026-10-09 — Agent / Gemini 3.1 Pro (Phase 3C Refinement 5)
+
+Phase: Phase 3C Refinement 5
+Task: Living ScaleScatter System, Global Stimulus Interaction & Cinematic Entrance
+
+Completed:
+- Added a permanent `d3.timer` loop that adds deterministic, phase-staggered sinusoidal ambient motion to all nodes. The visualization feels alive even when resting.
+- Rewrote the hover logic to treat the pointer as a global repulsive stimulus with a smoothed decay radius (200px) that softly pushes nodes away mathematically to form a 60px void.
+- Smoothly interpolated pointer target strength and coordinates so that fast mouse movements gracefully drag the void through the population field rather than instantly popping nodes.
+- Displayed the active cluster's semantic information directly inside the negative space created by the pointer, acting as a contextual lens.
+- Made the global scroll-driven entrance cinematic by significantly expanding `.stepSpacer` and assigning a staggered index-based time window to each node, ensuring they organically dissolve into their clusters.
+- Preserved perfect deterministic scroll linkage without introducing runaway physics or random jitter.
+
+Next step:
+- Transition to Phase 3D: Chapter 03 Implementation (The Architecture of Dominance).
+
 
 
 

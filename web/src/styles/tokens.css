@@ -1,0 +1,37 @@
+:root {
+  /* Dark Theme */
+  --color-bg-dark: #090a0b;
+  --color-surface-dark: #111214;
+  --color-primary-dark: #e8e7e3;
+  --color-secondary-dark: #92918d;
+  --color-border-dark: #2a2a29;
+
+  /* Light Theme */
+  --color-bg-light: #f1f0ec;
+  --color-surface-light: #e7e6e1;
+  --color-primary-light: #171717;
+  --color-secondary-light: #6d6c68;
+  --color-border-light: #d2d0c9;
+
+  /* Default Map (Mobile-first default to dark) */
+  --color-bg: var(--color-bg-dark);
+  --color-surface: var(--color-surface-dark);
+  --color-primary: var(--color-primary-dark);
+  --color-secondary: var(--color-secondary-dark);
+  --color-border: var(--color-border-dark);
+
+  /* Typography */
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Geist", system-ui, sans-serif;
+  --font-mono: "Geist Mono", monospace;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-bg: var(--color-bg-light);
+    --color-surface: var(--color-surface-light);
+    --color-primary: var(--color-primary-light);
+    --color-secondary: var(--color-secondary-light);
+    --color-border: var(--color-border-light);
+  }
+}

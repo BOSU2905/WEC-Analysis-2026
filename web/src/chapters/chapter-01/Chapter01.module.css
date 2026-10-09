@@ -1,0 +1,140 @@
+.chapter {
+  position: relative;
+  background-color: var(--color-bg);
+  padding-top: 8rem;
+  padding-bottom: 8rem;
+}
+
+.header {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem 4rem;
+}
+
+.chapterNumber {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--color-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+
+.chapterTitle {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 500;
+  color: var(--color-primary);
+}
+
+.scrollyContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.graphicContainer {
+  position: relative;
+  width: 100%;
+}
+
+.graphicSticky {
+  width: 100%;
+  height: 60vh;
+  position: sticky;
+  top: 10vh;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+}
+
+.textContainer {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  padding: 0 1rem;
+  margin-top: -30vh; /* overlap for mobile */
+}
+
+.step {
+  min-height: 40vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+.stepSpacer {
+  height: 150vh;
+}
+
+.releaseZone {
+  height: 150vh;
+}
+
+.narrativeCard {
+  background: rgba(17, 18, 20, 0.85); /* surface color with opacity */
+  backdrop-filter: blur(10px);
+  padding: 2rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  max-width: 500px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.narrativeCard p {
+  font-family: var(--font-body);
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--color-primary);
+  margin-bottom: 1.5rem;
+}
+
+.narrativeCard p:last-child {
+  margin-bottom: 0;
+}
+
+/* Desktop Split Screen */
+@media (min-width: 1024px) {
+  .scrollyContainer {
+    flex-direction: row;
+  }
+
+  .graphicContainer {
+    width: 60%;
+  }
+
+  .graphicSticky {
+    height: 100vh;
+    top: 0;
+    border: none;
+    border-right: 1px solid var(--color-border);
+  }
+
+  .textContainer {
+    width: 40%;
+    margin-top: 0;
+    padding: 0;
+  }
+
+  .step {
+    min-height: 40vh;
+    padding: 4rem 4rem;
+    justify-content: flex-start;
+  }
+
+  .stepSpacer {
+    height: 150vh;
+  }
+
+  .releaseZone {
+    height: 150vh;
+  }
+
+  .narrativeCard {
+    background: transparent;
+    backdrop-filter: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+}

@@ -1,4 +1,4 @@
-import dash
+# import dash
 from dash import dcc, html, Input, Output, callback
 import plotly.express as px
 import plotly.graph_objects as go
@@ -12,7 +12,7 @@ app.title = "WEC Racing Analysis 2026"
 # Load data
 @callback(Output('data-store', 'data'))
 def load_data():
-    df = pd.read_csv('Data/raw/wec_data.csv')
+    df = pd.read_csv('../../data/raw/wec_data.csv')
     
     # Data cleaning
     df['class'] = df['class'].replace({
@@ -752,4 +752,4 @@ def render_winners_tab(df):
     ])
 
 if __name__ == '__main__':
-    app.run_server(debug=True, host='0.0.0.0', port=8050)
+    app.run(debug=True, host='0.0.0.0', port=8050)

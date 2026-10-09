@@ -42,9 +42,9 @@ def load_data():
     import os
     # Try multiple paths for compatibility
     possible_paths = [
-        'Data/raw/wec_data.csv',
-        'data/raw/wec_data.csv',
-        './Data/raw/wec_data.csv',
+        '../../data/raw/wec_data.csv',
+        '../../data/raw/wec_data.csv',
+        '../../data/raw/wec_data.csv',
         os.path.join(os.path.dirname(__file__), 'Data', 'raw', 'wec_data.csv')
     ]
     

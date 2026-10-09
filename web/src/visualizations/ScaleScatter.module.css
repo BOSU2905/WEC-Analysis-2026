@@ -1,0 +1,91 @@
+.container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden; /* Ensure nothing visually escapes */
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.annotations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Redesigned editorial annotation panel */
+.annotationPanel {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  background: rgba(17, 18, 20, 0.4);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  animation: subtleFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+  pointer-events: auto;
+  cursor: default;
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.annotationPanelActive {
+  background: rgba(17, 18, 20, 0.85);
+  border-color: var(--color-primary);
+}
+
+.annotationEyebrow {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.annotationValue {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-primary);
+}
+
+@keyframes subtleFadeIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -40%);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.nativeLabelEyebrow {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  fill: var(--color-secondary);
+  pointer-events: none;
+}
+
+.nativeLabelValue {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 500;
+  fill: var(--color-primary);
+  pointer-events: none;
+}

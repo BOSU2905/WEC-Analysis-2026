@@ -1,0 +1,215 @@
+
+--- CELL 0 ---
+import seaborn as  sns
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+from packaging import markers
+
+--- CELL 1 ---
+path = r"C:\WEC_Analysis\Data\raw\wec_data.csv"
+
+df = pd.read_csv(path)
+df
+
+--- CELL 2 ---
+df.info()
+
+--- CELL 3 ---
+df['class'].unique()
+df['class'] = df['class'].replace({
+    'LM P1' : 'LMP1',
+    'LM P2' : 'LMP2',
+    'LM GTE Pro' : 'LMGTE Pro',
+    'LM GTE Am' : 'LMGTE Am',
+    'CDNT' :'Experimental',
+    'INNOVATIVE CAR' : 'Experimental'
+})
+df['class'].unique()
+df['class'].value_counts()
+
+--- CELL 4 ---
+df.info()
+class_map = {
+    'LMP1' : 'Hypercar',
+    'LMH' : 'Hypercar',
+    'LMDh' : 'Hypercar',
+    'HYPERCAR' : 'Hypercar',
+    'LMP2' : 'LMP2',
+    'LMGTE Am' : 'LMGT3',
+    'LMGTE Pro' : 'LMGT3',
+    'CDNT' : 'Experimental',
+    'INNOVATIVE CAR' : 'Experimental'
+}
+df['class_group'] = df['class'].map(class_map)
+
+
+--- CELL 5 ---
+winners = df[df['class_position'] == 1]
+victory_counts = winners['class_group'].value_counts()
+plt.figure(figsize=(10,10))
+sns.countplot(data=winners, x='class_group')
+
+--- CELL 7 ---
+plt.figure(figsize=(10,10))
+sns.countplot(winners, x='class')
+
+--- CELL 8 ---
+check_winners = winners.groupby(['season', 'race', 'class_group']).size().reset_index(name='winner_count')
+print(check_winners[check_winners['winner_count'] > 1].head())
+
+--- CELL 9 ---
+df['class'].unique()
+
+--- CELL 10 ---
+df['team']=df['team'].str.replace('Toyota Racing', 'Toyota Gazoo Racing')
+
+
+--- CELL 11 ---
+hypercar_winners = df[(df['class_group'] == 'Hypercar') & df['class_position'] == 1]
+top_hypercar_teams = hypercar_winners[['team']].value_counts()
+top_hypercar_teams
+
+--- CELL 12 ---
+top_hypercar_winners = winners[winners['team'].isin(['Toyota Gazoo Racing', 'Audi Sport Team Joest'])]
+hypercar_trend_data = top_hypercar_winners.groupby(['season', 'team']).size().unstack().fillna(0)
+
+hypercar_trend_data.plot(kind='line', marker='o', figsize=(10,10))
+
+--- CELL 13 ---
+LMGT3_winners = df[(df['class_group'] == 'LMGT3') & df['class_position'] == 1]
+top_LMGT3_winners = LMGT3_winners[['team']].value_counts()
+top_LMGT3_winners
+
+--- CELL 14 ---
+top_two = winners[winners['team'].isin(['AF Corse', 'Aston Martin Racing'])]
+trend_data = top_two.groupby(['season', 'team']).size().unstack().fillna(0)
+
+display(trend_data.plot(kind='line', marker='o', figsize=(10,10)))
+
+--- CELL 15 ---
+df.groupby('class_group')['tyres'].value_counts()
+
+--- CELL 16 ---
+sns.scatterplot(df, x='class_group', y='tyres')
+
+--- CELL 17 ---
+def lap_to_seconds(lap_time):
+    try:
+        if pd.isna(lap_time) or lap_time == '-':
+            return None
+        minutes, seconds = lap_time.split(':')
+        return int(minutes) * 60 + float(seconds)
+    except:
+        return None
+
+df ['fastest_lap (seconds)'] = df['fl_time'].apply(lap_to_seconds)
+df[['fastest_lap (seconds)']]
+
+--- CELL 18 ---
+df['race'] = df['race'].replace({
+    'LeMans 1' : 'LeMans',
+    'LeMans 2' : 'LeMans',
+    'Bahrain 2' : 'Bahrain',
+    'Spa 2' : 'Spa'
+})
+
+--- CELL 19 ---
+df_sorted = df.sort_values('season')
+plt.figure(figsize=(20,10))
+ax = sns.lineplot(
+    data=df_sorted,
+    x='race',
+    y='fastest_lap (seconds)',
+    hue='class_group',
+    markers=True,
+    style = 'class_group',
+    dashes=True,
+    palette='muted'
+)
+
+plt.title("Rata rata lap time tiap track")
+plt.ylabel("Lap Time")
+plt.xlabel("Race Track")
+plt.grid(True, alpha=0.3)
+
+--- CELL 20 ---
+df_sorted = df.sort_values('season')
+plt.figure(figsize=(20,10))
+ax = sns.lineplot(
+    data=df_sorted,
+    x='season',
+    y='fl_kph_average',
+    hue='class_group',
+    markers=True,
+    style = 'class_group',
+    dashes=True,
+    palette='muted'
+)
+plt.title("Rata lap time tiap track")
+plt.ylabel("Kph Average")
+plt.xlabel("Season Track")
+plt.grid(True, alpha=0.3)
+
+--- CELL 21 ---
+automatic_order2 = df.groupby('class_group')['fl_kph_average'].mean().sort_values(ascending=False).index
+year_order = sorted(df['season'].unique())
+plt.figure(figsize=(20,10))
+ax = sns.barplot(data=df,x='class_group', y='fl_kph_average', errorbar=None, hue='season',hue_order=year_order, gap=0.1, palette='muted', order=automatic_order2)
+
+for container in ax.containers:
+    ax.bar_label(container, padding=3, fmt='%0.1f')
+plt.title("Rata rata kecepatan tiap race tiap kelas")
+
+--- CELL 22 ---
+# Cek nama kelas asli yang ada di tahun 2021 dan 2023
+print("Kelas di tahun 2021:")
+print(df[df['season'] == '2021']['class'].unique())
+
+print("\nKelas di tahun 2023:")
+print(df[df['season'] == '2023']['class'].unique())
+
+--- CELL 23 ---
+df_official_wec = df[(df['season'] >= '2012')]
+df_official_wec.sort_values('season')
+fastest_lap_each_year = df_official_wec.groupby(['season', 'class_group', 'race'])[['fastest_lap (seconds)', 'vehicle']].min()
+fastest_lap_each_year
+
+g = sns.relplot(
+    data=df_official_wec,
+    x='season',
+    y='fastest_lap (seconds)',
+    hue='race',
+    col='class_group',
+    kind='line',
+    marker='o',
+    palette='tab20',
+    height=5,
+    aspect=1.2,
+    errorbar=None
+)
+g.fig.suptitle("Evolusi Waktu Lap Terbaik per Sirkuit di Setiap Kelas", y=1.05, fontsize=14)
+g.set_titles("{col_name}")
+g.set_xticklabels(rotation=45)
+
+plt.show()
+
+--- CELL 24 ---
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+import pandas as pd
+
+juara_1_df = df[df['class_position'] == 1]
+car_dominator_yearly = juara_1_df.groupby(['season', 'class_group', 'vehicle']).size().reset_index(name="total Win")
+
+idx_terbanyak = car_dominator_yearly.groupby(['season', 'class_group'])['total Win'].idxmax()
+top_car_yearly = car_dominator_yearly.loc[idx_terbanyak]
+
+top_car_yearly
+
+--- CELL 25 ---
+
+
+--- CELL 26 ---
+

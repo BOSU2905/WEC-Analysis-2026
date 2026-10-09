@@ -18,7 +18,7 @@ COLORS = {
 }
 
 print("🏁 Loading WEC data...")
-df = pd.read_csv('Data/raw/wec_data.csv')
+df = pd.read_csv('../../data/raw/wec_data.csv')
 
 # Data cleaning
 df['class'] = df['class'].replace({
