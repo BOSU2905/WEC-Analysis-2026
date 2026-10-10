@@ -252,17 +252,31 @@ export default function ArmadaScatter({ progress }: Props) {
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) return;
 
+    let gtRgb = "85, 85, 85";
+    let topClassRgb = "232, 231, 227";
+    let expRgb = "42, 42, 41";
+
+    const updateColors = () => {
+      const computed = getComputedStyle(document.documentElement);
+      gtRgb = computed.getPropertyValue("--chart-gt-rgb").trim() || gtRgb;
+      topClassRgb = computed.getPropertyValue("--chart-top-class-rgb").trim() || topClassRgb;
+      expRgb = computed.getPropertyValue("--chart-exp-rgb").trim() || expRgb;
+    };
+    
+    updateColors();
+    window.addEventListener("wec-theme-change", updateColors);
+
     const colorScale = (team: string) => {
       if (team === "AF Corse" || team === "Aston Martin Racing")
-        return "232, 231, 227"; // #E8E7E3
+        return gtRgb;
       if (
         team === "Toyota Gazoo Racing" ||
         team === "Audi Sport Team Joest" ||
         team === "Porsche GT Team" ||
         team === "Rebellion Racing"
       )
-        return "146, 145, 141"; // #92918D
-      return "42, 42, 41"; // #2A2A29
+        return topClassRgb;
+      return expRgb;
     };
 
     const syncNodes = () => {
@@ -271,8 +285,8 @@ export default function ArmadaScatter({ progress }: Props) {
       const v = tRef.current;
       const time = timeRef.current;
 
-      const start = 0.2;
-      const end = 0.8;
+      const start = 0.05;
+      const end = 0.95;
       let t = 0;
 
       if (v <= start) t = 0;
@@ -285,7 +299,8 @@ export default function ArmadaScatter({ progress }: Props) {
         animationStartTime.current = timeRef.current;
       }
 
-      const easedT = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+      // easeInOutCubic for a more deliberate, smoother motion curve
+      const easedT = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
       
       ctx.clearRect(0, 0, width, height);
 
@@ -359,6 +374,7 @@ export default function ArmadaScatter({ progress }: Props) {
 
     return () => {
       if (timer) timer.stop();
+      window.removeEventListener("wec-theme-change", updateColors);
     };
   }, [isAnimated, isLayoutReady, width, height, data]);
 

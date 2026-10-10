@@ -57,6 +57,13 @@ const dataPromise = d3.csv(dataUrl).then((raw) => {
   return fullSeries;
 });
 
+const getMfgColor = (mfg: string) => {
+  if (mfg === "Toyota") return "var(--chart-mfg-toyota)";
+  if (mfg === "Audi") return "var(--chart-mfg-audi)";
+  if (mfg === "Porsche") return "var(--chart-mfg-porsche)";
+  return "var(--chart-mfg-other)";
+};
+
 export default function ManufacturerPersistence() {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -244,10 +251,7 @@ export default function ManufacturerPersistence() {
         .attr("class", `${styles.visibleLine} ${isToyota ? styles.isToyota : ""} line-${mfg.replace(/\s+/g, "")}`)
         .attr("d", line)
         .attr("fill", "none")
-        .attr(
-          "stroke",
-          isToyota ? "var(--color-primary)" : "var(--color-secondary)",
-        )
+        .attr("stroke", getMfgColor(mfg))
         .attr("stroke-width", isToyota ? 4 : 2);
 
       const pathNode = path.node() as any;
@@ -337,10 +341,7 @@ export default function ManufacturerPersistence() {
         .attr("cx", xScale(lastPoint.season) || 0)
         .attr("cy", yScale(lastPoint.cumulativeWins))
         .attr("r", isToyota ? 6 : 3)
-        .attr(
-          "fill",
-          isToyota ? "var(--color-primary)" : "var(--color-secondary)",
-        )
+        .attr("fill", getMfgColor(mfg))
         .attr("opacity", isToyota ? 1 : 0.3);
 
       const dotNode = dot.node() as any;
@@ -357,6 +358,7 @@ export default function ManufacturerPersistence() {
             ? `${styles.visibleLabel} ${styles.isToyota} ${styles.annotation} label-${mfg.replace(/\s+/g, "")}`
             : `${styles.visibleLabel} ${styles.subLabel} label-${mfg.replace(/\s+/g, "")}`,
         )
+        .attr("fill", getMfgColor(mfg))
         .attr(
           "x",
           isToyota

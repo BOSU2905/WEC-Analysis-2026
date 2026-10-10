@@ -60,10 +60,10 @@ export default function TyreShare({
 
     // Color map matching the aesthetic
     const colorMap: Record<string, string> = {
-      michelin_pct: "var(--color-primary)",
-      dunlop_pct: "#c4aa82", // Muted gold
-      goodyear_pct: "#4a4a4a", // Gray
-      other_pct: "#1a1a1a",
+      michelin_pct: "var(--chart-ch4-michelin)",
+      dunlop_pct: "var(--chart-ch4-dunlop)",
+      goodyear_pct: "var(--chart-ch4-goodyear)",
+      other_pct: "var(--chart-ch4-other)",
     };
 
     // Area generator
@@ -134,16 +134,16 @@ export default function TyreShare({
         <div className={styles.legendItem}>
           <span
             className={styles.swatch}
-            style={{ background: "var(--color-primary)" }}
+            style={{ background: "var(--chart-ch4-michelin)" }}
           />{" "}
           Michelin
         </div>
         <div className={styles.legendItem}>
-          <span className={styles.swatch} style={{ background: "#c4aa82" }} />{" "}
+          <span className={styles.swatch} style={{ background: "var(--chart-ch4-dunlop)" }} />{" "}
           Dunlop
         </div>
         <div className={styles.legendItem}>
-          <span className={styles.swatch} style={{ background: "#4a4a4a" }} />{" "}
+          <span className={styles.swatch} style={{ background: "var(--chart-ch4-goodyear)" }} />{" "}
           Goodyear
         </div>
       </div>

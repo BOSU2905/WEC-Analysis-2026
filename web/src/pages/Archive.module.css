@@ -1,6 +1,5 @@
 .archive {
   min-height: 100vh;
-  background-color: var(--color-bg);
   color: var(--color-primary);
   padding-top: 10vh; /* Account for fixed header */
 }

@@ -10,11 +10,17 @@ body {
   margin: 0;
   padding: 0;
   background-color: var(--color-bg);
+  background-image: var(--bg-texture);
+  background-position: var(--bg-texture-position);
+  background-size: var(--bg-texture-size);
   color: var(--color-primary);
   font-family: var(--font-body);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 200ms ease, color 200ms ease;
 }
+
+/* Textures are now defined dynamically in tokens.css */
 
 h1,
 h2,

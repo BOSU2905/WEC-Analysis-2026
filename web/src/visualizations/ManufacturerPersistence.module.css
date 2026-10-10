@@ -27,14 +27,12 @@
   font-family: var(--font-display);
   font-weight: 500;
   font-size: 1.25rem;
-  fill: var(--color-primary);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .subLabel {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  fill: var(--color-secondary);
 }
 
 .axisLabel {

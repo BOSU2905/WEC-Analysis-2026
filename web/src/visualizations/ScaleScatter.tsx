@@ -19,12 +19,7 @@ type NodeData = {
   y?: number;
 };
 
-const RGB_COLORS: Record<string, string> = {
-  "Top Class (LMP1/Hypercar)": "232, 231, 227",
-  LMP2: "146, 145, 141",
-  "GT (GTE Pro/Am)": "85, 85, 85",
-  Experimental: "42, 42, 41",
-};
+
 
 export default function ScaleScatter({ progress }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -230,6 +225,24 @@ export default function ScaleScatter({ progress }: Props) {
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) return;
 
+    let chartColors: Record<string, string> = {
+      "Top Class (LMP1/Hypercar)": "232, 231, 227",
+      LMP2: "146, 145, 141",
+      "GT (GTE Pro/Am)": "85, 85, 85",
+      Experimental: "42, 42, 41",
+    };
+
+    const updateColors = () => {
+      const computed = getComputedStyle(document.documentElement);
+      chartColors["Top Class (LMP1/Hypercar)"] = computed.getPropertyValue("--chart-top-class-rgb").trim() || chartColors["Top Class (LMP1/Hypercar)"];
+      chartColors["LMP2"] = computed.getPropertyValue("--chart-lmp2-rgb").trim() || chartColors["LMP2"];
+      chartColors["GT (GTE Pro/Am)"] = computed.getPropertyValue("--chart-gt-rgb").trim() || chartColors["GT (GTE Pro/Am)"];
+      chartColors["Experimental"] = computed.getPropertyValue("--chart-exp-rgb").trim() || chartColors["Experimental"];
+    };
+
+    updateColors();
+    window.addEventListener("wec-theme-change", updateColors);
+
     const syncNodes = (v: number) => {
       const nodes = nodesRef.current;
       const radius = radiusRef.current;
@@ -325,7 +338,8 @@ export default function ScaleScatter({ progress }: Props) {
         }
 
         if (opacity > 0) {
-          ctx.fillStyle = `rgba(${RGB_COLORS[d.class]}, ${opacity})`;
+          const colorRgb = chartColors[d.class] || "85, 85, 85";
+          ctx.fillStyle = `rgba(${colorRgb}, ${opacity})`;
           ctx.beginPath();
           ctx.arc(baseX, baseY, currentRadius, 0, Math.PI * 2);
           ctx.fill();
@@ -417,6 +431,7 @@ export default function ScaleScatter({ progress }: Props) {
     return () => {
       unsubscribe();
       if (timer) timer.stop();
+      window.removeEventListener("wec-theme-change", updateColors);
     };
   }, [isAnimated, isInView, isLayoutReady, width, height, clusters, progress]);
 

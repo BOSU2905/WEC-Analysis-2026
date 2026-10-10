@@ -1,7 +1,6 @@
 .chapter {
   position: relative;
   z-index: 1;
-  background-color: var(--color-bg);
   padding-top: 8rem;
   padding-bottom: 8rem;
   border-top: 1px solid var(--color-border);
@@ -12,6 +11,9 @@
   top: 4rem;
   z-index: 40;
   background-color: var(--color-bg);
+  background-image: var(--bg-texture);
+  background-position: var(--bg-texture-position);
+  background-size: var(--bg-texture-size);
   padding: 0.75rem 2rem;
   margin-bottom: 2rem;
   border-bottom: 1px solid var(--color-border);
@@ -54,6 +56,9 @@
   position: sticky;
   top: 7.5rem;
   background-color: var(--color-bg);
+  background-image: var(--bg-texture);
+  background-position: var(--bg-texture-position);
+  background-size: var(--bg-texture-size);
   border: 1px solid var(--color-border);
 }
 

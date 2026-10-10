@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { LazyMotion, domAnimation } from "framer-motion";
 import SiteHeader from "./components/layout/SiteHeader";
 import Footer from "./components/layout/Footer";
-import Story from "./pages/Story";
-import Archive from "./pages/Archive";
+import Story from "./pages/Story"; // Eager load default view for LCP
+
+const Archive = lazy(() => import("./pages/Archive"));
 
 function App() {
   const [currentView, setCurrentView] = useState<"story" | "archive">("story");
@@ -28,7 +29,11 @@ function App() {
   return (
     <LazyMotion features={domAnimation}>
       <SiteHeader currentView={currentView} />
-      {currentView === "story" ? <Story /> : <Archive />}
+      <main>
+        <Suspense fallback={<div style={{ padding: '5rem', textAlign: 'center', color: 'var(--text-secondary)' }}>Loading...</div>}>
+          {currentView === "story" ? <Story /> : <Archive />}
+        </Suspense>
+      </main>
       <Footer />
     </LazyMotion>
   );

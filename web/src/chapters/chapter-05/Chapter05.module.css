@@ -1,6 +1,5 @@
 .chapter {
   position: relative;
-  background-color: var(--color-bg);
   border-top: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
@@ -29,6 +28,9 @@
   top: 15vh;
   padding: 4rem 2rem;
   background-color: var(--color-bg);
+  background-image: var(--bg-texture);
+  background-position: var(--bg-texture-position);
+  background-size: var(--bg-texture-size);
   z-index: 10;
 }
 
@@ -99,7 +101,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(to bottom, var(--color-bg), #050505);
+  background-image: var(--bg-texture), linear-gradient(to bottom, var(--color-bg), var(--color-surface));
+  background-position: var(--bg-texture-position), center;
+  background-size: var(--bg-texture-size), auto;
 }
 
 .closingContent {

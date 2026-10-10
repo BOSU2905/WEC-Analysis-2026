@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tyre Compound Asset Preview</title>
+  <style>
+    body { margin: 0; padding: 2rem; font-family: sans-serif; }
+    .container { display: flex; gap: 2rem; margin-bottom: 2rem; padding: 2rem; border-radius: 8px; }
+    .dark { 
+      background-color: #090a0b; 
+      color: #e8e7e3;
+      background-image: 
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.04) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.04) 75%, rgba(255,255,255,0.04)),
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.04) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.04) 75%, rgba(255,255,255,0.04));
+      background-position: 0 0, 2px 2px;
+      background-size: 4px 4px;
+    }
+    .light { 
+      background-color: #e3e6e8; 
+      color: #25292b;
+      background-image: 
+        repeating-linear-gradient(45deg, rgba(0,0,0,0.04) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.04) 75%, rgba(0,0,0,0.04)),
+        repeating-linear-gradient(45deg, rgba(0,0,0,0.04) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.04) 75%, rgba(0,0,0,0.04));
+      background-position: 0 0, 2px 2px;
+      background-size: 4px 4px;
+    }
+    .tyre-card { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+    .tyre-card img { width: 64px; height: 64px; }
+    h2 { margin-top: 0; }
+  </style>
+</head>
+<body>
+  <h1>Tyre Compound Asset Preview</h1>
+  
+  <div class="container dark">
+    <div><h2>Dark Mode (Carbon Fibre)</h2></div>
+    <div class="tyre-card">
+      <img src="/src/assets/tyres/michelin-soft.svg" alt="Soft">
+      <span>Soft</span>
+    </div>
+    <div class="tyre-card">
+      <img src="/src/assets/tyres/michelin-medium.svg" alt="Medium">
+      <span>Medium</span>
+    </div>
+    <div class="tyre-card">
+      <img src="/src/assets/tyres/michelin-hard.svg" alt="Hard">
+      <span>Hard</span>
+    </div>
+    <div class="tyre-card">
+      <img src="/src/assets/tyres/michelin-wet.svg" alt="Wet">
+      <span>Wet</span>
+    </div>
+  </div>
+
+  <div class="container light">
+    <div><h2>Light Mode (Silver Carbon)</h2></div>
+    <div class="tyre-card">
+      <img src="/src/assets/tyres/michelin-soft.svg" alt="Soft">
+      <span>Soft</span>
+    </div>
+    <div class="tyre-card">
+      <img src="/src/assets/tyres/michelin-medium.svg" alt="Medium">
+      <span>Medium</span>
+    </div>
+    <div class="tyre-card">
+      <img src="/src/assets/tyres/michelin-hard.svg" alt="Hard">
+      <span>Hard</span>
+    </div>
+    <div class="tyre-card">
+      <img src="/src/assets/tyres/michelin-wet.svg" alt="Wet">
+      <span>Wet</span>
+    </div>
+  </div>
+</body>
+</html>

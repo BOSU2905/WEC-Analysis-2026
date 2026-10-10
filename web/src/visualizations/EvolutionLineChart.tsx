@@ -56,9 +56,9 @@ export default function EvolutionLineChart() {
       "GT (GTE Pro/Am)",
     ] as const;
     const colorMap: Record<string, string> = {
-      "Top Class (LMP1/Hypercar)": "var(--color-primary)",
-      LMP2: "#c4aa82", // Muted gold
-      "GT (GTE Pro/Am)": "#4a4a4a", // Gray
+      "Top Class (LMP1/Hypercar)": "var(--chart-top-class)",
+      LMP2: "var(--chart-evo-lmp2)",
+      "GT (GTE Pro/Am)": "var(--chart-evo-gt)",
     };
 
     // Draw lines
@@ -136,9 +136,10 @@ export default function EvolutionLineChart() {
       // Label
       svg
         .append("text")
-        .attr("x", hypercarX + 10)
+        .attr("x", hypercarX - 10)
         .attr("y", margin.top + 10)
-        .attr("fill", "var(--color-primary)")
+        .attr("text-anchor", "end")
+        .attr("fill", "var(--chart-top-class)")
         .style("font-family", "var(--font-mono)")
         .style("font-size", "0.75rem")
         .text("Hypercar Era Begins (Pace Reduction)")
@@ -192,16 +193,16 @@ export default function EvolutionLineChart() {
         <div className={styles.legendItem}>
           <span
             className={styles.swatch}
-            style={{ background: "var(--color-primary)" }}
+            style={{ background: "var(--chart-top-class)" }}
           />{" "}
           Top Class
         </div>
         <div className={styles.legendItem}>
-          <span className={styles.swatch} style={{ background: "#c4aa82" }} />{" "}
+          <span className={styles.swatch} style={{ background: "var(--chart-evo-lmp2)" }} />{" "}
           LMP2
         </div>
         <div className={styles.legendItem}>
-          <span className={styles.swatch} style={{ background: "#4a4a4a" }} />{" "}
+          <span className={styles.swatch} style={{ background: "var(--chart-evo-gt)" }} />{" "}
           GT
         </div>
       </div>

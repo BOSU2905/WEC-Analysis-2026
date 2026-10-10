@@ -9,6 +9,10 @@
   align-items: center;
   z-index: 100;
   background-color: var(--color-bg);
+  background-image: var(--bg-texture);
+  background-position: var(--bg-texture-position);
+  background-size: var(--bg-texture-size);
+  transition: background-color 200ms ease;
 }
 
 .logo {

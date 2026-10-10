@@ -90,7 +90,6 @@ export default function ChapterNav() {
 
   return (
     <nav className={styles.nav} aria-label="Chapter Navigation">
-      <div className={styles.track} />
       <ul className={styles.list}>
         {CHAPTERS.map((ch) => (
           <li key={ch.id} className={styles.item}>

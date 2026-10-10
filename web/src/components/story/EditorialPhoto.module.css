@@ -20,7 +20,18 @@
   display: block;
   object-fit: cover;
   border-radius: 2px;
+  /* Natural color by default in light mode */
+  filter: contrast(1.05); 
+}
+
+:root[data-theme="dark"] .image {
   filter: grayscale(100%) contrast(1.1) brightness(0.8);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .image {
+    filter: grayscale(100%) contrast(1.1) brightness(0.8);
+  }
 }
 
 .caption {

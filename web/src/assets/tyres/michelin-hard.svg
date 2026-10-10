@@ -1,0 +1,61 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" aria-label="Michelin Hard slick tyre">
+  <defs>
+    <radialGradient id="tire-base" cx="50%" cy="50%" r="50%">
+      <stop offset="55%" stop-color="#181a1b"/>
+      <stop offset="75%" stop-color="#2a2c2d"/>
+      <stop offset="96%" stop-color="#141516"/>
+      <stop offset="100%" stop-color="#0a0a0a"/>
+    </radialGradient>
+    <radialGradient id="rim-base" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#050505"/>
+      <stop offset="85%" stop-color="#1a1c1d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <path id="text-path-top" d="M 60,200 A 140,140 0 0,1 340,200" />
+    <path id="text-path-bottom" d="M 70,200 A 130,130 0 0,0 330,200" />
+  </defs>
+
+  <circle cx="200" cy="200" r="195" fill="url(#tire-base)" />
+  <circle cx="200" cy="200" r="185" fill="none" stroke="#252728" stroke-width="8" opacity="0.7" />
+  <circle cx="200" cy="200" r="145" fill="none" stroke="#333638" stroke-width="15" opacity="0.3" />
+  <circle cx="200" cy="200" r="150" fill="none" stroke="#333638" stroke-width="25" opacity="0.4" />
+  <circle cx="200" cy="200" r="155" fill="none" stroke="#333638" stroke-width="15" opacity="0.3" />
+
+  <circle cx="200" cy="200" r="108" fill="none" stroke="#111" stroke-width="6" />
+  <circle cx="200" cy="200" r="105" fill="#0a0b0c" stroke="#2a2d2f" stroke-width="2" />
+  
+  <g stroke="#1a1c1d" stroke-width="14" stroke-linecap="round">
+    <line x1="200" y1="100" x2="200" y2="150" />
+    <line x1="200" y1="300" x2="200" y2="250" />
+    <line x1="100" y1="200" x2="150" y2="200" />
+    <line x1="300" y1="200" x2="250" y2="200" />
+    <line x1="129" y1="129" x2="165" y2="165" />
+    <line x1="271" y1="271" x2="235" y2="235" />
+    <line x1="129" y1="271" x2="165" y2="235" />
+    <line x1="271" y1="129" x2="235" y2="165" />
+  </g>
+  <g stroke="#232628" stroke-width="6" stroke-linecap="round">
+    <line x1="200" y1="105" x2="200" y2="145" />
+    <line x1="200" y1="295" x2="200" y2="255" />
+    <line x1="105" y1="200" x2="145" y2="200" />
+    <line x1="295" y1="200" x2="255" y2="200" />
+  </g>
+
+  <circle cx="200" cy="200" r="45" fill="url(#rim-base)" />
+  <circle cx="200" cy="200" r="22" fill="#111" stroke="#333" stroke-width="2" />
+  <path d="M 190 190 L 210 190 L 205 210 L 195 210 Z" fill="#444" />
+  <circle cx="200" cy="200" r="10" fill="#E53935" />
+
+  <text font-family="Arial, Helvetica, sans-serif" font-weight="900" font-style="italic" font-size="36" fill="#E8ECEF" letter-spacing="4" dominant-baseline="middle">
+    <textPath href="#text-path-top" startOffset="50%" text-anchor="middle">MICHELIN</textPath>
+  </text>
+  <text font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="20" fill="#889094" letter-spacing="3" dominant-baseline="middle">
+    <textPath href="#text-path-bottom" startOffset="50%" text-anchor="middle">PILOT SPORT</textPath>
+  </text>
+
+  <!-- Compound Colour: WEC 2026 Reference - HARD = RED -->
+  <g stroke="#D32F2F" stroke-width="12" fill="none" opacity="0.9" stroke-linecap="round">
+    <path d="M 30,200 A 170,170 0 0,1 53,115" />
+    <path d="M 370,200 A 170,170 0 0,1 347,285" />
+  </g>
+</svg>

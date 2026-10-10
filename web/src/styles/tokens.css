@@ -1,24 +1,17 @@
 :root {
-  /* Dark Theme */
+  /* Dark Theme Default Variables (Legacy Reference) */
   --color-bg-dark: #090a0b;
   --color-surface-dark: #111214;
   --color-primary-dark: #e8e7e3;
   --color-secondary-dark: #92918d;
   --color-border-dark: #2a2a29;
 
-  /* Light Theme */
-  --color-bg-light: #f1f0ec;
-  --color-surface-light: #e7e6e1;
-  --color-primary-light: #171717;
-  --color-secondary-light: #6d6c68;
-  --color-border-light: #d2d0c9;
-
-  /* Default Map (Mobile-first default to dark) */
-  --color-bg: var(--color-bg-dark);
-  --color-surface: var(--color-surface-dark);
-  --color-primary: var(--color-primary-dark);
-  --color-secondary: var(--color-secondary-dark);
-  --color-border: var(--color-border-dark);
+  /* Light Theme Variables (Legacy Reference) */
+  --color-bg-light: #f3f0e8;
+  --color-surface-light: #faf8f2;
+  --color-primary-light: #252724;
+  --color-secondary-light: #666862;
+  --color-border-light: #d8d4ca;
 
   /* Typography */
   --font-display: "Space Grotesk", system-ui, sans-serif;
@@ -26,12 +19,129 @@
   --font-mono: "Geist Mono", monospace;
 }
 
+:root,
+:root[data-theme="dark"] {
+  /* Default Map (Mobile-first default to dark) */
+  --color-bg: #090a0b;
+  --color-surface: #111214;
+  --color-primary: #e8e7e3;
+  --color-secondary: #92918d;
+  --color-border: #2a2a29;
+
+  --color-bg-rgb: 9, 10, 11;
+  --color-surface-rgb: 17, 18, 20;
+  --color-primary-rgb: 232, 231, 227;
+  --color-secondary-rgb: 146, 145, 141;
+  --color-border-rgb: 42, 42, 41;
+
+  /* Chart Colors (Dark) - Muted Telemetry palette */
+  --chart-top-class: #6598a8; /* petrol blue */
+  --chart-top-class-rgb: 101, 152, 168;
+  --chart-lmp2: #718fa8; /* steel blue */
+  --chart-lmp2-rgb: 113, 143, 168;
+  --chart-gt: #b6a16f; /* antique brass */
+  --chart-gt-rgb: 182, 161, 111;
+  --chart-exp: #899f82; /* dusty sage */
+  --chart-exp-rgb: 137, 159, 130;
+  
+  --chart-evo-lmp2: #b6a16f; /* antique brass */
+  --chart-evo-gt: #9688aa; /* smoke violet */
+  
+  --chart-mfg-highlight: #b95f59; /* oxide/racing red */
+  --chart-mfg-muted: #9688aa; /* smoke violet */
+  
+  --chart-mfg-toyota: #b8493e; /* constant light-theme racing red */
+  --chart-mfg-audi: #899f82; /* dusty sage */
+  --chart-mfg-porsche: #b6a16f; /* antique brass */
+  --chart-mfg-other: #718fa8; /* steel blue */
+
+  /* Global Textures (Dark) - Carbon Fibre Twill */
+  --bg-texture: repeating-linear-gradient(45deg, rgba(255,255,255,0.04) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.04) 75%, rgba(255,255,255,0.04)),
+                repeating-linear-gradient(45deg, rgba(255,255,255,0.04) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.04) 75%, rgba(255,255,255,0.04));
+  --bg-texture-position: 0 0, 2px 2px;
+  --bg-texture-size: 4px 4px;
+}
+
+:root[data-theme="light"] {
+  --color-bg: #e3e6e8;
+  --color-surface: #f1f2f1;
+  --color-primary: #25292b;
+  --color-secondary: #666d70;
+  --color-border: #c9cdce;
+
+  --color-bg-rgb: 227, 230, 232;
+  --color-surface-rgb: 241, 242, 241;
+  --color-primary-rgb: 37, 41, 43;
+  --color-secondary-rgb: 102, 109, 112;
+  --color-border-rgb: 201, 205, 206;
+
+  /* Chart Colors (Light) - Editorial motorsport palette */
+  --chart-top-class: #315e75; /* petrol blue */
+  --chart-top-class-rgb: 49, 94, 117;
+  --chart-lmp2: #3d7184; /* steel teal */
+  --chart-lmp2-rgb: 61, 113, 132;
+  --chart-gt: #b66b43; /* burnt orange */
+  --chart-gt-rgb: 182, 107, 67;
+  --chart-exp: #71866e; /* sage */
+  --chart-exp-rgb: 113, 134, 110;
+  
+  --chart-evo-lmp2: #a98438; /* ochre */
+  --chart-evo-gt: #8a7b9c; /* muted violet */
+  
+  --chart-mfg-highlight: #b8493e; /* racing red */
+  --chart-mfg-muted: #8a7b9c; /* muted violet */
+  
+  --chart-mfg-toyota: #b8493e;
+  --chart-mfg-audi: #71866e;
+  --chart-mfg-porsche: #b66b43;
+  --chart-mfg-other: #3d7184;
+
+  /* Global Textures (Light) - Silver Carbon Fibre */
+  --bg-texture: repeating-linear-gradient(45deg, rgba(0,0,0,0.04) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.04) 75%, rgba(0,0,0,0.04)),
+                repeating-linear-gradient(45deg, rgba(0,0,0,0.04) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.04) 75%, rgba(0,0,0,0.04));
+  --bg-texture-position: 0 0, 2px 2px;
+  --bg-texture-size: 4px 4px;
+}
+
 @media (prefers-color-scheme: light) {
-  :root {
-    --color-bg: var(--color-bg-light);
-    --color-surface: var(--color-surface-light);
-    --color-primary: var(--color-primary-light);
-    --color-secondary: var(--color-secondary-light);
-    --color-border: var(--color-border-light);
+  :root:not([data-theme="dark"]) {
+    --color-bg: #e3e6e8;
+    --color-surface: #f1f2f1;
+    --color-primary: #25292b;
+    --color-secondary: #666d70;
+    --color-border: #c9cdce;
+
+    --color-bg-rgb: 227, 230, 232;
+    --color-surface-rgb: 241, 242, 241;
+    --color-primary-rgb: 37, 41, 43;
+    --color-secondary-rgb: 102, 109, 112;
+    --color-border-rgb: 201, 205, 206;
+
+    /* Chart Colors (Light) */
+    --chart-top-class: #315e75;
+    --chart-top-class-rgb: 49, 94, 117;
+    --chart-lmp2: #3d7184;
+    --chart-lmp2-rgb: 61, 113, 132;
+    --chart-gt: #b66b43;
+    --chart-gt-rgb: 182, 107, 67;
+    --chart-exp: #71866e;
+    --chart-exp-rgb: 113, 134, 110;
+    
+    --chart-evo-lmp2: #a98438;
+    --chart-evo-gt: #8a7b9c;
+    
+    --chart-mfg-highlight: #b8493e;
+    --chart-mfg-muted: #8a7b9c;
+    
+    --chart-mfg-toyota: #b8493e;
+    --chart-mfg-audi: #71866e;
+    --chart-mfg-porsche: #b66b43;
+    --chart-mfg-other: #3d7184;
+
+    /* Global Textures (Light) - Silver Carbon Fibre */
+    --bg-texture: repeating-linear-gradient(45deg, rgba(0,0,0,0.04) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.04) 75%, rgba(0,0,0,0.04)),
+                  repeating-linear-gradient(45deg, rgba(0,0,0,0.04) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.04) 75%, rgba(0,0,0,0.04));
+    --bg-texture-position: 0 0, 2px 2px;
+    --bg-texture-size: 4px 4px;
   }
 }

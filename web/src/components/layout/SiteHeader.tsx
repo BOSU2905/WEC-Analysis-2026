@@ -1,4 +1,5 @@
 import styles from "./SiteHeader.module.css";
+import ThemeToggle from "./ThemeToggle";
 
 export default function SiteHeader({
   currentView = "story",
@@ -24,6 +25,7 @@ export default function SiteHeader({
         >
           Archive
         </a>
+        <ThemeToggle />
       </nav>
     </header>
   );
