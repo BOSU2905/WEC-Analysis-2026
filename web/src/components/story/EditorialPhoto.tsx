@@ -16,18 +16,18 @@ export default function EditorialPhoto({
   alt,
   caption,
   direction = "left",
-  viewportMargin = "0px",
+  viewportMargin = "-100px",
   duration = 1.2,
   priority = false,
 }: Props) {
   return (
-    <div className={styles.container}>
-      <m.div
-        className={styles.imageWrapper}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: viewportMargin }}
-      >
+    <m.div 
+      className={styles.container}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: viewportMargin }}
+    >
+      <div className={styles.imageWrapper}>
         <m.img
           src={src}
           alt={alt}
@@ -39,8 +39,7 @@ export default function EditorialPhoto({
             hidden: {
               x: direction === "left" ? "-10%" : "10%",
               opacity: 0,
-              clipPath:
-                direction === "left" ? "inset(0% 100% 0% 0%)" : "inset(0% 0% 0% 100%)",
+              clipPath: direction === "left" ? "inset(0% 100% 0% 0%)" : "inset(0% 0% 0% 100%)",
             },
             visible: {
               x: 0,
@@ -50,18 +49,21 @@ export default function EditorialPhoto({
             },
           }}
         />
-      </m.div>
+      </div>
       {caption && (
         <m.div
           className={styles.caption}
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.6 }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { 
+              opacity: 1,
+              transition: { duration: 0.8, delay: duration * 0.4 } // Modest stagger based on image duration
+            }
+          }}
         >
           {caption}
         </m.div>
       )}
-    </div>
+    </m.div>
   );
 }

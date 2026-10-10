@@ -146,10 +146,10 @@ export default function ScaleScatter({ progress }: Props) {
     let cancelled = false;
 
     const runLayoutAsync = async () => {
-      // Advance simulation silently in chunks
-      for (let i = 0; i < 10; i++) {
+      // Advance simulation silently in smaller chunks to prevent main-thread lag
+      for (let i = 0; i < 100; i++) {
         if (cancelled) return;
-        sim.tick(10);
+        sim.tick(1);
         await new Promise((r) => setTimeout(r, 0));
       }
 

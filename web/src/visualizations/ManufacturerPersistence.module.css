@@ -46,6 +46,9 @@
 }
 
 /* Hover States for O(1) DOM updates */
+.visibleLine {
+  transition: opacity 300ms ease, stroke-width 300ms ease;
+}
 .svg.isHovering .visibleLine {
   opacity: 0.15;
 }
@@ -60,6 +63,9 @@
   stroke-width: 4px !important;
 }
 
+.visibleDot {
+  transition: opacity 300ms ease, r 300ms ease;
+}
 .svg.isHovering .visibleDot {
   opacity: 0.15;
 }
@@ -74,6 +80,9 @@
   r: 6px !important;
 }
 
+.visibleLabel {
+  transition: opacity 300ms ease;
+}
 .svg.isHovering .visibleLabel {
   opacity: 0.15;
   font-weight: normal;

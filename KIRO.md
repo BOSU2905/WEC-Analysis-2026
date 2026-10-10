@@ -1,6 +1,41 @@
 # KIRO
 
 ## Completed Work
+- **Chapters 1-3 Editorial Spacing & Paragraph Structure**:
+  - Combined fragmented paragraphs into continuous `.narrativeCard` containers to form coherent sequences.
+  - Eliminated `.stepSpacer` and redundant `.step` containers that were creating oversized blank regions in the layout.
+  - Reduced `EditorialPhoto` base margin to `2.5rem` to tighten spacing around photos while maintaining editorial rhythm.
+- **Chapter 3 Animation Fix**:
+  - **Verified Root Cause**: `ArmadaScatter.tsx` calculated `elapsed` time using `d3.timer` which reset its internal `elapsed` counter to 0 each time it was initialized (e.g. when scrolling out of and back into view, or on resize observer triggers). However, `animationStartTime.current` was never reset to `null` on exit. Thus, when `elapsed` reset to 0 but `animationStartTime` retained a previous positive value, `elapsed - animationStartTime` yielded a massive negative number, keeping the dot opacity and radius multipliers at their static "invisible" baseline indefinitely. Furthermore, `useInView` used a trigger margin of `0px`, meaning the animation executed prematurely when the graphic first touched the bottom viewport edge.
+  - **Minimal Fix Applied**:
+    1. Replaced `d3.timer(elapsed)` with absolute `performance.now()` for `timeRef.current`. This guarantees a strictly increasing monotonic time value that aligns perfectly with `animationStartTime` regardless of timer restarts.
+    2. Reset `animationStartTime.current = null` via a `useEffect` whenever `isAnimated` turns false, allowing the animation to naturally replay if the user scrolls out and back in.
+    3. Added a dedicated `centerObserverRef` 1x1 point at the exact center of the chart and configured its `useInView` to `margin: "-5% 0px"`. This optimized trigger replaced the overly conservative `amount: 0.8` on the tall sticky container, ensuring the animation starts exactly as the dots slightly enter the user's focus area without feeling "too late" or forcing excessive scrolling.
+- **Chapter 1 Narrative Gap Refinement**:
+  - **Identified Issue**: The `releaseZone` at the end of the text container left a 50vh visual gap without narrative context before transitioning to Chapter 2. The previous fix added a paragraph in an empty `.step`, but it felt like additional empty space rather than a natural conclusion.
+  - **Minimal Fix Applied**: Replaced the awkward paragraph and `.step` with a verified editorial photograph (`lone-star-le-mans-start.jpg`) showing a dense multi-class race start. The photograph was placed inside the final `.narrativeCard` step, naturally concluding the chapter and bridging into Chapter 2 visually.
+- **EditorialPhoto Animation Standardization**:
+  - **Identified Issue**: Captions and images used separate `whileInView` triggers with mismatched margins and hardcoded delays (`0.6s`), causing captions to appear before images or inconsistently across scroll speeds.
+  - **Minimal Fix Applied**: Refactored `EditorialPhoto.tsx` to wrap both the image and caption in a shared `<m.div whileInView="visible">` container with `margin: "-100px"`. The image and caption now share the same trigger, and the caption utilizes Framer Motion `variants` to orchestrate a modest stagger (`delay: duration * 0.4`), keeping it firmly synchronized with the photo's entrance rhythm across all chapters.
+- **Chapter 2 Hover Transitions**:
+  - **Identified Issue**: Hovering across thin SVG paths was overly sensitive and instantly snapped styles, causing jitter.
+  - **Minimal Fix Applied**: 
+    1. Added a 150ms `setTimeout` on `mouseleave` to gracefully handle tiny pointer slips off the hit paths. Entering a new path clears the timeout, providing immediate snappy highlights without jitter.
+    2. Appended CSS transition properties (`opacity 300ms ease, stroke-width 300ms ease`) to the inline D3 entrance transition so they aren't overridden, establishing smooth highlighting.
+- **Chapter 1 Narrative Completion**:
+  - Appended a final concluding paragraph smoothly bridging the scale of the GT ecosystem to the survival of the top-class factory programs discussed in Chapter 2.
+- **Performance Audit & Rendering Optimizations**:
+  - **Verified Root Cause (Animation Contention)**: `ArmadaScatter.tsx` performed eager initial layout simulation on mount regardless of viewport visibility. This competed for main thread time with initial render and other chapter animations, causing Chapter 2 stuttering and Chapter 3 delayed starts.
+  - **Verified Root Cause (Main-Thread Blocking)**: The chunked force simulations in `ScaleScatter.tsx` and `ArmadaScatter.tsx` used high tick counts per yield (`sim.tick(10)`). With ~7000 nodes, 10 iterations per yield still caused micro-stutters.
+  - **Minimal Fix Applied**:
+    1. Added `isInView` boundary check to `ArmadaScatter.tsx` so layout simulation only starts when the component approaches the viewport.
+    2. Reduced `sim.tick(10)` down to `sim.tick(3)` and `sim.tick(6)` respectively, increasing loop iterations to compensate, ensuring smoother yield logic.
+- **Vertical Scroll Navigation Tracking**:
+  - **Identified Issue**: The `IntersectionObserver` in `ChapterNav.tsx` naively set the active chapter based on any intersecting entry, which could cause brief flickering or inaccurate active states when crossing tall sticky chapters.
+  - **Minimal Fix Applied**: Rewrote the observer callback to track all concurrently intersecting chapters dynamically via a `Map`, calculating the `intersectionRatio` across a more robust `threshold` matrix (`[0, 0.1 ... 1]`). It intelligently prioritizes the element taking up the most screen real estate, maintaining accurate tracking even when `Chapter01.tsx` strictly overlaps the viewport center.
+- **Chapters 1-3 Authentic Photography Integration**:
+  - **Source Validation & Acquisition**: Replaced placeholders with authentic, verified Wikimedia Commons CC-licensed images for Chapters 1, 2, and 3. Images were downloaded programmatically as 1200px optimized thumbnails to preserve performance, and proper metadata was logged in `image_credits.md`.
+  - **Visual Implementation**: Integrated using the robust `EditorialPhoto.tsx` component, leveraging its layout reservation mechanisms to prevent reflows. Entrances alternate elegantly left/right according to editorial flow.
 - **Chapter 00 EditorialPhoto Bug Fix & Regression Recovery**:
   - **Verified Root Cause (Original Bug)**: The `EditorialPhoto` component initially suffered from a Framer Motion string interpolation failure where mixed CSS units (`inset(0 100% 0 0)` without `%` on the `0`s vs `inset(0 0 0 0)`) caused the `clipPath` animation to remain stuck. Additionally, the observer boundary logic relied on `margin: "-100px"`. Due to a browser-level edge case, elements with an initial layout height of 0px (because the `<img>` is still loading) often fail to trigger `IntersectionObserver` when entering exclusively across a negative bottom-margin threshold. The observer only caught them when re-entering across the top-margin threshold (scrolling upward).
   - **Verified Root Cause (Regression)**: A previous fix attempt incorrectly swapped `margin: "-100px"` to `amount: 0.2` in `viewport`. Because the `clipPath` visibly reduced the intersection area to `0`, the `0.2` threshold could mathematically never be reached, leaving the photo permanently hidden. Furthermore, the `x: "-10%"` translation on the wrapper was sticking outside its parent `.container`, expanding the document layout and creating an unintended horizontal scrollbar.
@@ -26,6 +61,15 @@ To guarantee stability and prevent broken links, UI reflows, or CORS issues from
 The user will provide a text file containing candidate authentic historical WEC photo URLs in a later step. Once provided, these images will replace `01.jpg` through `04.jpg` in `src/assets/filmstrip/`. 
 
 *Constraint Note: Hotlinking directly to Wikimedia Commons URLs is strictly advised against due to URL hash alterations and CDN anti-hotlinking measures. Production implementation must host these images locally.*
+
+## Continuous Optimization Workflow
+To protect the reading experience and analytical integrity, all future agents working on this repository MUST adhere to the following optimization workflow:
+1. **Inspect before modifying**: Review existing components, hooks, and datasets before writing new code.
+2. **Identify costs**: Anticipate performance costs (re-renders, long-running loops, heavy SVG rendering) before they are introduced.
+3. **Reuse intelligently**: Use existing utilities like `EditorialPhoto.tsx`, `useInView`, and established D3 chunking patterns. Avoid duplicate IntersectionObservers or unthrottled event listeners.
+4. **Preserve logic**: Ensure structural narrative and visualization states remain deterministic and analytically correct. (e.g. `wec_analytical_foundation.ipynb` is canonical).
+5. **Check rigorously**: Implement → Validate correctness (`npm run typecheck`, `npm run lint`, `npm run test --run`) → Build (`npm run build`) → Document results.
+6. **Measure**: Distinguish verifiable measured results from theoretical assumptions.
 
 ## Design Backlog / Future Work
 - (Currently empty - previous Hero backlog item completed)

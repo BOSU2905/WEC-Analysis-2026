@@ -64,6 +64,7 @@ export default function ManufacturerPersistence() {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const hoveredMfgRef = useRef<string | null>(null);
   const previousHoveredMfgRef = useRef<string | null>(null);
+  const hoverTimeoutRef = useRef<number | null>(null);
 
   // INSTRUMENTATION
   const renderCount = useRef(0);
@@ -270,7 +271,7 @@ export default function ManufacturerPersistence() {
         .attr("stroke-dasharray", pathLength)
         .attr("stroke-dashoffset", pathLength)
         .attr("opacity", isToyota ? 1 : 0.3)
-        .style("transition", `stroke-dashoffset 2000ms linear ${isToyota ? 1000 : (index * 150) % 1500}ms`);
+        .style("transition", `stroke-dashoffset 2000ms linear ${isToyota ? 1000 : (index * 150) % 1500}ms, opacity 300ms ease, stroke-width 300ms ease`);
 
       // Trigger CSS transition on next frame
       requestAnimationFrame(() => {
@@ -294,12 +295,16 @@ export default function ManufacturerPersistence() {
         
       hitPath
         .on("mouseenter", () => {
+          if (hoverTimeoutRef.current) window.clearTimeout(hoverTimeoutRef.current);
           hoveredMfgRef.current = mfg;
           updateHoverState();
         })
         .on("mouseleave", () => {
-          hoveredMfgRef.current = null;
-          updateHoverState();
+          if (hoverTimeoutRef.current) window.clearTimeout(hoverTimeoutRef.current);
+          hoverTimeoutRef.current = window.setTimeout(() => {
+            hoveredMfgRef.current = null;
+            updateHoverState();
+          }, 150);
         })
         .on("touchstart", () => {
           if (hoveredMfgRef.current === mfg) {

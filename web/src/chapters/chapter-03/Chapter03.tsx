@@ -1,6 +1,8 @@
 import { useRef } from "react";
 import { useScroll } from "framer-motion";
 import ArmadaScatter from "../../visualizations/ArmadaScatter";
+import EditorialPhoto from "../../components/story/EditorialPhoto";
+import armadaImage from "../../assets/editorial/aston-martin-armada.jpg";
 import styles from "./Chapter03.module.css";
 
 export default function Chapter03() {
@@ -29,22 +31,16 @@ export default function Chapter03() {
           <div className={styles.step}>
             <div className={styles.narrativeCard}>
               <p>
-                While Toyota Gazoo Racing achieved sustained success through
-                elite engineering in the top class, dominating the overall
-                championship required a different strategy in the GT and LMP2
-                classes: sheer volume.
+                While Toyota achieved sustained success through elite engineering in the top class, dominating the GT and LMP2 classes required a different strategy: sheer volume. Instead of focusing all resources on a single factory prototype, manufacturers like Ferrari and Aston Martin created an "Armada Effect" by flooding the grid with massive fleets of customer and factory entries. These massive swarms were the lifeblood of the championship, proving that survival isn't just about having the fastest car—it's about fielding enough cars that one is bound to finish first.
               </p>
-              <p>
-                Instead of focusing all resources on a single factory prototype,
-                manufacturers like Ferrari and Aston Martin flooded the grid
-                with massive fleets of customer and factory entries.
-              </p>
-            </div>
-          </div>
+              
+              <EditorialPhoto
+                src={armadaImage}
+                alt="Aston Martin Vantage GTE"
+                caption="GT manufacturers fielded massive armadas of customer and factory entries."
+                direction="left"
+              />
 
-          <div className={styles.step}>
-            <div className={styles.narrativeCard}>
-              <p>This strategy created the "Armada Effect".</p>
               <p>
                 AF Corse (Ferrari's primary proxy) fielded an astonishing{" "}
                 <strong>269 total entries</strong> across the 13-year period.
@@ -53,29 +49,12 @@ export default function Chapter03() {
               </p>
               <p>
                 By fielding a sprawling armada—often up to 11 different unique
-                vehicles—AF Corse secured 41 absolute GT wins, nearly matching
-                Toyota's top-class win count but through overwhelming
+                vehicles per race—AF Corse secured 41 absolute GT wins. This strategy nearly matched
+                Toyota's win count, but achieved it through overwhelming
                 participation rather than sheer speed.
               </p>
             </div>
           </div>
-
-          <div className={styles.step}>
-            <div className={styles.narrativeCard}>
-              <p>
-                These massive customer-racing swarms were the lifeblood of the
-                championship. Without the GT and LMP2 armadas, the grids would
-                have been virtually empty.
-              </p>
-              <p>
-                They proved that in endurance racing, survival isn't just about
-                having the fastest car—it's about fielding enough cars that one
-                of them is bound to cross the finish line first.
-              </p>
-            </div>
-          </div>
-
-          <div className={styles.stepSpacer} />
         </div>
       </div>
     </article>

@@ -107,9 +107,11 @@ export default function ArmadaScatter({ progress }: Props) {
         };
   }, [isMobile, width, height]);
 
+  const isInView = useInView(containerRef, { once: true, margin: "600px" });
+
   // Initial layout calculation
   useEffect(() => {
-    if (width === 0 || height === 0 || data.length === 0 || !canvasRef.current || !svgRef.current)
+    if (!isInView || width === 0 || height === 0 || data.length === 0 || !canvasRef.current || !svgRef.current)
       return;
 
     // High DPI Canvas Setup
@@ -163,9 +165,9 @@ export default function ArmadaScatter({ progress }: Props) {
 
     const runLayoutAsync = async () => {
       // Chunk initial simulation
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < 75; i++) {
         if (cancelled) return;
-        simStart.tick(10);
+        simStart.tick(2);
         await new Promise((r) => setTimeout(r, 0));
       }
 
@@ -194,9 +196,9 @@ export default function ArmadaScatter({ progress }: Props) {
         .stop();
 
       // Chunk target simulation
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < 100; i++) {
         if (cancelled) return;
-        simTarget.tick(10);
+        simTarget.tick(2);
         await new Promise((r) => setTimeout(r, 0));
       }
 
@@ -217,11 +219,14 @@ export default function ArmadaScatter({ progress }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [data, dimensions, clusters, width, height]);
+  }, [data, dimensions, clusters, width, height, isInView]);
 
   // Continuous animation loop (matches Chapter 1's ambient motion style)
-  const isAnimated = useInView(containerRef, { margin: "0px" });
+  const centerObserverRef = useRef<HTMLDivElement>(null);
+  const isAnimated = useInView(containerRef, { amount: 0.1 });
+  const isVisibleForEntrance = useInView(centerObserverRef, { margin: "-5% 0px" });
   const isAnimatedRef = useRef(false);
+  const isVisibleForEntranceRef = useRef(false);
   const syncNodesRef = useRef<() => void>(() => {});
   const animationStartTime = useRef<number | null>(null);
   const prefersReducedMotionRef = useRef(
@@ -232,7 +237,14 @@ export default function ArmadaScatter({ progress }: Props) {
 
   useEffect(() => {
     isAnimatedRef.current = isAnimated;
+    if (!isAnimated) {
+      animationStartTime.current = null;
+    }
   }, [isAnimated]);
+
+  useEffect(() => {
+    isVisibleForEntranceRef.current = isVisibleForEntrance;
+  }, [isVisibleForEntrance]);
 
   useEffect(() => {
     if (width === 0 || height === 0 || data.length === 0 || !isLayoutReady) return;
@@ -269,7 +281,7 @@ export default function ArmadaScatter({ progress }: Props) {
         t = (v - start) / (end - start);
       }
 
-      if (isAnimatedRef.current && animationStartTime.current === null) {
+      if (isVisibleForEntranceRef.current && animationStartTime.current === null) {
         animationStartTime.current = timeRef.current;
       }
 
@@ -335,12 +347,13 @@ export default function ArmadaScatter({ progress }: Props) {
     let timer: d3.Timer | null = null;
     
     if (isAnimated) {
-      timer = d3.timer((elapsed) => {
-        timeRef.current = elapsed;
+      timer = d3.timer(() => {
+        timeRef.current = performance.now();
         syncNodes();
       });
     } else {
       // Draw static frame when out of view
+      timeRef.current = performance.now();
       syncNodes();
     }
 
@@ -420,6 +433,17 @@ export default function ArmadaScatter({ progress }: Props) {
 
   return (
     <div className={styles.container} ref={containerRef}>
+      <div
+        ref={centerObserverRef}
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          width: "1px",
+          height: "1px",
+          pointerEvents: "none",
+        }}
+      />
       <canvas
         ref={canvasRef}
         style={{
