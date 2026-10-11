@@ -3,16 +3,20 @@ import { LazyMotion, domAnimation } from "framer-motion";
 import SiteHeader from "./components/layout/SiteHeader";
 import Footer from "./components/layout/Footer";
 import Story from "./pages/Story"; // Eager load default view for LCP
+import PhotoCreditsModal from "./components/story/PhotoCreditsModal";
 
 const Archive = lazy(() => import("./pages/Archive"));
 
 function App() {
   const [currentView, setCurrentView] = useState<"story" | "archive">("story");
+  const [isCreditsOpen, setIsCreditsOpen] = useState(false);
 
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace("#", "");
-      if (hash === "archive") {
+      if (hash === "credits") {
+        setIsCreditsOpen(true);
+      } else if (hash === "archive") {
         setCurrentView("archive");
       } else {
         setCurrentView("story");
@@ -26,15 +30,40 @@ function App() {
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
+  const handleCloseCredits = () => {
+    setIsCreditsOpen(false);
+    if (window.location.hash === "#credits") {
+      history.replaceState(
+        null,
+        "",
+        window.location.pathname +
+          (currentView === "archive" ? "#archive" : "#story"),
+      );
+    }
+  };
+
   return (
     <LazyMotion features={domAnimation}>
       <SiteHeader currentView={currentView} />
       <main>
-        <Suspense fallback={<div style={{ padding: '5rem', textAlign: 'center', color: 'var(--text-secondary)' }}>Loading...</div>}>
+        <Suspense
+          fallback={
+            <div
+              style={{
+                padding: "5rem",
+                textAlign: "center",
+                color: "var(--text-secondary)",
+              }}
+            >
+              Loading...
+            </div>
+          }
+        >
           {currentView === "story" ? <Story /> : <Archive />}
         </Suspense>
       </main>
-      <Footer />
+      <Footer onOpenCredits={() => setIsCreditsOpen(true)} />
+      <PhotoCreditsModal isOpen={isCreditsOpen} onClose={handleCloseCredits} />
     </LazyMotion>
   );
 }

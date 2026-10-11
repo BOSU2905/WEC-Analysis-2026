@@ -6,6 +6,10 @@ import img1 from "../../assets/filmstrip/01.webp";
 import img2 from "../../assets/filmstrip/02.webp";
 import img3 from "../../assets/filmstrip/03.webp";
 import img4 from "../../assets/filmstrip/04.webp";
+import img5 from "../../assets/filmstrip/05.webp";
+import img6 from "../../assets/filmstrip/06.webp";
+import img7 from "../../assets/filmstrip/07.webp";
+import img8 from "../../assets/filmstrip/08.webp";
 
 export default function Hero() {
   const shouldReduceMotion = useReducedMotion();
@@ -28,9 +32,50 @@ export default function Hero() {
     },
   };
 
-  // Duplicate arrays to create a seamless infinite loop
-  const topRow = [img1, img2, img3, img4, img1, img2, img3, img4];
-  const bottomRow = [img3, img4, img1, img2, img3, img4, img1, img2];
+  // 8 authentic editorial moments curated for a cinematic documentary sequence
+  const filmstripItems = [
+    {
+      src: img1,
+      alt: "Multiclass field led by the Rebellion R13 prototype accelerating down the pit straight at the 2020 24 Hours of Le Mans",
+    },
+    {
+      src: img2,
+      alt: "Toyota TS050 Hybrid driven by Fernando Alonso navigating Village corner at the 2018 6 Hours of Silverstone",
+    },
+    {
+      src: img3,
+      alt: "Oak Racing Morgan LMP2 battling nose-to-tail with factory Toyota TS030 Hybrid LMP1 at the 2013 6 Hours of Silverstone",
+    },
+    {
+      src: img4,
+      alt: "Morand Racing Morgan LMP2 prototype overtaking an AF Corse Ferrari 458 Italia GTE at the 2013 24 Hours of Le Mans",
+    },
+    {
+      src: img5,
+      alt: "Car Guy Racing Ferrari 488 GTE pursued closely by the factory Porsche 911 RSR at the 2019 24 Hours of Le Mans",
+    },
+    {
+      src: img6,
+      alt: "Porsche 919 Hybrid racing into the night with blazing headlights at the 2016 24 Hours of Le Mans",
+    },
+    {
+      src: img7,
+      alt: "United Autosports pit crew conducting a rapid pit stop with fuel rig and pneumatic wheel guns at Le Mans 2019",
+    },
+    {
+      src: img8,
+      alt: "Toyota TS040 Hybrid LMP1 powering through heavy rain and rooster tails of spray at the 2014 6 Hours of Silverstone",
+    },
+  ];
+
+  // Duplicate arrays to create a seamless infinite loop across all 8 authentic editorial photos
+  const topRow = [...filmstripItems, ...filmstripItems];
+  const bottomRow = [
+    ...filmstripItems.slice(4),
+    ...filmstripItems.slice(0, 4),
+    ...filmstripItems.slice(4),
+    ...filmstripItems.slice(0, 4),
+  ];
 
   return (
     <section className={styles.hero}>
@@ -42,13 +87,12 @@ export default function Hero() {
         variants={filmstripVariant}
       >
         <div className={`${styles.filmstripRow} ${styles.scrollLeft}`}>
-          {topRow.map((src, i) => (
+          {topRow.map((item, i) => (
             <img
               key={`top-${i}`}
-              src={src}
+              src={item.src}
               className={styles.filmstripImage}
-              alt=""
-              aria-hidden="true"
+              alt={item.alt}
               fetchPriority={i < 2 ? "high" : "auto"}
               loading={i < 4 ? "eager" : "lazy"}
               decoding="async"
@@ -58,13 +102,12 @@ export default function Hero() {
           ))}
         </div>
         <div className={`${styles.filmstripRow} ${styles.scrollRight}`}>
-          {bottomRow.map((src, i) => (
+          {bottomRow.map((item, i) => (
             <img
               key={`bot-${i}`}
-              src={src}
+              src={item.src}
               className={styles.filmstripImage}
-              alt=""
-              aria-hidden="true"
+              alt={item.alt}
               loading={i >= 4 ? "eager" : "lazy"}
               decoding="async"
               width="800"

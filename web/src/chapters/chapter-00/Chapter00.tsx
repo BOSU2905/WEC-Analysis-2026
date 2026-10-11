@@ -2,8 +2,8 @@ import { useRef } from "react";
 import { m, useScroll, useTransform } from "framer-motion";
 import styles from "./Chapter00.module.css";
 import EditorialPhoto from "../../components/story/EditorialPhoto";
-import photoGrid from "../../assets/filmstrip/04.webp"; // Starting Grid placeholder
-import photoPit from "../../assets/filmstrip/03.webp"; // Pit stop placeholder
+import photoGrid from "../../assets/editorial/wec-starting-grid.webp";
+import photoPit from "../../assets/editorial/wec-pit-operations.webp";
 
 export default function Chapter00() {
   const containerRef = useRef<HTMLElement>(null);
@@ -44,8 +44,8 @@ export default function Chapter00() {
 
         <EditorialPhoto
           src={photoGrid}
-          alt="Starting grid of prototypes and GT cars"
-          caption="The starting grid features multiple classes preparing for hours of continuous racing."
+          alt="Starting grid of the 2020 24 Hours of Le Mans with prototypes and GT cars lined up on the pit straight"
+          caption="The multiclass starting grid lined up on the pit straight before 24 hours of continuous racing."
           direction="left"
           viewportMargin="0px 0px 200px 0px"
           duration={0.6}
@@ -71,8 +71,8 @@ export default function Chapter00() {
 
         <EditorialPhoto
           src={photoPit}
-          alt="Pit stop during the night"
-          caption="Pit stops are highly choreographed, involving driver changes, refuelling, and tyre management."
+          alt="United Autosports pit crew servicing a prototype during the 2019 24 Hours of Le Mans"
+          caption="Pit stops are highly choreographed operational sprints involving tyre changes, refuelling, and driver swaps."
           direction="right"
         />
 

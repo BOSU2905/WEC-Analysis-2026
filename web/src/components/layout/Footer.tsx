@@ -1,6 +1,10 @@
 import styles from "./Footer.module.css";
 
-export default function Footer() {
+interface FooterProps {
+  onOpenCredits?: () => void;
+}
+
+export default function Footer({ onOpenCredits }: FooterProps) {
   return (
     <footer className={styles.footer}>
       <div className={styles.content}>
@@ -33,6 +37,21 @@ export default function Footer() {
             . (Dataset usage attribution is based on available metadata; an
             explicit open-source license could not be verified in the source
             repository).
+          </p>
+          <p>
+            Photographic assets and provenance are catalogued in the{" "}
+            <a
+              href="#credits"
+              onClick={(e) => {
+                if (onOpenCredits) {
+                  e.preventDefault();
+                  onOpenCredits();
+                }
+              }}
+              className={styles.creditsBtn}
+            >
+              Photo Credits Ledger &rarr;
+            </a>
           </p>
         </div>
       </div>
