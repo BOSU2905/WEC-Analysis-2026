@@ -22,10 +22,9 @@ function LazyChapter({ id, component: Component, preloadNext }: any) {
 
   useEffect(() => {
     if (isInView && preloadNext) {
-      console.log(`[Story] LazyChapter ${id} triggers preloadNext at ${performance.now().toFixed(1)}ms`);
       preloadNext();
     }
-  }, [isInView, preloadNext, id]);
+  }, [isInView, preloadNext]);
 
   return (
     <div id={id} ref={ref}>

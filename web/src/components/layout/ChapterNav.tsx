@@ -16,11 +16,11 @@ export default function ChapterNav() {
   useEffect(() => {
     // Keep track of all currently intersecting chapters
     const visibleChapters = new Map<string, IntersectionObserverEntry>();
-    
+
     const observer = new IntersectionObserver(
       (entries) => {
         let hasChanges = false;
-        
+
         entries.forEach((entry) => {
           const id = entry.target.id.replace("-wrap", "");
           if (entry.isIntersecting) {
@@ -38,24 +38,24 @@ export default function ChapterNav() {
           // Sort visible chapters by their DOM order (or simply prioritize the one taking up the most space)
           // For a vertical narrative, the one whose top is closest to the middle of the screen is usually active,
           // or just the first one in the set that has the highest intersection ratio.
-          
+
           let bestId = "";
           let maxRatio = -1;
           let highestTop = -Infinity;
 
           visibleChapters.forEach((entry, id) => {
-            // If the chapter is massive (like Chapter 1), intersectionRatio might be small, 
+            // If the chapter is massive (like Chapter 1), intersectionRatio might be small,
             // but we still want it to be active if it spans the viewport.
             // Using the top position relative to viewport center is more reliable.
             const rect = entry.boundingClientRect;
-            
+
             // For very tall sticky containers, the container might cover the whole screen.
             // In that case, it is clearly the active chapter.
             if (entry.intersectionRatio > maxRatio) {
               maxRatio = entry.intersectionRatio;
               bestId = id;
             } else if (entry.intersectionRatio === maxRatio) {
-              // Tie-breaker: which one is further down the page? 
+              // Tie-breaker: which one is further down the page?
               if (rect.top > highestTop) {
                 highestTop = rect.top;
                 bestId = id;
@@ -69,11 +69,16 @@ export default function ChapterNav() {
         }
       },
       // Check a generous middle band to catch tall scrolling sections
-      { rootMargin: "-20% 0px -20% 0px", threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1] },
+      {
+        rootMargin: "-20% 0px -20% 0px",
+        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+      },
     );
 
     CHAPTERS.forEach((chapter) => {
-      const el = document.getElementById(chapter.id) || document.getElementById(`${chapter.id}-wrap`);
+      const el =
+        document.getElementById(chapter.id) ||
+        document.getElementById(`${chapter.id}-wrap`);
       if (el) observer.observe(el);
     });
 
@@ -82,9 +87,16 @@ export default function ChapterNav() {
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
-    const el = document.getElementById(id) || document.getElementById(`${id}-wrap`);
+    const el =
+      document.getElementById(id) || document.getElementById(`${id}-wrap`);
     if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
+      const prefersReducedMotion =
+        typeof window !== "undefined" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      el.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth" });
+      if (window.location.hash !== `#${id}`) {
+        history.pushState(null, "", `#${id}`);
+      }
     }
   };
 

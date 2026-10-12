@@ -1,30 +1,19 @@
 import { useEffect, useRef, useState, useMemo } from "react";
 import * as d3 from "d3";
 import { MotionValue, useInView } from "framer-motion";
-import dataUrl from "../data/entry_dots.csv?url";
+import armadaLayout from "../data/armada_layout.json";
 import styles from "./ArmadaScatter.module.css";
 
 type Props = {
   progress: MotionValue<number>;
 };
 
-type DataRow = {
-  season: string;
-  event_id: string;
-  class_group: string;
-  team: string;
-};
-
 type NodeData = {
   id: string;
-  class: string;
-  team: string;
   startX: number;
   startY: number;
   targetX: number;
   targetY: number;
-  x?: number;
-  y?: number;
 };
 
 const MAIN_TEAMS = [
@@ -51,22 +40,12 @@ export default function ArmadaScatter({ progress }: Props) {
   const svgRef = useRef<SVGSVGElement>(null);
   const annotationsRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [data, setData] = useState<DataRow[]>([]);
-  const [isLayoutReady, setIsLayoutReady] = useState(false);
   const nodesRef = useRef<NodeData[]>([]);
+  const lastAnnotationOpacityRef = useRef<number>(-1);
 
   const tRef = useRef(0);
   const timeRef = useRef(0);
-
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    // Fetch data immediately when the component mounts (which is pre-fetched at 1000px)
-    // This removes the network delay when the user actually reaches 600px.
-    d3.csv(dataUrl).then((res) => {
-      setData(res as unknown as DataRow[]);
-    });
-  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -107,12 +86,9 @@ export default function ArmadaScatter({ progress }: Props) {
         };
   }, [isMobile, width, height]);
 
-  const isInView = useInView(containerRef, { once: true, margin: "600px" });
-
-  // Initial layout calculation
+  // Initial instant layout resolution from precomputed deterministic positions
   useEffect(() => {
-    if (!isInView || width === 0 || height === 0 || data.length === 0 || !canvasRef.current || !svgRef.current)
-      return;
+    if (width === 0 || height === 0 || !canvasRef.current || !svgRef.current) return;
 
     // High DPI Canvas Setup
     const dpr = window.devicePixelRatio || 1;
@@ -130,105 +106,26 @@ export default function ArmadaScatter({ progress }: Props) {
     const svg = d3.select(svgRef.current);
     svg.attr("width", width).attr("height", height);
 
-    const nodes: NodeData[] = data.map((d, i) => {
-      const teamGroup = MAIN_TEAMS.includes(d.team) ? d.team : "Other";
-      return {
+    // Map precomputed normalized coordinates instantly (0ms simulation delay)
+    const rawCoords = isMobile ? armadaLayout.mobile : armadaLayout.desktop;
+    const nodes: NodeData[] = new Array(rawCoords.length);
+    for (let i = 0; i < rawCoords.length; i++) {
+      const c = rawCoords[i];
+      nodes[i] = {
         id: `node-${i}`,
-        class: d.class_group,
-        team: teamGroup,
-        startX: width / 2 + (Math.random() - 0.5) * 100,
-        startY: height / 2 + (Math.random() - 0.5) * 100,
-        targetX: 0,
-        targetY: 0,
-        x: width / 2,
-        y: height / 2,
+        startX: c[0] * width,
+        startY: c[1] * height,
+        targetX: c[2] * width,
+        targetY: c[3] * height,
       };
-    });
+    }
+    nodesRef.current = nodes;
+  }, [dimensions, width, height, isMobile]);
 
-    const padding = 2;
-    const safeArea = width * height;
-    const maxRadius = Math.max(
-      1,
-      Math.floor(Math.sqrt(safeArea / nodes.length) / 2) - padding,
-    );
-    const radius = Math.min(maxRadius, 8);
-
-    // Initial simulation: clump loosely in the center
-    const simStart = d3
-      .forceSimulation(nodes)
-      .force("x", d3.forceX(width / 2).strength(0.05))
-      .force("y", d3.forceY(height / 2).strength(0.05))
-      .force("collide", d3.forceCollide(radius + 0.5).iterations(2))
-      .stop();
-
-    let cancelled = false;
-
-    const runLayoutAsync = async () => {
-      // Chunk initial simulation
-      for (let i = 0; i < 75; i++) {
-        if (cancelled) return;
-        simStart.tick(2);
-        await new Promise((r) => setTimeout(r, 0));
-      }
-
-      nodes.forEach((d) => {
-        d.startX = d.x || width / 2;
-        d.startY = d.y || height / 2;
-        d.x = d.startX;
-        d.y = d.startY;
-      });
-
-      const simTarget = d3
-        .forceSimulation(nodes)
-        .force(
-          "x",
-          d3
-            .forceX<NodeData>((d) => clusters[d.team as keyof typeof clusters].x)
-            .strength(0.2),
-        )
-        .force(
-          "y",
-          d3
-            .forceY<NodeData>((d) => clusters[d.team as keyof typeof clusters].y)
-            .strength(0.2),
-        )
-        .force("collide", d3.forceCollide(radius + 1).iterations(2))
-        .stop();
-
-      // Chunk target simulation
-      for (let i = 0; i < 100; i++) {
-        if (cancelled) return;
-        simTarget.tick(2);
-        await new Promise((r) => setTimeout(r, 0));
-      }
-
-      nodes.forEach((d) => {
-        d.targetX = d.x || 0;
-        d.targetY = d.y || 0;
-      });
-
-      if (!cancelled) {
-        nodesRef.current = nodes;
-        setIsLayoutReady(true);
-      }
-    };
-
-    setIsLayoutReady(false);
-    runLayoutAsync();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [data, dimensions, clusters, width, height, isInView]);
-
-  // Continuous animation loop (matches Chapter 1's ambient motion style)
-  const centerObserverRef = useRef<HTMLDivElement>(null);
-  const isAnimated = useInView(containerRef, { amount: 0.1 });
-  const isVisibleForEntrance = useInView(centerObserverRef, { margin: "-5% 0px" });
-  const isAnimatedRef = useRef(false);
-  const isVisibleForEntranceRef = useRef(false);
-  const syncNodesRef = useRef<() => void>(() => {});
+  // Viewport tracking: trigger entrance as soon as Chapter 3 enters view
+  const isAnimated = useInView(containerRef, { amount: 0.15 });
   const animationStartTime = useRef<number | null>(null);
+  const hasEnteredRef = useRef(false);
   const prefersReducedMotionRef = useRef(
     typeof window !== "undefined"
       ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
@@ -236,18 +133,24 @@ export default function ArmadaScatter({ progress }: Props) {
   );
 
   useEffect(() => {
-    isAnimatedRef.current = isAnimated;
-    if (!isAnimated) {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = (e: MediaQueryListEvent) => {
+      prefersReducedMotionRef.current = e.matches;
+    };
+    prefersReducedMotionRef.current = mq.matches;
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (!isAnimated && !hasEnteredRef.current) {
       animationStartTime.current = null;
     }
   }, [isAnimated]);
 
   useEffect(() => {
-    isVisibleForEntranceRef.current = isVisibleForEntrance;
-  }, [isVisibleForEntrance]);
-
-  useEffect(() => {
-    if (width === 0 || height === 0 || data.length === 0 || !isLayoutReady) return;
+    if (width === 0 || height === 0 || nodesRef.current.length === 0) return;
 
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) return;
@@ -259,28 +162,27 @@ export default function ArmadaScatter({ progress }: Props) {
     const updateColors = () => {
       const computed = getComputedStyle(document.documentElement);
       gtRgb = computed.getPropertyValue("--chart-gt-rgb").trim() || gtRgb;
-      topClassRgb = computed.getPropertyValue("--chart-top-class-rgb").trim() || topClassRgb;
+      topClassRgb =
+        computed.getPropertyValue("--chart-top-class-rgb").trim() ||
+        topClassRgb;
       expRgb = computed.getPropertyValue("--chart-exp-rgb").trim() || expRgb;
     };
-    
+
     updateColors();
     window.addEventListener("wec-theme-change", updateColors);
 
-    const colorScale = (team: string) => {
-      if (team === "AF Corse" || team === "Aston Martin Racing")
-        return gtRgb;
-      if (
-        team === "Toyota Gazoo Racing" ||
-        team === "Audi Sport Team Joest" ||
-        team === "Porsche GT Team" ||
-        team === "Rebellion Racing"
-      )
-        return topClassRgb;
-      return expRgb;
-    };
+    const padding = 2;
+    const safeArea = width * height;
+    const maxRadius = Math.max(
+      1,
+      Math.floor(Math.sqrt(safeArea / nodesRef.current.length) / 2) - padding,
+    );
+    const rBase = Math.min(maxRadius, 8);
+    const { gt, topClass, other } = armadaLayout.groups;
 
     const syncNodes = () => {
-      if (nodesRef.current.length === 0) return;
+      const nodes = nodesRef.current;
+      if (!nodes || nodes.length === 0) return;
 
       const v = tRef.current;
       const time = timeRef.current;
@@ -288,86 +190,146 @@ export default function ArmadaScatter({ progress }: Props) {
       const start = 0.05;
       const end = 0.95;
       let t = 0;
-
       if (v <= start) t = 0;
       else if (v >= end) t = 1;
       else {
         t = (v - start) / (end - start);
       }
 
-      if (isVisibleForEntranceRef.current && animationStartTime.current === null) {
-        animationStartTime.current = timeRef.current;
+      // Start entrance timing immediately when in view
+      if (!hasEnteredRef.current && isAnimated && animationStartTime.current === null) {
+        animationStartTime.current = time;
       }
 
-      // easeInOutCubic for a more deliberate, smoother motion curve
       const easedT = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-      
+      const isReducedMotion = prefersReducedMotionRef.current;
+
+      const centerX = width / 2;
+      const centerY = height / 2;
+
+      const elapsedSinceEntrance = animationStartTime.current !== null
+        ? time - animationStartTime.current
+        : 0;
+      const enterProgress = hasEnteredRef.current || isReducedMotion
+        ? 1
+        : Math.min(1, elapsedSinceEntrance / 1200);
+
+      if (enterProgress >= 1) {
+        hasEnteredRef.current = true;
+      }
+
+      const enterEase = d3.easeCubicOut(enterProgress);
+
+      const rCurrent = isReducedMotion
+        ? rBase
+        : rBase * (0.2 + 0.8 * enterEase);
+      const enterFade = isReducedMotion ? 1 : enterEase;
+      const mainOpacity = (0.75 + 0.25 * easedT) * enterFade;
+      const otherOpacity = (0.2 + 0.3 * (1 - easedT)) * enterFade;
+
       ctx.clearRect(0, 0, width, height);
 
-      const padding = 2;
-      const safeArea = width * height;
-      const maxRadius = Math.max(1, Math.floor(Math.sqrt(safeArea / nodesRef.current.length) / 2) - padding);
-      const rBase = Math.min(maxRadius, 8);
-
-      for (let i = 0; i < nodesRef.current.length; i++) {
-        const d = nodesRef.current[i];
-        let cx = d.startX + (d.targetX - d.startX) * easedT;
-        const phaseX = i * 0.1;
-        cx += Math.sin(time * 0.001 + phaseX) * 2.5;
-
-        let cy = d.startY + (d.targetY - d.startY) * easedT;
-        const phaseY = i * 0.1;
-        cy += Math.cos(time * 0.0008 + phaseY) * 2.5;
-
-        let opacity = 0.75 + 0.25 * easedT;
-        if (d.team === "Other") opacity = 0.2 + 0.3 * (1 - easedT);
-
-        let currentRadius = rBase;
-
-        if (prefersReducedMotionRef.current) {
-          // Keep original base values
-        } else if (animationStartTime.current !== null) {
-          const elapsed = timeRef.current - animationStartTime.current;
-          const staggerDelay = (i / nodesRef.current.length) * 100;
-          const dotElapsed = elapsed - staggerDelay;
-          let dotEnterT = 0;
-          if (dotElapsed > 0) dotEnterT = Math.min(1, dotElapsed / 250);
-          
-          const enterEase = d3.easeCubicOut(dotEnterT);
-          opacity *= (0.3 + 0.7 * enterEase);
-          currentRadius = rBase * (0.5 + 0.5 * enterEase);
-        } else {
-          opacity *= 0.3;
-          currentRadius = rBase * 0.5;
+      // 1. Batch GT group (1 draw call)
+      if (mainOpacity > 0 && gt.length > 0) {
+        ctx.fillStyle = `rgba(${gtRgb}, ${mainOpacity})`;
+        ctx.beginPath();
+        for (let k = 0; k < gt.length; k++) {
+          const idx = gt[k];
+          const d = nodes[idx];
+          const targetBaseX = d.startX + (d.targetX - d.startX) * easedT;
+          const targetBaseY = d.startY + (d.targetY - d.startY) * easedT;
+          let cx = isReducedMotion
+            ? targetBaseX
+            : centerX + (targetBaseX - centerX) * enterEase;
+          let cy = isReducedMotion
+            ? targetBaseY
+            : centerY + (targetBaseY - centerY) * enterEase;
+          if (!isReducedMotion && enterProgress > 0.2) {
+            const ambientAmp = 2.5 * enterEase;
+            const phase = idx * 0.1;
+            cx += Math.sin(time * 0.001 + phase) * ambientAmp;
+            cy += Math.cos(time * 0.0008 + phase) * ambientAmp;
+          }
+          ctx.moveTo(cx + rCurrent, cy);
+          ctx.arc(cx, cy, rCurrent, 0, Math.PI * 2);
         }
-
-        if (opacity > 0) {
-          ctx.fillStyle = `rgba(${colorScale(d.team)}, ${opacity})`;
-          ctx.beginPath();
-          ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
-          ctx.fill();
-        }
+        ctx.fill();
       }
 
+      // 2. Batch Top Class group (1 draw call)
+      if (mainOpacity > 0 && topClass.length > 0) {
+        ctx.fillStyle = `rgba(${topClassRgb}, ${mainOpacity})`;
+        ctx.beginPath();
+        for (let k = 0; k < topClass.length; k++) {
+          const idx = topClass[k];
+          const d = nodes[idx];
+          const targetBaseX = d.startX + (d.targetX - d.startX) * easedT;
+          const targetBaseY = d.startY + (d.targetY - d.startY) * easedT;
+          let cx = isReducedMotion
+            ? targetBaseX
+            : centerX + (targetBaseX - centerX) * enterEase;
+          let cy = isReducedMotion
+            ? targetBaseY
+            : centerY + (targetBaseY - centerY) * enterEase;
+          if (!isReducedMotion && enterProgress > 0.2) {
+            const ambientAmp = 2.5 * enterEase;
+            const phase = idx * 0.1;
+            cx += Math.sin(time * 0.001 + phase) * ambientAmp;
+            cy += Math.cos(time * 0.0008 + phase) * ambientAmp;
+          }
+          ctx.moveTo(cx + rCurrent, cy);
+          ctx.arc(cx, cy, rCurrent, 0, Math.PI * 2);
+        }
+        ctx.fill();
+      }
+
+      // 3. Batch Other group (1 draw call)
+      if (otherOpacity > 0 && other.length > 0) {
+        ctx.fillStyle = `rgba(${expRgb}, ${otherOpacity})`;
+        ctx.beginPath();
+        for (let k = 0; k < other.length; k++) {
+          const idx = other[k];
+          const d = nodes[idx];
+          const targetBaseX = d.startX + (d.targetX - d.startX) * easedT;
+          const targetBaseY = d.startY + (d.targetY - d.startY) * easedT;
+          let cx = isReducedMotion
+            ? targetBaseX
+            : centerX + (targetBaseX - centerX) * enterEase;
+          let cy = isReducedMotion
+            ? targetBaseY
+            : centerY + (targetBaseY - centerY) * enterEase;
+          if (!isReducedMotion && enterProgress > 0.2) {
+            const ambientAmp = 2.5 * enterEase;
+            const phase = idx * 0.1;
+            cx += Math.sin(time * 0.001 + phase) * ambientAmp;
+            cy += Math.cos(time * 0.0008 + phase) * ambientAmp;
+          }
+          ctx.moveTo(cx + rCurrent, cy);
+          ctx.arc(cx, cy, rCurrent, 0, Math.PI * 2);
+        }
+        ctx.fill();
+      }
+
+      // Sync annotations overlay
       if (annotationsRef.current) {
-        d3.select(annotationsRef.current).style(
-          "opacity",
-          easedT > 0.1 ? easedT : 0,
-        );
+        const targetOpacity = easedT > 0.1 ? easedT : 0;
+        if (
+          Math.abs(lastAnnotationOpacityRef.current - targetOpacity) > 0.005
+        ) {
+          annotationsRef.current.style.opacity = `${targetOpacity}`;
+          lastAnnotationOpacityRef.current = targetOpacity;
+        }
       }
     };
-    
-    syncNodesRef.current = syncNodes;
 
     let timer: d3.Timer | null = null;
-    
+
     if (isAnimated) {
       timer = d3.timer(() => {
         timeRef.current = performance.now();
         syncNodes();
       });
     } else {
-      // Draw static frame when out of view
       timeRef.current = performance.now();
       syncNodes();
     }
@@ -376,27 +338,18 @@ export default function ArmadaScatter({ progress }: Props) {
       if (timer) timer.stop();
       window.removeEventListener("wec-theme-change", updateColors);
     };
-  }, [isAnimated, isLayoutReady, width, height, data]);
+  }, [isAnimated, width, height]);
 
   // Progress tracking
   useEffect(() => {
     const unsubscribe = progress.on("change", (v) => {
       tRef.current = v;
-      // Do NOT call syncNodesRef.current() here when offscreen, 
-      // as it forces a full canvas redraw on every scroll event while out of view.
     });
     tRef.current = progress.get();
     return () => unsubscribe();
   }, [progress]);
 
-  const teamCounts = useMemo(() => {
-    const counts: Record<string, number> = {};
-    data.forEach((d) => {
-      const t = MAIN_TEAMS.includes(d.team) ? d.team : "Other";
-      counts[t] = (counts[t] || 0) + 1;
-    });
-    return counts;
-  }, [data]);
+  const teamCounts = armadaLayout.teamCounts as Record<string, number>;
 
   const getAnnotationStyle = (
     team: string,
@@ -449,17 +402,6 @@ export default function ArmadaScatter({ progress }: Props) {
 
   return (
     <div className={styles.container} ref={containerRef}>
-      <div
-        ref={centerObserverRef}
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          width: "1px",
-          height: "1px",
-          pointerEvents: "none",
-        }}
-      />
       <canvas
         ref={canvasRef}
         style={{
@@ -486,7 +428,6 @@ export default function ArmadaScatter({ progress }: Props) {
         style={{ opacity: 0 }}
       >
         {dimensions.width > 0 &&
-          data.length > 0 &&
           MAIN_TEAMS.map((team) => {
             const center = clusters[team as keyof typeof clusters];
             if (!center) return null;

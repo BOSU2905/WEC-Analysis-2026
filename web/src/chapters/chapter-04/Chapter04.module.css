@@ -127,6 +127,8 @@
   margin-bottom: 4rem;
   padding-bottom: 3rem;
   border-bottom: 1px solid var(--color-border);
+  content-visibility: auto;
+  contain-intrinsic-size: 350px;
 }
 
 .tyresGrid {
@@ -152,7 +154,9 @@
   cursor: pointer;
   padding: 1rem;
   border-radius: 8px;
-  transition: background-color 0.4s ease, border-color 0.4s ease;
+  transition:
+    background-color 0.4s ease,
+    border-color 0.4s ease;
   border: 1px solid transparent;
 }
 
@@ -196,7 +200,10 @@
   opacity: 0;
   visibility: hidden;
   transform: translateY(10px);
-  transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s ease;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease,
+    visibility 0.4s ease;
   min-height: 100px; /* reserve space so layout does not shift on hover */
 }
 
@@ -259,13 +266,28 @@
   }
 }
 
-.rotate1 { animation: spin 60s linear infinite; animation-delay: 0s; }
-.rotate2 { animation: spin 60s linear infinite; animation-delay: -15s; }
-.rotate3 { animation: spin 60s linear infinite; animation-delay: -30s; }
-.rotate4 { animation: spin 60s linear infinite; animation-delay: -45s; }
+.rotate1 {
+  animation: spin 60s linear infinite;
+  animation-delay: 0s;
+}
+.rotate2 {
+  animation: spin 60s linear infinite;
+  animation-delay: -15s;
+}
+.rotate3 {
+  animation: spin 60s linear infinite;
+  animation-delay: -30s;
+}
+.rotate4 {
+  animation: spin 60s linear infinite;
+  animation-delay: -45s;
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .rotate1, .rotate2, .rotate3, .rotate4 {
+  .rotate1,
+  .rotate2,
+  .rotate3,
+  .rotate4 {
     animation: none;
   }
 }

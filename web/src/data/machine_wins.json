@@ -1,6 +1,6 @@
 [
   {
-    "vehicle": "Oreca 07 - Gibson",
+    "vehicle": "Oreca 07 Gibson",
     "class_wins": 42,
     "primary_class": "LMP2",
     "first_win": "2017",
@@ -21,7 +21,7 @@
     "last_win": "2019-2020"
   },
   {
-    "vehicle": "Toyota TS050 - Hybrid",
+    "vehicle": "Toyota TS050 Hybrid",
     "class_wins": 19,
     "primary_class": "LMP1",
     "first_win": "2016",

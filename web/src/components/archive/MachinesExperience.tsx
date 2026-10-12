@@ -17,19 +17,22 @@ interface MachineDatum {
 const machines = machineData as MachineDatum[];
 type EditorialKey = keyof typeof editorialData;
 
+const toyota3dConfig = {
+  path: '/assets/machines/3d/toyota_ts050_hybrid.glb',
+  attribution: {
+    label: 'Toyota TS050 Hybrid (2017 WEC LMP1)',
+    title: 'Toyota TS050 Hybrid (2017)',
+    creator: 'MattDoesBlender',
+    creatorUrl: 'https://sketchfab.com/search?q=MattDoesBlender',
+    sourceUrl: 'https://sketchfab.com/3d-models/wec-lmp1-toyota-ts050-2017-266a9cae9e65458bab0f0017e2ebebb2',
+    license: 'CC BY-NC-SA 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by-nc-sa/4.0/'
+  }
+};
+
 const machine3dConfigs: Record<string, { path: string; attribution: any }> = {
-  'Toyota TS050 - Hybrid': {
-    path: '/assets/machines/3d/toyota_ts050_hybrid.glb',
-    attribution: {
-      label: 'Toyota TS050 Hybrid (2017 WEC LMP1)',
-      title: 'Toyota TS050 Hybrid (2017)',
-      creator: 'MattDoesBlender',
-      creatorUrl: 'https://sketchfab.com/search?q=MattDoesBlender',
-      sourceUrl: 'https://sketchfab.com/3d-models/wec-lmp1-toyota-ts050-2017-266a9cae9e65458bab0f0017e2ebebb2',
-      license: 'CC BY-NC-SA 4.0',
-      licenseUrl: 'https://creativecommons.org/licenses/by-nc-sa/4.0/'
-    }
-  },
+  'Toyota TS050 Hybrid': toyota3dConfig,
+  'Toyota TS050 - Hybrid': toyota3dConfig,
   'Aston Martin Vantage V8': {
     path: '/assets/machines/3d/2012_aston_martin_vantage_gte.glb',
     attribution: {
@@ -128,7 +131,7 @@ export default function MachinesExperience() {
                   </div>
                 </div>
               )}
-              
+
               {machine3dConfigs[activeMachine.vehicle] ? (
                 <div className={styles.modelWrapper}>
                   <Suspense fallback={
@@ -141,9 +144,9 @@ export default function MachinesExperience() {
                       />
                     </div>
                   }>
-                    <MachineModel 
-                      path={machine3dConfigs[activeMachine.vehicle].path} 
-                      attribution={machine3dConfigs[activeMachine.vehicle].attribution} 
+                    <MachineModel
+                      path={machine3dConfigs[activeMachine.vehicle].path}
+                      attribution={machine3dConfigs[activeMachine.vehicle].attribution}
                     />
                   </Suspense>
                 </div>
@@ -160,8 +163,8 @@ export default function MachinesExperience() {
                     className={`${styles.sideViewImage} ${activeMachine.vehicle === 'Porsche 911 RSR' ? styles.enlargedSideView : ''}`}
                     loading="lazy"
                   />
-                  {activeMachine.vehicle === 'Oreca 07 - Gibson' && (
-                    <div className={styles.assetNotice} style={{ marginTop: '2rem' }}>
+                  {(activeMachine.vehicle === 'Oreca 07 Gibson' || activeMachine.vehicle === 'Oreca 07 - Gibson') && (
+                    <div className={styles.sideViewNotice}>
                       <p>
                         Not every machine in this archive has an interactive 3D model. For the Oreca 07 Gibson, we retained a 2D side view to preserve historical accuracy rather than substitute an unrelated or unsuitable model.
                       </p>

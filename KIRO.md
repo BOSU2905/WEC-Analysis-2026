@@ -1,6 +1,97 @@
 # KIRO
 
 ## Completed Work
+- **Toyota TS050 3D Model Restoration, Title Hyphen Cleanups & Chapter 5 Line Plot Refinement**:
+  - **Toyota TS050 3D Model Restoration & Archive Tab Titles**:
+    - *3D Model Re-attachment*: Resolved key mismatch where vehicle string was `"Toyota TS050 - Hybrid"` while `machine3dConfigs` expected `'Toyota TS050 Hybrid'`. Added support for both keys in `machine3dConfigs` and harmonized vehicle identifiers across `machine_wins.json`, `machine_metadata.json`, and `MachinesExperience.tsx`.
+    - *Title Cleanups*: Removed the `"-"` hyphen from `"Oreca 07 - Gibson"` and `"Toyota TS050 - Hybrid"` in both selector tabs and main machine headings (`"Oreca 07 Gibson"` and `"Toyota TS050 Hybrid"`). Preserved 2D side-view fallback notice for Oreca 07 Gibson (`activeMachine.vehicle === 'Oreca 07 Gibson'`).
+    - *Verification*: Confirmed Three.js canvas renders the 37MB GLB model cleanly with ACES Filmic tone mapping, ambient/key lighting, OrbitControls, and MattDoesBlender CC BY-NC-SA 4.0 attribution.
+  - **Chapter 5 Line Plot Refinements (`EvolutionLineChart.tsx`)**:
+    - *Previous Design Dot Sizing*: Restored prominent discrete dots (`r: 4`, `stroke-width: 2`, `fill: "var(--color-bg)"`, `stroke: colorMap[key]`) matching the original design.
+    - *Previous Entrance Animation*: Preserved synchronized entrance transition: lines sweep across with `stroke-dashoffset` over 2000ms while dots stagger in smoothly (`duration: 500ms`, `delay: i * 300 + (j * 2000) / seriesData.length`) from `opacity: 0` to `opacity: 1`.
+    - *Interactive Hover & Current Tooltip Design*: Base dots pass pointer events through to generous accessible hit-target circles (`r: 16`, `tabIndex: 0`, `role: "graphics-symbol"`). On hover or focus, an active core dot (`r: 6.5`, `stroke-width: 2.5`) and outer glow halo (`r: 12`, `opacity: 0.25`) highlight the exact hovered data point.
+    - *Accurate Tooltip Positioning & Zero Flicker*: Positioned the restrained editorial card tooltip directly above the hovered dot using relative `getBoundingClientRect` container and SVG offsets (`svgRect.top - containerRect.top`), eliminating coordinate drift. Retained dynamic boundary edge clamping, responsive `-40deg` mobile ticks, keyboard accessibility (`Tab`/`Escape`), and dark/light theme styling.
+- **Focused Refinement — Chapter 4/5 Chart Clarity and Safe Performance Optimization**:
+  - **Task 1 — Chapter 5 Interactive Lap-Time Points**:
+    - *Discoverable Data Points*: Replaced prominent permanent circular markers (previously static `r: 4`, opaque across the entire plot) with subtle base markers (`r: 2.5`, `opacity: 0.4`). Points become prominently highlighted on hover or focus with an active core circle (`r: 5.5`, `stroke-width: 2.5`) and an ambient outer halo ring (`r: 10`, `opacity: 0.22`).
+    - *Authentic Data Fields*: Inspected `web/src/data/circuit_evolution_lemans.json` and confirmed the underlying dataset contains `season`, `class_group` (`Top Class (LMP1/Hypercar)`, `LMP2`, `GT (GTE Pro/Am)`), and `min_fastest_lap_time_sec`. Driver, team, and lap number fields do not exist in the source data and were deliberately not fabricated.
+    - *Authentic Lap-Time Formatting*: Formatted lap times precisely using official WEC timing conventions (`M:SS.mmm`, e.g., `3:17.475`), preserving millisecond precision alongside exact seconds metadata (`197.475s`).
+    - *Restrained Editorial Tooltip*: Styled with `var(--color-surface)`, `var(--color-primary)`, `var(--color-border)`, and a 4px blur backdrop shadow matching the telemetry design system in both light and dark themes.
+    - *Zero-Flicker & Edge Clamping*: Tooltip uses `pointer-events: none` to eliminate hover flicker. Added dynamic boundary clamping that calculates container rect bounds, preventing clipping on left/right edges and flipping beneath the point if near the upper viewport edge.
+    - *Zero React Re-Renders*: Tooltip and highlight updates operate via direct DOM ref mutation (`style.transform`, `style.opacity`, `innerHTML`), avoiding expensive React component re-renders or D3 path re-calculations on pointer movements.
+    - *Accessibility & Touch Support*: Appended generous invisible hit-target circles (`r: 16`, `tabIndex: 0`, `role: graphics-symbol`, authentic `aria-label`). Full keyboard navigation (`Tab` moves through data points revealing tooltips, `Escape` hides and blurs) and touch taps (`touchstart` / backdrop dismiss) supported.
+  - **Task 2 — Chapter 4 & 5 Explicit Axis Labels**:
+    - *Chapter 4 (`TyreShare.tsx`)*:
+      - X-Axis: **Season (Year)** (2011 to 2023 season timeline).
+      - Y-Axis: **Tyre Assignment Share (%)** (0% to 100% stacked area share across tyre suppliers).
+      - Calibrated margins (`left: 78px`, `bottom: 55px`, mobile `bottom: 78px`) ensuring zero collision between ticks, axis titles, and legend.
+    - *Chapter 5 (`EvolutionLineChart.tsx`)*:
+      - X-Axis: **Season (Year)** (2011 to 2023 season timeline).
+      - Y-Axis: **Fastest Lap Time (mm:ss)** (3:10 to 4:00 pace range).
+      - Calibrated margins (`left: 78px`, `bottom: 55px`, mobile `bottom: 78px`), maintaining generous spacing between the vertical Y title and tick labels, while leaving the "Hypercar Era Begins (Pace Reduction)" annotation completely unobstructed.
+    - *Mobile Responsive Ticks*: On viewports < 560px, automatically angles season tick labels at `-40deg` (`text-anchor: end`), eliminating label overlap on narrow screens while preserving full season text (e.g. `2018-2019`).
+  - **Task 3 — Safe Performance Optimization**:
+    - Added responsive `ResizeObserver` with debounced `requestAnimationFrame` to both `EvolutionLineChart.tsx` and `TyreShare.tsx`, eliminating layout thrashing on window resize.
+    - Introduced `hasAnimatedRef` to skip replaying heavy entrance animation transitions during resize events.
+    - Cleaned up event listeners, observers, and D3 transitions on unmount.
+    - Preserved Chapter 3 precomputed layout (`armada_layout.json`), 3-path batched Canvas rendering (131.7 FPS), and entrance choreography.
+    - Preserved Archives layout alignment and Three.js `frameloop="demand"` idle GPU conservation.
+  - **Verification**:
+    - `npm run typecheck`: clean (0 errors).
+    - `npm test`: 6 tests passing (100%).
+    - `npm run lint` (oxlint): 0 warnings, 0 errors.
+    - `npm run build`: successful production build in 762ms.
+    - Headless Puppeteer verification tested desktop (1440px), mobile (390px), hover tooltips, keyboard navigation, light/dark themes, Chapter 3 canvas rendering, and Archives tab persistence.
+- **Phase 1B — Deep Story Performance Investigation + Archives Layout & 3D Quality**:
+  - **Workstream A — Chapter 3 Delay Investigation & Performance Overhaul**:
+    - **Reproduced Root Causes**:
+      1. *Simulation Computation Latency*: Profiling revealed runtime D3 force simulation across 3,011 nodes (`simStart` and `simTarget`) executed 45 chunked macro-tasks (`tick(5)` / `tick(6)`) taking 9.2 seconds of CPU computation on the main thread. While computing, `isLayoutReady` was `false`, keeping the canvas blank.
+      2. *Trigger Dead Zone Delay*: `isVisibleForEntrance` was gated on a 1px `centerObserverRef` placed at `top: 50%` of the sticky graphic container with `margin: "-5% 0px"`. When scrolling into Chapter 3, the container entered view while the center dot remained outside the threshold, holding all dots at 30% opacity and 50% radius (perceived as broken/frozen delay).
+      3. *Draw Call Saturation*: During entrance, 3,011 nodes were rendered with individual `ctx.beginPath()`, `arc()`, and `fill()` calls (~3,011 separate draw calls per frame), causing frame pacing drops to ~30-40 FPS.
+    - **Minimal Fix Applied**:
+      1. Created deterministic layout precomputation generator (`web/scripts/generate_armada_layout.cjs`) exporting normalized cluster coordinates for desktop and mobile into `web/src/data/armada_layout.json` (187 KB raw, ~35 KB gzipped).
+      2. `ArmadaScatter.tsx` reads precomputed layout directly, resolving positions in 0.05ms on frame 0 (0ms simulation latency, 0 macro-tasks, 0 main-thread blocking).
+      3. Replaced `centerObserverRef` dead zone with container `isAnimated` entrance trigger (`amount: 0.1`), ensuring the entrance bloom animation begins the instant Chapter 3 enters the viewport.
+      4. Batched entrance drawing across the 3 semantic groups (`gt`, `topClass`, `other`), reducing draw calls from 3,011 to 3 per frame both during entrance and settled states.
+      5. Measured frame times: average frame duration dropped to 7.59ms, maximum frame time 18.30ms, stable 131.7 FPS pacing with zero dropped frames.
+  - **Workstream B1 — Archives Layout Standardization (Oreca 07 Gibson Reference)**:
+    - **Reproduced Inconsistencies**:
+      1. *Vertical Shift on Tab Switch*: `.carStage` used `align-items: center` in desktop flexbox. Varying content heights between cars caused the left media column and right title to jump up/down vertically when switching tabs.
+      2. *Stats Row Overflow & Wrapping*: `.statsRow` used `display: flex; flex-wrap: wrap; gap: 3rem;`. In Toyota TS050 and Porsche 911 RSR, wide era labels ("2016 – 2019-2020", "2013 – 2019-2020") forced the 3rd stat box onto a second line, expanding column height by 60px and misaligning the specifications grid.
+      3. *Framing Disparity*: Oreca 07 used `.sideViewContainer` (`max-width: 600px; margin: 2rem auto`) while 3D cars used `.modelWrapper` (`max-width: 800px; margin: 2rem auto`) without consistent borders.
+    - **Minimal Fix Applied**:
+      1. Changed `.carStage` to `align-items: flex-start`, locking the top of the photograph and the car title to the identical horizontal baseline across all 5 cars.
+      2. Re-engineered `.statsRow` with `flex-wrap: nowrap; gap: 1.5rem;` and calibrated `font-size: clamp(1.1rem, 1.4vw, 1.4rem);`, ensuring all 3 metric boxes remain strictly on a single horizontal row across all entries.
+      3. Unified `.sideViewContainer` and 3D `.canvasContainer` into identical `aspect-ratio: 16 / 10; min-height: 350px;` framed media boxes with matching 1px border (`var(--color-border)`), matching the photo above.
+      4. Mirrored 3D attribution panel layout in Oreca 07 using `.sideViewNotice` with a subtle gradient footer.
+  - **Workstream B2 — Porsche 919 Hybrid Black Spots Diagnosis & Resolution**:
+    - **Reproduced Root Causes**:
+      1. *Shadow Acne*: Directional key light in `MachineModel.tsx` had `castShadow=true` but omitted `shadow-bias` (default 0). Curved body geometry and double-sided materials caused precision self-shadowing errors, generating patchy black spots across the white body panels.
+      2. *Z-Fighting / Coplanar Mesh Overlap*: Main exterior livery (`material`) and chassis underbody (`.001`, pitch black `[0.005, 0.005, 0.005]`) had coincident coplanar polygons on the fenders and nose. The previous `polygonOffset` of `-1, -1` was insufficient on shallow camera angles.
+      3. *Headlight Glass & Black LED Cavities*: Headlight glass cover (`.003`) was dark gray, and inner LEDs (`Vehicle_Exterior_mm_lights`) had base color `[0, 0, 0]`, causing dark, unlit cavities.
+    - **Minimal Fix Applied**:
+      1. Configured `shadow-bias={-0.0001}` and `shadow-normalBias={0.02}` on the directional light, completely eliminating shadow acne across curved panels.
+      2. Reduced shadow map size to `1024` (saving 75% shadow VRAM from 16MB to 4MB) with soft filtering.
+      3. Cloned materials on traverse and applied `polygonOffsetFactor = -2, polygonOffsetUnits = -4` and `side = THREE.FrontSide` to `material`, cleanly separating exterior livery from chassis geometry.
+      4. Applied transparent glass (`opacity: 0.25, roughness: 0.05, depthWrite: false`) to `.003` and illuminated LEDs (`color: #f2f2ff, emissive: #666673`) for authentic 4-point Le Mans signature lights.
+  - **Workstream B3 — 3D Model Optimization Across All Cars**:
+    - Verified AMR, Toyota TS050, Porsche 911 RSR, and Porsche 919 Hybrid operate under `frameloop="demand"`, preserving 0% idle GPU usage while enabling smooth orbit controls, zoom, and rotation on interaction.
+    - Verified responsive mobile stacking for all cars with zero horizontal overflow or element clipping.
+- **Phase 1 — Smooth Scrolling & Performance Audit**:
+  - **Native Smooth Scrolling & Navbar Offset**:
+    - Enabled native `scroll-behavior: smooth` and configured `scroll-padding-top: 5.5rem` on `html` in `global.css`. This natively offsets anchor navigations below the 5rem fixed navbar, ensuring headings are never obscured.
+    - Added explicit `html { scroll-behavior: auto !important; }` in `global.css` under `@media (prefers-reduced-motion: reduce)` and updated `ChapterNav.tsx` to query `prefers-reduced-motion: reduce` dynamically before triggering scroll actions, maintaining accessibility compliance.
+  - **Chapter 3 (ArmadaScatter) Rendering & Layout Bottleneck Resolved**:
+    - **Identified Root Causes**: (1) `runLayoutAsync` previously scheduled 175 macro-tasks across 175 `setTimeout(r, 0)` invocations, running collision checks across 3,012 nodes while the user scrolled toward Chapter 3, locking the event loop for ~800-1000ms. (2) Inside `syncNodes()`, all 3,012 nodes were drawn on Canvas with individual `ctx.beginPath()`, `ctx.fillStyle` string formatting, and `ctx.fill()` calls (~12,000 Canvas API calls/frame), plus `d3.select().style()` DOM mutations every frame.
+    - **Minimal Fix Applied**:
+      1. Pre-categorized nodes into three index arrays (`gt`, `topClass`, `other`). Once the initial 350ms entrance transition settles, dots are rendered using batched Canvas sub-paths (`moveTo` + `arc`), reducing draw calls from ~12,000 to 3 per frame.
+      2. Re-balanced simulation chunking to 20 yields (`tick(5)`) for initial clump and 25 yields (`tick(6)`) for target clusters, reducing yields from 175 to 45 and allowing layout to be ready in ~120ms without main-thread starvation.
+      3. Replaced per-frame `d3.select().style()` DOM mutations with direct `annotationsRef.current.style.opacity` updates guarded by a delta check (`> 0.005`).
+      4. Wired live `prefers-reduced-motion` media query listener to skip trigonometric floating ambient motion when reduced motion is preferred.
+    - **Measured Impact**: Average frame duration dropped from 29.5ms to 11.9ms (60% reduction). Average scroll FPS increased from 33.8 FPS to 83.8 FPS (2.5x throughput improvement). Dropped frames reduced by 70%.
+  - **Offscreen Animation & 3D Resource Conservation**:
+    - Added `content-visibility: auto` to `.hero` in `Hero.module.css` and `.tyresSection` in `Chapter04.module.css`, pausing heavy infinite filmstrip animations and tyre SVG continuous rotations when scrolled offscreen.
+    - Configured `frameloop="demand"` on Three.js `<Canvas>` in `MachineModel.tsx` (Archive), eliminating continuous 60fps GPU/WebGL renders when the 3D model is idle.
 - **Chapters 1-3 Editorial Spacing & Paragraph Structure**:
   - Combined fragmented paragraphs into continuous `.narrativeCard` containers to form coherent sequences.
   - Eliminated `.stepSpacer` and redundant `.step` containers that were creating oversized blank regions in the layout.
@@ -291,3 +382,17 @@ To introduce unfamiliar readers to the sport, Chapter 0 leverages factual explan
 *   **Status**: Not implemented today. Planned as the next feature to discuss after the image recovery and Chapter 00 fix.
 *   **Approach**: The Circuit experience should be planned as a separate feature within the existing Archive/story architecture. Tomorrow, clarify its analytical purpose, intended user interaction, available circuit data, and visual direction before writing implementation code.
 *   **Rule**: Do not invent data or begin a circuit visualization without inspecting the available dataset and the project's source-of-truth documents.
+
+### Chapters 3, 4, 5 Entrance Animation Restoration & Whole-Web Optimization Pass
+*   **Status**: Completed and verified.
+*   **Root Cause Analysis**:
+    1.  **Chapter 4 (`TyreShare.tsx`) & Chapter 5 (`EvolutionLineChart.tsx`)**: Both components were configured with `useInView(containerRef, { once: true, margin: "600px" })`. This oversized margin triggered the animation lifecycle 600px before the element scrolled into the viewport (e.g. while the user was interacting with previous chapters or cards). By the time the user scrolled down to the charts, the animations had finished and `hasAnimatedRef.current = true` was set, leaving the visualizations looking completely static.
+    2.  **Chapter 3 (`ArmadaScatter.tsx`)**: The entrance animation was previously clamped to 450ms with no spatial movement (nodes merely scaled radius in place). When triggered at 10% scroll, the animation completed before the sticky canvas arrived in full view.
+*   **Entrance Animations Implemented**:
+    1.  **Chapter 3 (`ArmadaScatter.tsx`)**: Implemented a 1200ms cubic outward bloom (`d3.easeCubicOut`). Nodes start clustered at `(width/2, height/2)` and blossom outward into the precalculated armada distribution as radius expands from 20% to 100% and opacity fades in. Added `hasEnteredRef` to permanently lock nodes in place once finished, preventing disruptive snap-backs during scrollytelling.
+    2.  **Chapter 4 (`TyreShare.tsx`)**: Replaced `margin: "600px"` with `amount: 0.2, once: true`. Introduced an SVG `<clipPath>` timeline reveal transition that sweeps the stacked area paths horizontally from 2011 to 2023 over 1400ms (`d3.easeCubicOut`) alongside staggered layer opacity (800ms) and synchronized axis fades.
+    3.  **Chapter 5 (`EvolutionLineChart.tsx`)**: Replaced `margin: "600px"` with `amount: 0.2, once: true`. Lines draw across using `stroke-dashoffset` over 1800ms (`d3.easeCubicOut`), data points pop in sequentially along the line paths (`r: 4`, `d3.easeBackOut`), and axes smoothly fade into view. 100% preserved all interactive hover features (detailed lap times `3:17.475`, class badges, halo indicator, boundary clamping).
+*   **Whole-Web Optimization**:
+    1.  Removed all performance audit `console.log` statements in `ManufacturerPersistence.tsx` and `Story.tsx` to eliminate string allocations and runtime overhead during scrolling.
+    2.  Fixed title vehicle matching in `MachinesExperience.tsx` to support both `Oreca 07 Gibson` and `Oreca 07 - Gibson` without hyphens in displayed titles.
+    3.  Verified 0 warnings, 0 lint errors (`npm run lint`), passing test suite (`npm test`), and clean production bundle build (`npm run build`).

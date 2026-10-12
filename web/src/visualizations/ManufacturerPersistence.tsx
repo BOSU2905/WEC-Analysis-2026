@@ -73,13 +73,7 @@ export default function ManufacturerPersistence() {
   const previousHoveredMfgRef = useRef<string | null>(null);
   const hoverTimeoutRef = useRef<number | null>(null);
 
-  // INSTRUMENTATION
-  const renderCount = useRef(0);
-  
-  useEffect(() => {
-    renderCount.current++;
-    console.log(`[Ch2] Component Render ${renderCount.current} at ${performance.now().toFixed(1)}ms`);
-  });
+
 
   const isInView = useInView(containerRef, { once: true, margin: "200px" });
 
@@ -131,7 +125,6 @@ export default function ManufacturerPersistence() {
           ) {
             return prev;
           }
-          console.log(`[Ch2] ResizeObserver triggered: ${entry.contentRect.width}x${entry.contentRect.height} at ${performance.now().toFixed(1)}ms`);
           return {
             width: entry.contentRect.width,
             height: entry.contentRect.height,
@@ -153,8 +146,7 @@ export default function ManufacturerPersistence() {
     )
       return;
 
-    console.log(`[Ch2] Starting D3 layout and transition setup at ${performance.now().toFixed(1)}ms`);
-    const layoutStart = performance.now();
+
 
     const { width, height } = dimensions;
     const margin = { top: 60, right: 140, bottom: 80, left: 80 };
@@ -382,8 +374,6 @@ export default function ManufacturerPersistence() {
         textNode._baseY = isToyota ? yScale(lastPoint.cumulativeWins) - 24 : yScale(lastPoint.cumulativeWins) + 4;
       }
     });
-
-    console.log(`[Ch2] D3 setup completed in ${(performance.now() - layoutStart).toFixed(1)}ms`);
   }, [data, dimensions, isInView, updateHoverState]);
 
 
