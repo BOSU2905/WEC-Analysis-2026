@@ -17,6 +17,13 @@ interface MachineDatum {
 const machines = machineData as MachineDatum[];
 type EditorialKey = keyof typeof editorialData;
 
+const resolveAsset = (path?: string) => {
+  if (!path) return "";
+  if (/^https?:\/\//.test(path)) return path;
+  const cleanPath = path.startsWith("/") ? path.slice(1) : path;
+  return `${import.meta.env.BASE_URL}${cleanPath}`;
+};
+
 const toyota3dConfig = {
   path: '/assets/machines/3d/toyota_ts050_hybrid.glb',
   attribution: {
@@ -121,7 +128,7 @@ export default function MachinesExperience() {
               ) : (
                 <div className={styles.photoContainer}>
                   <img
-                    src={editorial.image.url}
+                    src={resolveAsset(editorial.image.url)}
                     alt={`Photograph of ${activeMachine.vehicle}`}
                     className={styles.photo}
                     loading="lazy"
@@ -137,7 +144,7 @@ export default function MachinesExperience() {
                   <Suspense fallback={
                     <div className={styles.sideViewContainer}>
                       <img
-                        src={editorial.side_view_url}
+                        src={resolveAsset(editorial.side_view_url)}
                         alt={`${activeMachine.vehicle} side profile loading fallback`}
                         className={styles.sideViewImage}
                         loading="lazy"
@@ -145,7 +152,7 @@ export default function MachinesExperience() {
                     </div>
                   }>
                     <MachineModel
-                      path={machine3dConfigs[activeMachine.vehicle].path}
+                      path={resolveAsset(machine3dConfigs[activeMachine.vehicle].path)}
                       attribution={machine3dConfigs[activeMachine.vehicle].attribution}
                     />
                   </Suspense>
@@ -158,7 +165,7 @@ export default function MachinesExperience() {
                   transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
                 >
                   <img
-                    src={editorial.side_view_url}
+                    src={resolveAsset(editorial.side_view_url)}
                     alt={`${activeMachine.vehicle} side profile`}
                     className={`${styles.sideViewImage} ${activeMachine.vehicle === 'Porsche 911 RSR' ? styles.enlargedSideView : ''}`}
                     loading="lazy"
