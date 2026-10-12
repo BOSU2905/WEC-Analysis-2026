@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import ManufacturerPersistence from "../../visualizations/ManufacturerPersistence";
 import EditorialPhoto from "../../components/story/EditorialPhoto";
-import toyotaImage from "../../assets/editorial/toyota-ts050.jpg";
+import toyotaImage from "../../assets/editorial/toyota-ts050.webp";
 import styles from "./Chapter02.module.css";
 
 export default function Chapter02() {

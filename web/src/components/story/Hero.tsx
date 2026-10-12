@@ -93,8 +93,8 @@ export default function Hero() {
               src={item.src}
               className={styles.filmstripImage}
               alt={item.alt}
-              fetchPriority={i < 2 ? "high" : "auto"}
-              loading={i < 4 ? "eager" : "lazy"}
+              fetchPriority="low"
+              loading={i < 2 ? "eager" : "lazy"}
               decoding="async"
               width="800"
               height="533"
@@ -108,7 +108,8 @@ export default function Hero() {
               src={item.src}
               className={styles.filmstripImage}
               alt={item.alt}
-              loading={i >= 4 ? "eager" : "lazy"}
+              fetchPriority="low"
+              loading={i < 2 ? "eager" : "lazy"}
               decoding="async"
               width="800"
               height="533"

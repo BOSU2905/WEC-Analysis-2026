@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { useScroll } from "framer-motion";
 import ArmadaScatter from "../../visualizations/ArmadaScatter";
 import EditorialPhoto from "../../components/story/EditorialPhoto";
-import armadaImage from "../../assets/editorial/aston-martin-armada.jpg";
+import armadaImage from "../../assets/editorial/aston-martin-armada.webp";
 import styles from "./Chapter03.module.css";
 
 export default function Chapter03() {

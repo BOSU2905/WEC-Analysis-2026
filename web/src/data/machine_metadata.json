@@ -18,10 +18,10 @@
     ],
     "image": {
       "placeholder": false,
-      "url": "/assets/machines/oreca-07-gibson.jpg",
+      "url": "/assets/machines/oreca-07-gibson.webp",
       "credit": "Wikimedia / CC BY-SA 4.0"
     },
-    "side_view_url": "/assets/machines/oreca-07-gibson-side.png"
+    "side_view_url": "/assets/machines/oreca-07-gibson-side.webp"
   },
   "Aston Martin Vantage V8": {
     "historical_insight": "Derived directly from the Vantage road car, the V8 GTE was a thunderous presence in WEC, known for its bonded aluminium chassis and roaring naturally aspirated V8 engine.",
@@ -43,10 +43,10 @@
     ],
     "image": {
       "placeholder": false,
-      "url": "/assets/machines/aston-martin-vantage-v8.jpg",
+      "url": "/assets/machines/aston-martin-vantage-v8.webp",
       "credit": "All-Free-Photos.com"
     },
-    "side_view_url": "/assets/machines/aston-martin-vantage-v8-side.png"
+    "side_view_url": "/assets/machines/aston-martin-vantage-v8-side.webp"
   },
   "Porsche 911 RSR": {
     "historical_insight": "The RSR continuously evolved the iconic 911 platform. In its later iterations (like the 2019 RSR-19), Porsche radically shifted the engine ahead of the rear axle, transforming it into a mid-engined GT powerhouse.",
@@ -67,10 +67,10 @@
     ],
     "image": {
       "placeholder": false,
-      "url": "/assets/machines/porsche-911-rsr.png",
+      "url": "/assets/machines/porsche-911-rsr.webp",
       "credit": "Stuttcars / Porsche AG"
     },
-    "side_view_url": "/assets/machines/porsche-911-rsr-side.png"
+    "side_view_url": "/assets/machines/porsche-911-rsr-side.webp"
   },
   "Toyota TS050 Hybrid": {
     "historical_insight": "The TS050 was a technological tour de force. After heartbreaking near-misses, its 8-megajoule hybrid system ultimately delivered Toyota's long-awaited overall victory at Le Mans.",
@@ -88,10 +88,10 @@
     ],
     "image": {
       "placeholder": false,
-      "url": "/assets/machines/toyota-ts050-hybrid.jpg",
+      "url": "/assets/machines/toyota-ts050-hybrid.webp",
       "credit": "Takayuki Suzuki / CC BY-SA 2.0"
     },
-    "side_view_url": "/assets/machines/toyota-ts050-hybrid-side.png"
+    "side_view_url": "/assets/machines/toyota-ts050-hybrid-side.webp"
   },
   "Porsche 919 Hybrid": {
     "historical_insight": "The 919 Hybrid defined the LMP1 golden era. Combining a compact V4 engine with advanced dual energy recovery systems, it secured a remarkable three consecutive overall Le Mans wins.",
@@ -112,9 +112,9 @@
     ],
     "image": {
       "placeholder": false,
-      "url": "/assets/machines/porsche-919-hybrid.jpg",
+      "url": "/assets/machines/porsche-919-hybrid.webp",
       "credit": "Edvvc / CC BY 2.0"
     },
-    "side_view_url": "/assets/machines/porsche-919-hybrid-side.png"
+    "side_view_url": "/assets/machines/porsche-919-hybrid-side.webp"
   }
 }

@@ -24,12 +24,12 @@ export interface PhotoCreditEntry {
 }
 
 // Imports for thumbnail previews in the credits modal
-import contrastImg from "../assets/editorial/gt-prototype-contrast.jpg";
-import toyotaImg from "../assets/editorial/toyota-ts050.jpg";
-import armadaImg from "../assets/editorial/aston-martin-armada.jpg";
-import scaleGridImg from "../assets/editorial/scale-grid.jpg";
-import multiclassImg from "../assets/editorial/multiclass-silverstone.jpg";
-import loneStarImg from "../assets/editorial/lone-star-le-mans-start.jpg";
+import contrastImg from "../assets/editorial/gt-prototype-contrast.webp";
+import toyotaImg from "../assets/editorial/toyota-ts050.webp";
+import armadaImg from "../assets/editorial/aston-martin-armada.webp";
+import scaleGridImg from "../assets/editorial/scale-grid.webp";
+import multiclassImg from "../assets/editorial/multiclass-silverstone.webp";
+import loneStarImg from "../assets/editorial/lone-star-le-mans-start.webp";
 import wecStartingGridImg from "../assets/editorial/wec-starting-grid.webp";
 import wecPitOperationsImg from "../assets/editorial/wec-pit-operations.webp";
 

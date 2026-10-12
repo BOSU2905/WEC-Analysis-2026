@@ -41,23 +41,18 @@ function LazyChapter({ id, component: Component, preloadNext }: any) {
 
 export default function Story() {
   useEffect(() => {
-    // Schedule background preparation of all chunks to prevent fast-scroll blanking
-    const prepareUpcoming = () => {
-      // Small delay allows Hero/Ch00 to render and settle before hitting network
-      setTimeout(() => {
-        loadCh1()
-          .then(() => loadCh2())
-          .then(() => loadCh3())
-          .then(() => loadCh4())
-          .then(() => loadCh5())
-          .catch(() => {}); // ignore network failures on preload
-      }, 1000);
+    // Gracefully warm Chapter 01 during idle time so it is ready when scrolling past Chapter 00.
+    // Subsequent chapters are progressively warmed via LazyChapter's 1000px viewport margin.
+    const warmNext = () => {
+      loadCh1().catch(() => {});
     };
 
-    if (window.requestIdleCallback) {
-      window.requestIdleCallback(prepareUpcoming);
+    if ("requestIdleCallback" in window) {
+      const handle = (window as any).requestIdleCallback(warmNext, { timeout: 4000 });
+      return () => (window as any).cancelIdleCallback?.(handle);
     } else {
-      prepareUpcoming();
+      const timer = setTimeout(warmNext, 3000);
+      return () => clearTimeout(timer);
     }
   }, []);
 

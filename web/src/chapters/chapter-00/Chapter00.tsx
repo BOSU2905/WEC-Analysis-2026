@@ -49,7 +49,6 @@ export default function Chapter00() {
           direction="left"
           viewportMargin="0px 0px 200px 0px"
           duration={0.6}
-          priority={true}
         />
 
         <div className={styles.proseBlock}>

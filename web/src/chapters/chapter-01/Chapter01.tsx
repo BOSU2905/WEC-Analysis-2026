@@ -2,10 +2,10 @@ import { useRef } from "react";
 import { useScroll } from "framer-motion";
 import ScaleScatter from "../../visualizations/ScaleScatter";
 import EditorialPhoto from "../../components/story/EditorialPhoto";
-import scaleGridImage from "../../assets/editorial/scale-grid.jpg";
-import multiclassImage from "../../assets/editorial/multiclass-silverstone.jpg";
-import contrastImage from "../../assets/editorial/gt-prototype-contrast.jpg";
-import loneStarStartImage from "../../assets/editorial/lone-star-le-mans-start.jpg";
+import scaleGridImage from "../../assets/editorial/scale-grid.webp";
+import multiclassImage from "../../assets/editorial/multiclass-silverstone.webp";
+import contrastImage from "../../assets/editorial/gt-prototype-contrast.webp";
+import loneStarStartImage from "../../assets/editorial/lone-star-le-mans-start.webp";
 import datasetScale from "../../data/dataset_scale.json";
 import styles from "./Chapter01.module.css";
 
