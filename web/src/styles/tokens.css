@@ -7,11 +7,11 @@
   --color-border-dark: #2a2a29;
 
   /* Light Theme Variables (Legacy Reference) */
-  --color-bg-light: #f3f0e8;
-  --color-surface-light: #faf8f2;
-  --color-primary-light: #252724;
-  --color-secondary-light: #666862;
-  --color-border-light: #d8d4ca;
+  --color-bg-light: #f5f6f8;
+  --color-surface-light: #ffffff;
+  --color-primary-light: #202224;
+  --color-secondary-light: #5a6065;
+  --color-border-light: #dcdfe3;
 
   /* Typography */
   --font-display: "Space Grotesk", system-ui, sans-serif;
@@ -24,15 +24,20 @@
   /* Default Map (Mobile-first default to dark) */
   --color-bg: #090a0b;
   --color-surface: #111214;
+  --color-surface-subtle: #18191c;
   --color-primary: #e8e7e3;
   --color-secondary: #92918d;
   --color-border: #2a2a29;
+  --color-accent: #e69d45;
+  --color-accent-hover: #f0ab58;
 
   --color-bg-rgb: 9, 10, 11;
   --color-surface-rgb: 17, 18, 20;
+  --color-surface-subtle-rgb: 24, 25, 28;
   --color-primary-rgb: 232, 231, 227;
   --color-secondary-rgb: 146, 145, 141;
   --color-border-rgb: 42, 42, 41;
+  --color-accent-rgb: 230, 157, 69;
 
   /* Chart Colors (Dark) - Muted Telemetry palette */
   --chart-top-class: #6598a8; /* petrol blue */
@@ -63,17 +68,22 @@
 }
 
 :root[data-theme="light"] {
-  --color-bg: #e3e6e8;
-  --color-surface: #f1f2f1;
-  --color-primary: #25292b;
-  --color-secondary: #666d70;
-  --color-border: #c9cdce;
+  --color-bg: #f5f6f8;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #f0f2f5;
+  --color-primary: #202224;
+  --color-secondary: #5a6065;
+  --color-border: #dcdfe3;
+  --color-accent: #d97736;
+  --color-accent-hover: #c46427;
 
-  --color-bg-rgb: 227, 230, 232;
-  --color-surface-rgb: 241, 242, 241;
-  --color-primary-rgb: 37, 41, 43;
-  --color-secondary-rgb: 102, 109, 112;
-  --color-border-rgb: 201, 205, 206;
+  --color-bg-rgb: 245, 246, 248;
+  --color-surface-rgb: 255, 255, 255;
+  --color-surface-subtle-rgb: 240, 242, 245;
+  --color-primary-rgb: 32, 34, 36;
+  --color-secondary-rgb: 90, 96, 101;
+  --color-border-rgb: 220, 223, 227;
+  --color-accent-rgb: 217, 119, 54;
 
   /* Chart Colors (Light) - Editorial motorsport palette */
   --chart-top-class: #315e75; /* petrol blue */
@@ -96,26 +106,31 @@
   --chart-mfg-porsche: #b66b43;
   --chart-mfg-other: #3d7184;
 
-  /* Global Textures (Light) - Silver Carbon Fibre */
-  --bg-texture: repeating-linear-gradient(45deg, rgba(0,0,0,0.04) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.04) 75%, rgba(0,0,0,0.04)),
-                repeating-linear-gradient(45deg, rgba(0,0,0,0.04) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.04) 75%, rgba(0,0,0,0.04));
+  /* Global Textures (Light) - Subtle Carbon Twill */
+  --bg-texture: repeating-linear-gradient(45deg, rgba(0,0,0,0.025) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.025) 75%, rgba(0,0,0,0.025)),
+                repeating-linear-gradient(45deg, rgba(0,0,0,0.025) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.025) 75%, rgba(0,0,0,0.025));
   --bg-texture-position: 0 0, 2px 2px;
   --bg-texture-size: 4px 4px;
 }
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
-    --color-bg: #e3e6e8;
-    --color-surface: #f1f2f1;
-    --color-primary: #25292b;
-    --color-secondary: #666d70;
-    --color-border: #c9cdce;
+    --color-bg: #f5f6f8;
+    --color-surface: #ffffff;
+    --color-surface-subtle: #f0f2f5;
+    --color-primary: #202224;
+    --color-secondary: #5a6065;
+    --color-border: #dcdfe3;
+    --color-accent: #d97736;
+    --color-accent-hover: #c46427;
 
-    --color-bg-rgb: 227, 230, 232;
-    --color-surface-rgb: 241, 242, 241;
-    --color-primary-rgb: 37, 41, 43;
-    --color-secondary-rgb: 102, 109, 112;
-    --color-border-rgb: 201, 205, 206;
+    --color-bg-rgb: 245, 246, 248;
+    --color-surface-rgb: 255, 255, 255;
+    --color-surface-subtle-rgb: 240, 242, 245;
+    --color-primary-rgb: 32, 34, 36;
+    --color-secondary-rgb: 90, 96, 101;
+    --color-border-rgb: 220, 223, 227;
+    --color-accent-rgb: 217, 119, 54;
 
     /* Chart Colors (Light) */
     --chart-top-class: #315e75;

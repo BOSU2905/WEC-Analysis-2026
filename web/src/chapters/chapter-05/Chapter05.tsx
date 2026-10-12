@@ -1,14 +1,15 @@
 import { useRef } from "react";
-import { m, useScroll, useTransform } from "framer-motion";
+import { m, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import styles from "./Chapter05.module.css";
 import EvolutionLineChart from "../../visualizations/EvolutionLineChart";
 
 export default function Chapter05() {
   const containerRef = useRef<HTMLElement>(null);
+  const shouldReduceMotion = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start center", "end center"],
+    offset: ["start end", "end start"],
   });
 
   const opacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
@@ -18,7 +19,10 @@ export default function Chapter05() {
     <article id="chapter-05" className={styles.chapter} ref={containerRef}>
       <div className={styles.gridContainer}>
         <div className={styles.stickyContainer}>
-          <m.header className={styles.header} style={{ opacity, y }}>
+          <m.header
+            className={styles.header}
+            style={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity, y }}
+          >
             <h2 className={styles.chapterNumber}>Chapter 05</h2>
             <h3 className={styles.chapterTitle}>The Evolution of Speed</h3>
             <p className={styles.chapterIntro}>
@@ -55,10 +59,10 @@ export default function Chapter05() {
       <div className={styles.closingSection}>
         <m.div
           className={styles.closingContent}
-          initial={{ opacity: 0, y: 30 }}
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-20%" }}
-          transition={{ duration: 1 }}
+          transition={{ duration: shouldReduceMotion ? 0 : 1 }}
         >
           <div className={styles.divider} />
           <h3>Endurance, Validated</h3>

@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { m, useScroll, useTransform } from "framer-motion";
+import { m, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import styles from "./Chapter04.module.css";
 import TyreShare from "../../visualizations/TyreShare";
 
@@ -10,10 +10,11 @@ import wetTyre from "../../assets/tyres/michelin-wet.svg";
 
 export default function Chapter04() {
   const containerRef = useRef<HTMLElement>(null);
+  const shouldReduceMotion = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start center", "end center"],
+    offset: ["start end", "end start"],
   });
 
   const opacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
@@ -22,7 +23,10 @@ export default function Chapter04() {
   return (
     <article id="chapter-04" className={styles.chapter} ref={containerRef}>
       <div className={styles.stickyContainer}>
-        <m.header className={styles.header} style={{ opacity, y }}>
+        <m.header
+          className={styles.header}
+          style={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity, y }}
+        >
           <h2 className={styles.chapterNumber}>Chapter 04</h2>
           <h3 className={styles.chapterTitle}>The Grip</h3>
           <p className={styles.chapterIntro}>

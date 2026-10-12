@@ -1,8 +1,105 @@
-import { Suspense, useEffect, useMemo } from "react";
-import { Canvas } from "@react-three/fiber";
+import { Suspense, useEffect, useMemo, useState, useRef } from "react";
+import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, useGLTF, Environment } from "@react-three/drei";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import * as THREE from "three";
 import styles from "./MachineModel.module.css";
+
+// Explicit initial camera parameters
+const INITIAL_CAMERA_POS = new THREE.Vector3(5.5, 2.0, 5.5);
+const INITIAL_TARGET_POS = new THREE.Vector3(0, 0.6, 0);
+
+// Camera and interaction controller handling deterministic view reset
+function CameraManager({ resetTrigger }: { resetTrigger: number }) {
+  const { camera, invalidate } = useThree();
+  const controlsRef = useRef<OrbitControlsImpl>(null);
+  const animFrameRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (resetTrigger === 0) return;
+
+    if (animFrameRef.current !== null) {
+      cancelAnimationFrame(animFrameRef.current);
+      animFrameRef.current = null;
+    }
+
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (prefersReducedMotion || !controlsRef.current) {
+      camera.position.copy(INITIAL_CAMERA_POS);
+      if (controlsRef.current) {
+        controlsRef.current.target.copy(INITIAL_TARGET_POS);
+        controlsRef.current.update();
+      }
+      camera.lookAt(INITIAL_TARGET_POS);
+      invalidate();
+      return;
+    }
+
+    const controls = controlsRef.current;
+    const startCamPos = camera.position.clone();
+    const startTarget = controls.target.clone();
+    const startTime = performance.now();
+    const duration = 280; // ms short transition
+
+    const animateReset = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // Smooth cubic ease out
+      const ease = 1 - Math.pow(1 - progress, 3);
+
+      camera.position.lerpVectors(startCamPos, INITIAL_CAMERA_POS, ease);
+      controls.target.lerpVectors(startTarget, INITIAL_TARGET_POS, ease);
+      controls.update();
+      invalidate();
+
+      if (progress < 1) {
+        animFrameRef.current = requestAnimationFrame(animateReset);
+      } else {
+        camera.position.copy(INITIAL_CAMERA_POS);
+        controls.target.copy(INITIAL_TARGET_POS);
+        controls.update();
+        invalidate();
+        animFrameRef.current = null;
+      }
+    };
+
+    animFrameRef.current = requestAnimationFrame(animateReset);
+
+    return () => {
+      if (animFrameRef.current !== null) {
+        cancelAnimationFrame(animFrameRef.current);
+      }
+    };
+  }, [resetTrigger, camera, invalidate]);
+
+  // Cancel reset animation if user starts dragging
+  const handleStart = () => {
+    if (animFrameRef.current !== null) {
+      cancelAnimationFrame(animFrameRef.current);
+      animFrameRef.current = null;
+    }
+  };
+
+  return (
+    <OrbitControls
+      ref={controlsRef}
+      makeDefault
+      enablePan={false}
+      enableDamping={true}
+      minPolarAngle={Math.PI / 6}
+      maxPolarAngle={Math.PI / 2 - 0.05}
+      minDistance={3}
+      maxDistance={12}
+      target={[0, 0.6, 0]}
+      autoRotate={false}
+      onStart={handleStart}
+    />
+  );
+}
 
 // The model component using useGLTF to load the glb
 function CarModel({ path }: { path: string }) {
@@ -17,12 +114,7 @@ function CarModel({ path }: { path: string }) {
         child.castShadow = true;
         child.receiveShadow = true;
 
-        // Fix for Porsche 911 RSR left wheel rendering defect:
-        // Diagnosis: The left wheel nodes (e.g., LOD_A_BRAKE_CALIPER_FRONT_LEFT) have a negative
-        // determinant in their transform matrices, meaning the geometry was mirrored. Because
-        // the material is shared with the right wheel, Three.js cannot automatically assign BackSide
-        // without breaking the right wheel. The left wheel ends up front-face culled.
-        // Fix: Clone the material for mirrored meshes and set DoubleSide.
+        // Fix for Porsche 911 RSR left wheel rendering defect
         if (path.includes("2018_porsche_911_rsr")) {
           child.updateMatrixWorld(true);
           if (child.matrixWorld.determinant() < 0) {
@@ -31,16 +123,7 @@ function CarModel({ path }: { path: string }) {
           }
         }
 
-        // Fix for Porsche 919 Hybrid (2015) black spots and headlights:
-        // Diagnosis 1 (Shadow Acne & Backfaces): Double-sided materials on thin car body panels
-        // cause self-shadowing precision artifacts when rendered with directional light shadows.
-        // Fix: Use single-sided front face rendering for exterior body panels and set shadow normal bias.
-        // Diagnosis 2 (Z-fighting): The main livery (material 'material') geometrically overlaps
-        // the chassis underbody ('.001'), causing Z-fighting (black spots).
-        // Fix: Clone material, apply negative polygonOffset (-2, -4) to bring livery forward.
-        // Diagnosis 3 (Headlights): The glass cover ('.003') was opaque dark gray, and internal LEDs
-        // ('Vehicle_Exterior_mm_lights') had black base color.
-        // Fix: Glass made transparent; LEDs given authentic bright white emissive tint.
+        // Fix for Porsche 919 Hybrid (2015) black spots and headlights
         if (path.includes("porsche_919_hybrid_2015")) {
           if (child.material) {
             const m = child.material as THREE.MeshStandardMaterial;
@@ -72,7 +155,6 @@ function CarModel({ path }: { path: string }) {
           }
         }
 
-        // Fix for potentially overly bright/white materials:
         // Ensure standard PBR materials aren't blowing out
         if (child.material) {
           child.material.needsUpdate = true;
@@ -81,7 +163,6 @@ function CarModel({ path }: { path: string }) {
     });
 
     // 2. Deterministic Bounding Box Scaling
-    // Reset scale/position first in case useEffect runs multiple times
     clonedScene.scale.set(1, 1, 1);
     clonedScene.position.set(0, 0, 0);
     clonedScene.updateMatrixWorld(true);
@@ -122,12 +203,42 @@ export interface MachineModelProps {
 }
 
 export default function MachineModel({ path, attribution }: MachineModelProps) {
+  const [resetTrigger, setResetTrigger] = useState(0);
+
+  const handleResetView = () => {
+    setResetTrigger((prev) => prev + 1);
+  };
+
   return (
     <div className={styles.canvasContainer}>
       <div className={styles.instructionLayer}>
         <span className={styles.instructionText}>
           Drag to rotate &bull; Scroll to zoom
         </span>
+        <button
+          type="button"
+          className={styles.resetButton}
+          onClick={handleResetView}
+          aria-label="Reset 3D View"
+          title="Reset 3D View"
+        >
+          <svg
+            className={styles.resetIcon}
+            width="13"
+            height="13"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+            <path d="M3 3v5h5" />
+          </svg>
+          <span className={styles.resetText}>Reset View</span>
+        </button>
       </div>
 
       <Suspense
@@ -142,10 +253,10 @@ export default function MachineModel({ path, attribution }: MachineModelProps) {
             alpha: true,
             preserveDrawingBuffer: false,
             toneMapping: THREE.ACESFilmicToneMapping,
-            toneMappingExposure: 0.9, // Prevent blowout of white livery
+            toneMappingExposure: 0.9,
           }}
         >
-          {/* Subtle ambient lighting so dark shadows aren't pitch black */}
+          {/* Subtle ambient lighting */}
           <ambientLight intensity={0.6} />
 
           {/* Key light for volume and contrast */}
@@ -160,23 +271,12 @@ export default function MachineModel({ path, attribution }: MachineModelProps) {
           {/* Fill light to soften harsh shadows */}
           <directionalLight position={[-10, 10, -10]} intensity={0.5} />
 
-          {/* Balanced environment map for realistic glossy car reflections without overwhelming base colors */}
+          {/* Balanced environment map */}
           <Environment preset="city" background={false} />
 
           <CarModel path={path} />
 
-          {/* User controls with restricted rotation and zoom */}
-          <OrbitControls
-            makeDefault
-            enablePan={false}
-            enableDamping={true}
-            minPolarAngle={Math.PI / 6} // Allow viewing slightly from above
-            maxPolarAngle={Math.PI / 2 - 0.05} // Prevent going below ground
-            minDistance={3}
-            maxDistance={12}
-            target={[0, 0.6, 0]} // Orbit around the car's volumetric center, not its tires
-            autoRotate={false}
-          />
+          <CameraManager resetTrigger={resetTrigger} />
         </Canvas>
       </Suspense>
 

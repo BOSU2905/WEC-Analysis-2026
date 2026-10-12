@@ -13,28 +13,18 @@
 }
 
 :root[data-theme="light"] .chapter {
-  --color-bg: #e3e6e8;
-  --color-primary: #343c40;
-  --color-secondary: #687c7d;
-  --color-border: #b9bfc1;
-
-  --chart-ch4-michelin: #687c7d;
-  --chart-ch4-dunlop: #9d795b;
-  --chart-ch4-goodyear: #343c40;
-  --chart-ch4-other: #b9bfc1;
+  --chart-ch4-michelin: #565b60;
+  --chart-ch4-dunlop: #a98438;
+  --chart-ch4-goodyear: #25282b;
+  --chart-ch4-other: #dedad2;
 }
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) .chapter {
-    --color-bg: #e3e6e8;
-    --color-primary: #343c40;
-    --color-secondary: #687c7d;
-    --color-border: #b9bfc1;
-
-    --chart-ch4-michelin: #687c7d;
-    --chart-ch4-dunlop: #9d795b;
-    --chart-ch4-goodyear: #343c40;
-    --chart-ch4-other: #b9bfc1;
+    --chart-ch4-michelin: #565b60;
+    --chart-ch4-dunlop: #a98438;
+    --chart-ch4-goodyear: #25282b;
+    --chart-ch4-other: #dedad2;
   }
 }
 

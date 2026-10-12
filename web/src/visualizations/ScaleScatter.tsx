@@ -208,16 +208,26 @@ export default function ScaleScatter({ progress }: Props) {
   // 3. Continuous Animation & Interpolation Loop (Canvas Renderer)
   const isAnimated = useInView(containerRef, { margin: "0px" }); // Only animate when actually visible
   const isAnimatedRef = useRef(false);
-  const animationStartTime = useRef<number | null>(null);
   const prefersReducedMotionRef = useRef(
     typeof window !== "undefined"
       ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
-      : false,
+    : false,
   );
 
   useEffect(() => {
     isAnimatedRef.current = isAnimated;
   }, [isAnimated]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = (e: MediaQueryListEvent) => {
+      prefersReducedMotionRef.current = e.matches;
+    };
+    prefersReducedMotionRef.current = mq.matches;
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   useEffect(() => {
     if (!isInView || width === 0 || height === 0 || nodesRef.current.length === 0 || !isLayoutReady) return;
@@ -230,6 +240,13 @@ export default function ScaleScatter({ progress }: Props) {
       LMP2: "146, 145, 141",
       "GT (GTE Pro/Am)": "85, 85, 85",
       Experimental: "42, 42, 41",
+    };
+
+    const classDepthMap: Record<string, number> = {
+      "Top Class (LMP1/Hypercar)": 1.0,
+      LMP2: 0.72,
+      Experimental: 0.58,
+      "GT (GTE Pro/Am)": 0.42,
     };
 
     const updateColors = () => {
@@ -246,9 +263,10 @@ export default function ScaleScatter({ progress }: Props) {
     const syncNodes = (v: number) => {
       const nodes = nodesRef.current;
       const radius = radiusRef.current;
+      const isReducedMotion = prefersReducedMotionRef.current;
 
-      const start = 0.3;
-      const end = 0.7;
+      const start = 0.28;
+      const end = 0.72;
       let t = 0;
 
       if (v <= start) t = 0;
@@ -262,9 +280,8 @@ export default function ScaleScatter({ progress }: Props) {
       const time = timeRef.current;
       const stimulus = stimulusRef.current;
 
-      if (isAnimatedRef.current && animationStartTime.current === null) {
-        animationStartTime.current = timeRef.current;
-      }
+      // Continuous scroll-linked emergence progression (first step: v in [0.0, 0.22])
+      const scrollReveal = Math.min(1, Math.max(0, v / 0.18));
 
       ctx.clearRect(0, 0, width, height);
 
@@ -272,24 +289,40 @@ export default function ScaleScatter({ progress }: Props) {
       for (let i = 0; i < nodes.length; i++) {
         const d = nodes[i];
 
-        // Staggered node entrance for cinematic scroll
+        // Smooth golden-ratio distributed cluster morphing
         let nodeT = 0;
-        const stagger = (i % 100) / 100;
-        const nodeStart = stagger * 0.3;
-        if (t > nodeStart) {
-          nodeT = (t - nodeStart) / 0.7;
+        const clusterStagger = ((i * 269) % 1000) / 1000;
+        const clusterStart = clusterStagger * 0.25;
+        if (t > clusterStart) {
+          nodeT = (t - clusterStart) / 0.75;
         }
         if (nodeT > 1) nodeT = 1;
         const easedT =
-          nodeT < 0.5 ? 2 * nodeT * nodeT : -1 + (4 - 2 * nodeT) * nodeT;
+          nodeT < 0.5 ? 4 * nodeT * nodeT * nodeT : 1 - Math.pow(-2 * nodeT + 2, 3) / 2;
 
         let baseX = d.gridX + (d.clusterX - d.gridX) * easedT;
         let baseY = d.gridY + (d.clusterY - d.gridY) * easedT;
 
+        // Subtle Class-Depth Parallax (editorial depth without altering data values)
+        if (!isReducedMotion) {
+          const depth = classDepthMap[d.class] ?? 0.55;
+          const depthOffset = depth - 0.55; // [-0.13 to +0.45]
+          // Parallax gently settles down by 85% as dots dock cleanly into clusters
+          const clusterSettle = 1 - easedT * 0.85;
+          const scrollDelta = v - 0.35;
+          const parallaxY = scrollDelta * depthOffset * 18 * clusterSettle;
+          const parallaxX = scrollDelta * Math.sin(depth * Math.PI) * 2.5 * clusterSettle;
+
+          baseX += parallaxX;
+          baseY += parallaxY;
+        }
+
         // Ambient Motion (deterministic noise)
-        const phase = i * 0.1;
-        baseX += Math.sin(time * 0.001 + phase) * 2.5;
-        baseY += Math.cos(time * 0.0008 + phase) * 2.5;
+        if (!isReducedMotion) {
+          const phase = i * 0.1;
+          baseX += Math.sin(time * 0.001 + phase) * 2.5;
+          baseY += Math.cos(time * 0.0008 + phase) * 2.5;
+        }
 
         // Stimulus Reaction
         if (stimulus.strength > 0.01) {
@@ -316,25 +349,14 @@ export default function ScaleScatter({ progress }: Props) {
 
         let currentRadius = radius;
 
-        // Entrance Animation
-        if (prefersReducedMotionRef.current) {
-          // Do nothing, keep original radius and opacity
-        } else if (animationStartTime.current !== null) {
-          const elapsed = timeRef.current - animationStartTime.current;
-          const staggerDelay = (i / nodes.length) * 200; // 200ms stagger over all dots
-          const dotElapsed = elapsed - staggerDelay;
-          
-          let dotEnterT = 0;
-          if (dotElapsed > 0) {
-            dotEnterT = Math.min(1, dotElapsed / 300); // 300ms per dot
-          }
-          
-          const easedDotEnter = d3.easeCubicOut(dotEnterT);
-          currentRadius = radius * (0.5 + 0.5 * easedDotEnter);
-          opacity *= (0.3 + 0.7 * easedDotEnter);
-        } else {
-          opacity *= 0.3;
-          currentRadius = radius * 0.5;
+        // Scroll-responsive progressive emergence
+        if (!isReducedMotion) {
+          const emergeStagger = ((i * 137) % 1000) / 1000;
+          const localEmerge = Math.min(1, Math.max(0, (scrollReveal - emergeStagger * 0.25) / 0.75));
+          const easedEmerge = 1 - Math.pow(1 - localEmerge, 3);
+          const emergeScale = 0.55 + 0.45 * easedEmerge;
+          currentRadius = radius * emergeScale;
+          opacity *= (0.45 + 0.55 * easedEmerge);
         }
 
         if (opacity > 0) {
@@ -424,8 +446,10 @@ export default function ScaleScatter({ progress }: Props) {
       syncNodes(progress.get());
     }
 
-    const unsubscribe = progress.on("change", () => {
-      // Handled entirely by the d3.timer reading progress.get() when visible
+    const unsubscribe = progress.on("change", (v) => {
+      if (!isAnimatedRef.current) {
+        syncNodes(v);
+      }
     });
 
     return () => {

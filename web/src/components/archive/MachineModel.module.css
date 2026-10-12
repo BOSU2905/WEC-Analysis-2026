@@ -31,7 +31,9 @@
   left: 0;
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
   pointer-events: none;
   z-index: 10;
 }
@@ -43,8 +45,48 @@
   border-radius: 99px;
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  opacity: 0.8;
+  opacity: 0.9;
   border: 1px solid var(--color-border);
+  backdrop-filter: blur(4px);
+  pointer-events: auto;
+}
+
+.resetButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--color-surface);
+  color: var(--color-primary);
+  border: 1px solid var(--color-border);
+  padding: 0.25rem 0.75rem;
+  border-radius: 99px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  pointer-events: auto;
+  backdrop-filter: blur(4px);
+}
+
+.resetButton:hover {
+  background: var(--color-primary);
+  color: var(--color-bg);
+  border-color: var(--color-primary);
+}
+
+.resetButton:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.resetIcon {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+.resetText {
+  line-height: 1;
 }
 
 .attributionPanel {

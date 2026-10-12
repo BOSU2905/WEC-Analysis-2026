@@ -16,7 +16,12 @@ function App() {
       const hash = window.location.hash.replace("#", "");
       if (hash === "credits") {
         setIsCreditsOpen(true);
-      } else if (hash === "archive") {
+      } else if (
+        hash === "archive" ||
+        hash === "machines" ||
+        hash === "paddock" ||
+        hash === "circuits"
+      ) {
         setCurrentView("archive");
       } else {
         setCurrentView("story");

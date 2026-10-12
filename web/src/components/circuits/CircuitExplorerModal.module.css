@@ -1,0 +1,662 @@
+/* Modal Backdrop */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background-color: rgba(9, 10, 11, 0.92);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  overflow: hidden;
+}
+
+/* Near-fullscreen Container */
+.dialogContainer {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 1540px;
+  height: 94vh;
+  max-height: 960px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 64px -12px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Modal Top Bar */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.75rem;
+  border-bottom: 1px solid var(--color-border);
+  background: rgba(var(--color-surface-rgb), 0.95);
+  flex-shrink: 0;
+  gap: 1rem;
+}
+
+.circuitIdentity {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.countryBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-secondary);
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+}
+
+.flagEmoji {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.circuitTitle {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 1.8vw, 1.6rem);
+  font-weight: 500;
+  color: var(--color-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.topControls {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.circuitQuickStats {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.quickStatDivider {
+  opacity: 0.3;
+}
+
+.closeButton {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.closeButton:hover {
+  background: var(--color-primary);
+  color: var(--color-bg);
+  border-color: var(--color-primary);
+}
+
+.closeButton:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Two-Column Composition */
+.contentLayout {
+  display: grid;
+  grid-template-columns: 1fr 440px;
+  flex-grow: 1;
+  min-height: 0; /* Important for scrollable flex child */
+  overflow: hidden;
+}
+
+/* Left Column: Interactive Map Panel */
+.mapPanel {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface-subtle);
+  border-right: 1px solid var(--color-border);
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Sector Controls Toolbar */
+.sectorToolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.5rem;
+  background: rgba(var(--color-surface-rgb), 0.6);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+
+.sectorTab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 99px;
+  padding: 0.35rem 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.sectorTab:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.sectorTab:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.sectorTabActive {
+  background: var(--color-primary);
+  color: var(--color-bg);
+  border-color: var(--color-primary);
+  font-weight: 600;
+}
+
+.sectorTabActive:hover {
+  background: var(--color-primary);
+  color: var(--color-bg);
+}
+
+.sectorDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* SVG Viewport */
+.svgViewport {
+  flex-grow: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.interactiveSvg {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.4));
+  overflow: visible;
+}
+
+/* Map Track Outlines */
+.mapTrackBg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 16;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mapTrackOutline {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.85;
+}
+
+.mapSectorHighlight {
+  fill: none;
+  stroke-width: 12;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+/* Marker Elements */
+.markerGroup {
+  cursor: pointer;
+  transition: opacity 0.25s ease;
+  outline: none;
+}
+
+.markerHitArea {
+  fill: transparent;
+}
+
+.markerCircle {
+  stroke-width: 2.5;
+  transition: r 0.2s ease, fill 0.2s ease, stroke 0.2s ease;
+}
+
+.markerHalo {
+  fill: none;
+  stroke-width: 1.5;
+}
+
+.markerGroup:hover .markerCircle {
+  filter: brightness(1.2);
+}
+
+.markerGroup:focus-visible .markerCircle {
+  stroke: #ffffff;
+  stroke-width: 3.5;
+}
+
+.markerDimmed {
+  opacity: 0.28;
+}
+
+.markerSelected {
+  opacity: 1 !important;
+}
+
+/* SVG Tooltip on Marker Hover/Select */
+.svgTooltipBg {
+  fill: var(--color-surface);
+  stroke: var(--color-border);
+  stroke-width: 1;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+}
+
+.svgTooltipText {
+  fill: var(--color-primary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.mapHintLayer {
+  position: absolute;
+  bottom: 1rem;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.mapHintText {
+  background: rgba(var(--color-surface-rgb), 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--color-border);
+  padding: 0.3rem 0.85rem;
+  border-radius: 99px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--color-secondary);
+}
+
+/* Right Column: Information Panel */
+.infoPanel {
+  background: var(--color-surface);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 1.75rem;
+}
+
+.infoCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Turn Header Area */
+.turnHeader {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 1.25rem;
+}
+
+.turnBadges {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.turnNumberBadge {
+  background: var(--color-primary);
+  color: var(--color-bg);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+}
+
+.sectorBadge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.18rem 0.55rem;
+  border: 1px solid;
+  border-radius: 4px;
+  background: var(--color-surface-subtle);
+}
+
+.directionBadge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  padding: 0.18rem 0.55rem;
+  border-radius: 4px;
+}
+
+.turnName {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  margin: 0;
+  line-height: 1.25;
+}
+
+/* Content Blocks */
+.blockTitle {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.technicalBlock,
+.analysisBlock {
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 1rem 1.15rem;
+}
+
+.technicalText,
+.analysisText {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+/* Did You Know Callout */
+.factCallout {
+  background: var(--color-surface-subtle);
+  border-left: 3px solid var(--color-accent);
+  border-radius: 0 6px 6px 0;
+  padding: 1rem 1.15rem;
+}
+
+.factHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 0.4rem;
+}
+
+.factText {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  color: var(--color-primary);
+  line-height: 1.55;
+  margin: 0 0 0.5rem;
+}
+
+.factSource {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--color-secondary);
+}
+
+/* Sector Context Overview */
+.sectorContextBlock {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px dashed var(--color-border);
+  border-radius: 6px;
+  padding: 1rem 1.15rem;
+}
+
+.sectorOverviewText {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  color: var(--color-secondary);
+  line-height: 1.55;
+  margin: 0 0 0.85rem;
+}
+
+.sectorTurnsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.sectorTurnsListLabel {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--color-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sectorTurnChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.turnChip {
+  background: rgba(var(--color-surface-rgb), 0.8);
+  border: 1px solid var(--color-border);
+  color: var(--color-primary);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.turnChip:hover {
+  border-color: var(--color-primary);
+}
+
+.turnChipActive {
+  background: var(--color-primary);
+  color: var(--color-bg);
+  border-color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* Corner Nav Row */
+.cornerNavRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cornerNavBtn {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-primary);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cornerNavBtn:hover {
+  background: var(--color-primary);
+  color: var(--color-bg);
+  border-color: var(--color-primary);
+}
+
+.cornerNavBtn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.cornerCountIndicator {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-secondary);
+}
+
+/* Provenance Footer */
+.provenanceFooter {
+  padding-top: 0.5rem;
+}
+
+.provenanceFooter h4 {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-secondary);
+  margin: 0 0 0.6rem;
+}
+
+.provenanceFooter p {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--color-secondary);
+  line-height: 1.5;
+  margin: 0 0 0.4rem;
+}
+
+.provenanceFooter a {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.provenanceNotes {
+  font-style: italic;
+}
+
+.lapRecordNotice {
+  color: var(--color-primary) !important;
+  margin-top: 0.5rem !important;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1024px) {
+  .contentLayout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    overflow-y: auto;
+  }
+
+  .dialogContainer {
+    height: 98vh;
+    max-height: none;
+  }
+
+  .mapPanel {
+    height: 48vh;
+    min-height: 280px;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .svgViewport {
+    padding: 1rem;
+  }
+
+  .infoPanel {
+    overflow-y: visible;
+  }
+}
+
+@media (max-width: 640px) {
+  .backdrop {
+    padding: 0;
+  }
+
+  .dialogContainer {
+    height: 100vh;
+    border-radius: 0;
+    border: none;
+  }
+
+  .topBar {
+    padding: 0.75rem 1rem;
+  }
+
+  .circuitTitle {
+    font-size: 1.15rem;
+  }
+
+  .circuitQuickStats {
+    display: none;
+  }
+
+  .mapPanel {
+    height: 40vh;
+    min-height: 240px;
+  }
+
+  .sectorToolbar {
+    padding: 0.6rem 1rem;
+  }
+
+  .infoPanel {
+    padding: 1.25rem 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialogContainer,
+  .infoCard,
+  .markerCircle,
+  .closeButton,
+  .cornerNavBtn,
+  .sectorTab {
+    transition: none !important;
+  }
+}
