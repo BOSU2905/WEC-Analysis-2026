@@ -267,20 +267,20 @@
 }
 
 .rotate1 {
-  animation: spin 60s linear infinite;
+  animation: spin 36s linear infinite;
   animation-delay: 0s;
 }
 .rotate2 {
-  animation: spin 60s linear infinite;
-  animation-delay: -15s;
+  animation: spin 36s linear infinite;
+  animation-delay: -9s;
 }
 .rotate3 {
-  animation: spin 60s linear infinite;
-  animation-delay: -30s;
+  animation: spin 36s linear infinite;
+  animation-delay: -18s;
 }
 .rotate4 {
-  animation: spin 60s linear infinite;
-  animation-delay: -45s;
+  animation: spin 36s linear infinite;
+  animation-delay: -27s;
 }
 
 @media (prefers-reduced-motion: reduce) {

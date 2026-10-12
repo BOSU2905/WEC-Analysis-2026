@@ -72,13 +72,13 @@ export default function ManufacturerPersistence() {
   const hoveredMfgRef = useRef<string | null>(null);
   const previousHoveredMfgRef = useRef<string | null>(null);
   const hoverTimeoutRef = useRef<number | null>(null);
-
-
+  const isAnimationCompleteRef = useRef(false);
+  const hasAnimatedRef = useRef(false);
 
   const isInView = useInView(containerRef, { once: true, margin: "200px" });
 
   const updateHoverState = useCallback(() => {
-    if (!svgRef.current) return;
+    if (!svgRef.current || !isAnimationCompleteRef.current) return;
     const svg = d3.select(svgRef.current);
     
     const currentHover = hoveredMfgRef.current;
@@ -147,6 +147,18 @@ export default function ManufacturerPersistence() {
       return;
 
 
+
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const shouldAnimate = !hasAnimatedRef.current && !prefersReducedMotion;
+
+    if (!shouldAnimate) {
+      isAnimationCompleteRef.current = true;
+      hasAnimatedRef.current = true;
+    } else {
+      isAnimationCompleteRef.current = false;
+    }
 
     const { width, height } = dimensions;
     const margin = { top: 60, right: 140, bottom: 80, left: 80 };
@@ -263,39 +275,50 @@ export default function ManufacturerPersistence() {
         pathNode._pathLength = pathLength;
       }
 
-      path
-        .attr("stroke-dasharray", pathLength)
-        .attr("stroke-dashoffset", pathLength)
-        .attr("opacity", isToyota ? 1 : 0.3)
-        .style("transition", `stroke-dashoffset 2000ms linear ${isToyota ? 1000 : (index * 150) % 1500}ms, opacity 300ms ease, stroke-width 300ms ease`);
+      if (shouldAnimate) {
+        path
+          .attr("stroke-dasharray", pathLength)
+          .attr("stroke-dashoffset", pathLength)
+          .attr("opacity", isToyota ? 1 : 0.3)
+          .style("transition", `stroke-dashoffset 2000ms linear ${isToyota ? 1000 : (index * 150) % 1500}ms, opacity 300ms ease, stroke-width 300ms ease`);
 
-      // Trigger CSS transition on next frame
-      requestAnimationFrame(() => {
+        // Trigger CSS transition on next frame
         requestAnimationFrame(() => {
-          if (pathNode) {
-            pathNode.style.strokeDashoffset = "0";
-          }
+          requestAnimationFrame(() => {
+            if (pathNode) {
+              pathNode.style.strokeDashoffset = "0";
+            }
+          });
         });
-      });
+      } else {
+        path
+          .attr("stroke-dasharray", "none")
+          .attr("stroke-dashoffset", "0")
+          .attr("opacity", isToyota ? 1 : 0.3)
+          .style("transition", "opacity 300ms ease, stroke-width 300ms ease");
+      }
 
       // Invisible hit area for hover interaction
       const hitPath = pathsGroup
         .append("path")
         .datum(dataPoints)
+        .attr("class", "mfg-hit-path")
         .attr("d", line)
         .attr("fill", "none")
         .attr("stroke", "transparent")
         .attr("stroke-width", 15) // Reduced from 30 to prevent massive overlapping occlusion
-        .style("pointer-events", "stroke")
+        .style("pointer-events", isAnimationCompleteRef.current ? "stroke" : "none")
         .style("cursor", "pointer");
         
       hitPath
         .on("mouseenter", () => {
+          if (!isAnimationCompleteRef.current) return;
           if (hoverTimeoutRef.current) window.clearTimeout(hoverTimeoutRef.current);
           hoveredMfgRef.current = mfg;
           updateHoverState();
         })
         .on("mouseleave", () => {
+          if (!isAnimationCompleteRef.current) return;
           if (hoverTimeoutRef.current) window.clearTimeout(hoverTimeoutRef.current);
           hoverTimeoutRef.current = window.setTimeout(() => {
             hoveredMfgRef.current = null;
@@ -303,6 +326,7 @@ export default function ManufacturerPersistence() {
           }, 150);
         })
         .on("touchstart", () => {
+          if (!isAnimationCompleteRef.current) return;
           if (hoveredMfgRef.current === mfg) {
             hoveredMfgRef.current = null;
           } else {
@@ -316,16 +340,20 @@ export default function ManufacturerPersistence() {
       // A group to handle the fade-in independently of hover state
       const entryFadeGroup = labelsGroup
         .append("g")
-        .attr("opacity", 0)
-        .style("transition", `opacity 500ms linear ${isToyota ? 3000 : 2000 + ((index * 150) % 1500)}ms`);
+        .attr("opacity", shouldAnimate ? 0 : 1);
         
-      requestAnimationFrame(() => {
+      if (shouldAnimate) {
+        entryFadeGroup
+          .style("transition", `opacity 500ms linear ${isToyota ? 3000 : 2000 + ((index * 150) % 1500)}ms`);
+
         requestAnimationFrame(() => {
-          if (entryFadeGroup.node()) {
-            (entryFadeGroup.node() as any).style.opacity = "1";
-          }
+          requestAnimationFrame(() => {
+            if (entryFadeGroup.node()) {
+              (entryFadeGroup.node() as any).style.opacity = "1";
+            }
+          });
         });
-      });
+      }
 
       const dot = entryFadeGroup
         .append("circle")
@@ -374,6 +402,62 @@ export default function ManufacturerPersistence() {
         textNode._baseY = isToyota ? yScale(lastPoint.cumulativeWins) - 24 : yScale(lastPoint.cumulativeWins) + 4;
       }
     });
+
+    const onEntranceComplete = () => {
+      if (isAnimationCompleteRef.current) return;
+      isAnimationCompleteRef.current = true;
+      hasAnimatedRef.current = true;
+
+      // Enable hit paths for hover
+      chart.selectAll(".mfg-hit-path").style("pointer-events", "stroke");
+
+      // Clean up stroke-dashoffset transition so subsequent hover operations never touch dashoffset
+      chart.selectAll(`.${styles.visibleLine}`).each(function () {
+        const el = this as SVGPathElement;
+        el.style.transition = "opacity 300ms ease, stroke-width 300ms ease";
+        el.style.strokeDashoffset = "0";
+        el.style.strokeDasharray = "none";
+      });
+
+      if (hoveredMfgRef.current) {
+        updateHoverState();
+      }
+    };
+
+    let completionTimer: number | null = null;
+    const chartNode = chart.node();
+    const handleTransitionEnd = (e: Event) => {
+      const te = e as TransitionEvent;
+      if (
+        te.propertyName === "opacity" &&
+        (te.target as Element)?.classList?.contains("label-Toyota")
+      ) {
+        onEntranceComplete();
+      }
+    };
+
+    if (shouldAnimate) {
+      if (chartNode) {
+        chartNode.addEventListener("transitionend", handleTransitionEnd);
+      }
+      completionTimer = window.setTimeout(() => {
+        onEntranceComplete();
+      }, 3550);
+    } else {
+      onEntranceComplete();
+    }
+
+    return () => {
+      if (chartNode) {
+        chartNode.removeEventListener("transitionend", handleTransitionEnd);
+      }
+      if (completionTimer) {
+        window.clearTimeout(completionTimer);
+      }
+      if (hoverTimeoutRef.current) {
+        window.clearTimeout(hoverTimeoutRef.current);
+      }
+    };
   }, [data, dimensions, isInView, updateHoverState]);
 
 

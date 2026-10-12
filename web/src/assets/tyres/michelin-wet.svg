@@ -1,70 +1,119 @@
 <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" aria-label="Michelin Wet tyre">
   <defs>
-    <radialGradient id="tire-base" cx="50%" cy="50%" r="50%">
-      <stop offset="55%" stop-color="#181a1b"/>
-      <stop offset="75%" stop-color="#2a2c2d"/>
-      <stop offset="96%" stop-color="#141516"/>
-      <stop offset="100%" stop-color="#0a0a0a"/>
+    <radialGradient id="wet-tire-rubber" cx="50%" cy="50%" r="50%">
+      <stop offset="60%" stop-color="#1c1e20"/>
+      <stop offset="78%" stop-color="#2a2d30"/>
+      <stop offset="94%" stop-color="#141517"/>
+      <stop offset="100%" stop-color="#0a0b0c"/>
     </radialGradient>
-    <radialGradient id="rim-base" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#050505"/>
-      <stop offset="85%" stop-color="#1a1c1d"/>
-      <stop offset="100%" stop-color="#000000"/>
+    <radialGradient id="wet-wheel-rim" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#060708"/>
+      <stop offset="70%" stop-color="#15171a"/>
+      <stop offset="92%" stop-color="#1f2226"/>
+      <stop offset="100%" stop-color="#0e1012"/>
     </radialGradient>
-    <path id="text-path-top" d="M 60,200 A 140,140 0 0,1 340,200" />
-    <path id="text-path-bottom" d="M 70,200 A 130,130 0 0,0 330,200" />
+    <path id="wet-text-top" d="M 64,200 A 136,136 0 0,1 336,200" />
+    <path id="wet-text-bottom" d="M 72,200 A 128,128 0 0,0 328,200" />
   </defs>
 
-  <circle cx="200" cy="200" r="195" fill="url(#tire-base)" />
+  <!-- Outer Tyre Body -->
+  <circle cx="200" cy="200" r="195" fill="url(#wet-tire-rubber)" />
   
-  <!-- Wet Tyre Shoulder Tread Blocks (Deep Grooves) -->
-  <g stroke="#08090a" stroke-width="12" stroke-linecap="round">
-    <circle cx="200" cy="200" r="192" fill="none" stroke-dasharray="4 20" />
+  <!-- Wet Tyre Deep Shoulder Tread Grooves / Water Drainage Channels -->
+  <g stroke="#090a0c" stroke-width="12" stroke-linecap="round">
+    <circle cx="200" cy="200" r="193" fill="none" stroke-dasharray="5 21" />
   </g>
-  <g stroke="#0d0e0f" stroke-width="8" stroke-linecap="round">
-    <circle cx="200" cy="200" r="182" fill="none" stroke-dasharray="2 22" stroke-dashoffset="10" />
+  <g stroke="#101114" stroke-width="8" stroke-linecap="round">
+    <circle cx="200" cy="200" r="184" fill="none" stroke-dasharray="3 23" stroke-dashoffset="11" />
   </g>
 
-  <circle cx="200" cy="200" r="185" fill="none" stroke="#252728" stroke-width="8" opacity="0.3" />
-  <circle cx="200" cy="200" r="145" fill="none" stroke="#333638" stroke-width="15" opacity="0.3" />
-  <circle cx="200" cy="200" r="150" fill="none" stroke="#333638" stroke-width="25" opacity="0.4" />
-  <circle cx="200" cy="200" r="155" fill="none" stroke="#333638" stroke-width="15" opacity="0.3" />
-
-  <circle cx="200" cy="200" r="108" fill="none" stroke="#111" stroke-width="6" />
-  <circle cx="200" cy="200" r="105" fill="#0a0b0c" stroke="#2a2d2f" stroke-width="2" />
+  <circle cx="200" cy="200" r="186" fill="none" stroke="#2b2e31" stroke-width="5" opacity="0.4" />
+  <circle cx="200" cy="200" r="176" fill="none" stroke="#1d2022" stroke-width="4" opacity="0.6" />
   
-  <g stroke="#1a1c1d" stroke-width="14" stroke-linecap="round">
-    <line x1="200" y1="100" x2="200" y2="150" />
-    <line x1="200" y1="300" x2="200" y2="250" />
-    <line x1="100" y1="200" x2="150" y2="200" />
-    <line x1="300" y1="200" x2="250" y2="200" />
-    <line x1="129" y1="129" x2="165" y2="165" />
-    <line x1="271" y1="271" x2="235" y2="235" />
-    <line x1="129" y1="271" x2="165" y2="235" />
-    <line x1="271" y1="129" x2="235" y2="165" />
+  <!-- Sidewall Velvet Recess Band -->
+  <circle cx="200" cy="200" r="150" fill="none" stroke="#25282b" stroke-width="32" opacity="0.5" />
+  <circle cx="200" cy="200" r="132" fill="none" stroke="#1b1d1f" stroke-width="2" opacity="0.7" />
+
+  <!-- Wheel Rim Flange and Brake Disc Recess -->
+  <circle cx="200" cy="200" r="107" fill="none" stroke="#0a0a0c" stroke-width="6" />
+  <circle cx="200" cy="200" r="104" fill="url(#wet-wheel-rim)" stroke="#32363b" stroke-width="2" />
+  
+  <!-- Brake Disc & Cooling Slots Behind Spokes -->
+  <circle cx="200" cy="200" r="92" fill="#0d0e10" />
+  <circle cx="200" cy="200" r="88" fill="none" stroke="#181a1d" stroke-width="1.5" stroke-dasharray="3 7" opacity="0.6" />
+  <circle cx="200" cy="200" r="80" fill="none" stroke="#16181b" stroke-width="1.5" stroke-dasharray="2 6" opacity="0.5" />
+
+  <!-- Forged Racing Wheel Spokes (10-Spoke Paired Pattern) -->
+  <g stroke="#26292d" stroke-linecap="round">
+    <!-- Main Paired Spokes -->
+    <g stroke-width="7">
+      <line x1="190" y1="164" x2="175" y2="108" />
+      <line x1="210" y1="164" x2="225" y2="108" />
+      <line x1="234" y1="178" x2="289" y2="145" />
+      <line x1="241" y1="196" x2="299" y2="179" />
+      <line x1="234" y1="222" x2="289" y2="255" />
+      <line x1="221" y1="234" x2="259" y2="285" />
+      <line x1="179" y1="241" x2="145" y2="289" />
+      <line x1="166" y1="234" x2="115" y2="259" />
+      <line x1="159" y1="196" x2="101" y2="179" />
+      <line x1="166" y1="178" x2="111" y2="145" />
+    </g>
+    <!-- Highlight Inner Bevels on Spokes -->
+    <g stroke="#3c4046" stroke-width="2">
+      <line x1="192" y1="162" x2="177" y2="110" />
+      <line x1="208" y1="162" x2="223" y2="110" />
+      <line x1="232" y1="176" x2="287" y2="143" />
+      <line x1="239" y1="194" x2="297" y2="177" />
+      <line x1="232" y1="220" x2="287" y2="253" />
+      <line x1="219" y1="232" x2="257" y2="283" />
+      <line x1="181" y1="239" x2="147" y2="287" />
+      <line x1="168" y1="232" x2="117" y2="257" />
+      <line x1="161" y1="194" x2="103" y2="177" />
+      <line x1="168" y1="176" x2="113" y2="143" />
+    </g>
   </g>
-  <g stroke="#232628" stroke-width="6" stroke-linecap="round">
-    <line x1="200" y1="105" x2="200" y2="145" />
-    <line x1="200" y1="295" x2="200" y2="255" />
-    <line x1="105" y1="200" x2="145" y2="200" />
-    <line x1="295" y1="200" x2="255" y2="200" />
+
+  <!-- Center Hub Assembly -->
+  <circle cx="200" cy="200" r="42" fill="#141618" stroke="#2d3034" stroke-width="2.5" />
+  <!-- Center Drive Pin Recesses -->
+  <g fill="#08090a">
+    <circle cx="200" cy="174" r="3.5" />
+    <circle cx="225" cy="192" r="3.5" />
+    <circle cx="215" cy="221" r="3.5" />
+    <circle cx="185" cy="221" r="3.5" />
+    <circle cx="175" cy="192" r="3.5" />
+  </g>
+  <!-- Center Lock Hex Drive Nut -->
+  <polygon points="200,183 215,191.5 215,208.5 200,217 185,208.5 185,191.5" fill="#202326" stroke="#484d54" stroke-width="1.5" />
+  <!-- Anodized Blue Center Safety Core for Rain/Wet specification -->
+  <circle cx="200" cy="200" r="10" fill="#0288D1" stroke="#01579B" stroke-width="1.5" />
+  <circle cx="200" cy="200" r="4" fill="#111" />
+
+  <!-- Michelin Signature Brand Slash Accent (Flanking Typography) -->
+  <g transform="translate(112, 106) rotate(-22)">
+    <rect x="-12" y="-4" width="15" height="7" rx="1.5" fill="#002B66" />
+    <rect x="3" y="-4" width="9" height="7" rx="1.5" fill="#FFD200" />
+  </g>
+  <g transform="translate(288, 106) rotate(22)">
+    <rect x="-12" y="-4" width="9" height="7" rx="1.5" fill="#FFD200" />
+    <rect x="-3" y="-4" width="15" height="7" rx="1.5" fill="#002B66" />
   </g>
 
-  <circle cx="200" cy="200" r="45" fill="url(#rim-base)" />
-  <circle cx="200" cy="200" r="22" fill="#111" stroke="#333" stroke-width="2" />
-  <path d="M 190 190 L 210 190 L 205 210 L 195 210 Z" fill="#444" />
-  <circle cx="200" cy="200" r="10" fill="#29B6F6" />
-
-  <text font-family="Arial, Helvetica, sans-serif" font-weight="900" font-style="italic" font-size="36" fill="#E8ECEF" letter-spacing="4" dominant-baseline="middle">
-    <textPath href="#text-path-top" startOffset="50%" text-anchor="middle">MICHELIN</textPath>
+  <!-- Sidewall Branding Typography -->
+  <text font-family="system-ui, -apple-system, 'Segoe UI', Arial, sans-serif" font-weight="900" font-style="italic" font-size="33" fill="#F4F6F8" letter-spacing="4.5" dominant-baseline="middle">
+    <textPath href="#wet-text-top" startOffset="50%" text-anchor="middle">MICHELIN</textPath>
   </text>
-  <text font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="20" fill="#889094" letter-spacing="3" dominant-baseline="middle">
-    <textPath href="#text-path-bottom" startOffset="50%" text-anchor="middle">PILOT SPORT</textPath>
+  <text font-family="system-ui, -apple-system, 'Segoe UI', Arial, sans-serif" font-weight="800" font-style="italic" font-size="19" fill="#98A0A6" letter-spacing="3.5" dominant-baseline="middle">
+    <textPath href="#wet-text-bottom" startOffset="50%" text-anchor="middle">PILOT SPORT</textPath>
   </text>
 
-  <!-- Compound Colour: WEC 2026 Reference - WET = BLUE -->
-  <g stroke="#0288D1" stroke-width="12" fill="none" opacity="0.9" stroke-linecap="round">
-    <path d="M 30,200 A 170,170 0 0,1 53,115" />
-    <path d="M 370,200 A 170,170 0 0,1 347,285" />
+  <!-- WEC 2026 Reference Compound Markings - WET = BLUE -->
+  <g stroke="#0288D1" stroke-width="13" fill="none" opacity="0.95" stroke-linecap="round">
+    <path d="M 28,200 A 172,172 0 0,1 55,108" />
+    <path d="M 372,200 A 172,172 0 0,1 345,292" />
+  </g>
+  <g stroke="#0288D1" stroke-width="4" fill="none" opacity="0.75" stroke-linecap="round">
+    <path d="M 37,200 A 163,163 0 0,1 58,124" />
+    <path d="M 363,200 A 163,163 0 0,1 342,276" />
   </g>
 </svg>

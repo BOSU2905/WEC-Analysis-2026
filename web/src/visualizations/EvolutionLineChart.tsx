@@ -35,6 +35,7 @@ export default function EvolutionLineChart() {
   const svgRef = useRef<SVGSVGElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const hasAnimatedRef = useRef(false);
+  const lastWidthRef = useRef(0);
   const isInView = useInView(containerRef, { once: true, amount: 0.2 });
 
   useEffect(() => {
@@ -102,7 +103,10 @@ export default function EvolutionLineChart() {
         .y((d) => y(d.value))
         .curve(d3.curveMonotoneX);
 
-      const shouldAnimate = !hasAnimatedRef.current;
+      const prefersReducedMotion =
+        typeof window !== "undefined" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const shouldAnimate = !hasAnimatedRef.current && !prefersReducedMotion;
 
       keys.forEach((key, i) => {
         const seriesData = data
@@ -127,7 +131,12 @@ export default function EvolutionLineChart() {
             .duration(1800)
             .delay(i * 250)
             .ease(d3.easeCubicOut)
-            .attr("stroke-dashoffset", 0);
+            .attr("stroke-dashoffset", 0)
+            .on("end", function () {
+              d3.select(this)
+                .attr("stroke-dasharray", null)
+                .attr("stroke-dashoffset", null);
+            });
         }
 
         // Base dots (r=4, stroke-width=2 with entrance scale & fade)
@@ -457,6 +466,7 @@ export default function EvolutionLineChart() {
       }
 
       hasAnimatedRef.current = true;
+      lastWidthRef.current = width;
     };
 
     const svgElement = svgRef.current;
@@ -465,11 +475,17 @@ export default function EvolutionLineChart() {
     renderChart();
 
     // Responsive resize observer with debounced RAF to avoid layout thrashing
-    const observer = new ResizeObserver(() => {
-      if (rafId) cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        renderChart();
-      });
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const newWidth = Math.round(entry.contentRect.width);
+        if (newWidth > 0 && newWidth !== lastWidthRef.current) {
+          lastWidthRef.current = newWidth;
+          if (rafId) cancelAnimationFrame(rafId);
+          rafId = requestAnimationFrame(() => {
+            renderChart();
+          });
+        }
+      }
     });
 
     observer.observe(containerElement);

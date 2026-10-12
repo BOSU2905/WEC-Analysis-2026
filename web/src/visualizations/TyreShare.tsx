@@ -24,6 +24,7 @@ export default function TyreShare({
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const hasAnimatedRef = useRef(false);
+  const lastWidthRef = useRef(0);
   const isInView = useInView(containerRef, { once: true, amount: 0.2 });
 
   useEffect(() => {
@@ -87,7 +88,10 @@ export default function TyreShare({
         .y1((d) => y(d[1]))
         .curve(d3.curveMonotoneX);
 
-      const shouldAnimate = !hasAnimatedRef.current;
+      const prefersReducedMotion =
+        typeof window !== "undefined" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const shouldAnimate = !hasAnimatedRef.current && !prefersReducedMotion;
 
       // Reveal clip-path for horizontal sweep entrance
       const defs = svg.append("defs");
@@ -235,6 +239,7 @@ export default function TyreShare({
       }
 
       hasAnimatedRef.current = true;
+      lastWidthRef.current = width;
     };
 
     const svgElement = svgRef.current;
@@ -243,11 +248,17 @@ export default function TyreShare({
     renderChart();
 
     // Responsive resize observer with debounced RAF to prevent layout thrashing
-    const observer = new ResizeObserver(() => {
-      if (rafId) cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        renderChart();
-      });
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const newWidth = Math.round(entry.contentRect.width);
+        if (newWidth > 0 && newWidth !== lastWidthRef.current) {
+          lastWidthRef.current = newWidth;
+          if (rafId) cancelAnimationFrame(rafId);
+          rafId = requestAnimationFrame(() => {
+            renderChart();
+          });
+        }
+      }
     });
 
     observer.observe(containerElement);

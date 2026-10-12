@@ -1,6 +1,36 @@
 # KIRO
 
 ## Completed Work
+- **Animation Refinement and Michelin Icon Polish**:
+  - **Task 1 — Restore Chapter 4 and Chapter 5 Entrance Animations**:
+    - *Root Cause Diagnosed*: Both `TyreShare.tsx` and `EvolutionLineChart.tsx` attached a `ResizeObserver` immediately after initial render. By W3C specification, `ResizeObserver` always fires an initial callback on the very next frame (~16ms). The unthrottled callback invoked `renderChart()`, which called `svg.selectAll("*").interrupt()` and `svg.selectAll("*").remove()`. Because `hasAnimatedRef.current` was already flagged `true`, the second render executed with `shouldAnimate = false`, immediately aborting the entrance transitions and rendering static completed charts before the user could ever see them.
+    - *Minimal Fix Applied*:
+      1. Introduced `lastWidthRef` in both `TyreShare.tsx` and `EvolutionLineChart.tsx`. The `ResizeObserver` compares `entry.contentRect.width` against `lastWidthRef.current` and only re-renders when an actual width delta occurs, completely eliminating the 16ms self-cancelling initial callback.
+      2. Integrated live `prefers-reduced-motion` checks (`window.matchMedia("(prefers-reduced-motion: reduce)").matches`) so accessibility preferences are strictly respected.
+      3. Chapter 4: Restored horizontal `<clipPath>` sweep transition (1400ms, `d3.easeCubicOut`) revealing stacked tyre share from 2011 to 2023 alongside staggered layer and axis fades.
+      4. Chapter 5: Restored progressive line entrance animation (1800ms, `d3.easeCubicOut`) drawing each series continuously from first point (2011) to last point (2023). Added `.on("end", ...)` to clean up `stroke-dasharray` and `stroke-dashoffset`, ensuring the final rendered path matches the underlying data with subpixel precision. Dots stagger in sequentially (`r: 4`, `d3.easeBackOut`), and all interactive hover features (detailed lap times `3:17.475`, halo highlight, clamping tooltip) remain fully intact.
+  - **Task 2 — Refine WEC Tyres / Michelin Icon & Continuous Rotation**:
+    - *Reference Source Check*: Attempted access to `https://sportscar365.com/wp-content/uploads/2024/03/Michelin.jpg`. Noted limitation: the external host returns HTTP/2 connection resets / anti-scraping blocks when accessed directly.
+    - *Icon Silhouette & Branding Upgrades*:
+      1. Redesigned wheel center from primitive straight crosshairs to an authentic 10-spoke paired forged racing wheel with centerlock drive hub, drive pin recesses, hex lock nut, and anodized center safety drive.
+      2. Upgraded sidewall branding with authentic curved italic bold `MICHELIN` and `PILOT SPORT` typography, flanked by Michelin's signature yellow-and-blue motorsport brand slash accents (`#002B66` / `#FFD200`).
+      3. Refined compound markings adhering to the WEC 2026 reference system: Soft = White (`#FFFFFF`), Medium = Yellow (`#FFC107`), Hard = Red (`#E53935`), Wet = Blue (`#0288D1`).
+      4. Preserved authentic perimeter water-drainage tread blocks on the Wet tyre SVG.
+    - *Rotation Speed Tuning*: Increased continuous rotation speed from 60s to 36s linear spin in `Chapter04.module.css`. Synchronized delays to 0s, -9s, -18s, and -27s, creating smooth, elegant 90-degree quadrant phasing across the 4 tyre cards while keeping motion restrained.
+  - **Task 3 — Prevent Chapter 2 Hover from Interrupting Entrance Animation**:
+    - *Root Cause Diagnosed*: In `ManufacturerPersistence.tsx`, the invisible hover hit paths (`hitPath`) had `pointer-events: stroke` enabled from frame 0. When the pointer moved over the chart while lines were drawing, `mouseenter` invoked `updateHoverState()`. This executed `svg.select(".line-...").each(appendChild)` to raise the hovered line to front. In DOM rendering, detaching and re-attaching an SVG path immediately cancels active CSS transitions, causing `stroke-dashoffset` to jump directly to completion (0). Simultaneously, `.svg.isHovering` dimmed all other animating lines to `opacity: 0.15`, disrupting the entire entrance choreography.
+    - *Minimal Fix Applied*:
+      1. Introduced `isAnimationCompleteRef` and `hasAnimatedRef`. During entrance, hit paths have `style("pointer-events", "none")` and `updateHoverState` returns early, rendering the chart completely immune to pointer interference.
+      2. Attached a DOM `transitionend` listener on Toyota's entrance elements (plus a 3550ms safety timer matching the animation duration) to signal completion.
+      3. On completion, `isAnimationCompleteRef.current = true` enables `pointer-events: stroke` on `.mfg-hit-path` and updates line transitions to `"opacity 300ms ease, stroke-width 300ms ease"`, with `strokeDashoffset = "0"` and `strokeDasharray = "none"`. This ensures subsequent hover operations (and `appendChild` re-ordering) never reset or disrupt dash offsets.
+      4. Pointer exit and re-entry smoothly toggle `.isHovering` and `.isHovered` without altering line states.
+      5. Handled `prefers-reduced-motion` to immediately enable hover without animation delay.
+  - **Verification**:
+    - `npm run typecheck`: 0 errors.
+    - `npm run lint` (oxlint): 0 errors, 0 warnings.
+    - `npm test`: 6 tests passed (100%).
+    - `npm run build`: successful production build (1.76s).
+    - Headless Puppeteer automation validated Chapter 2 hover defense, Chapter 4 clip path sweep, Chapter 5 line draw + tooltip, Michelin continuous rotation, and reduced-motion fallback.
 - **Toyota TS050 3D Model Restoration, Title Hyphen Cleanups & Chapter 5 Line Plot Refinement**:
   - **Toyota TS050 3D Model Restoration & Archive Tab Titles**:
     - *3D Model Re-attachment*: Resolved key mismatch where vehicle string was `"Toyota TS050 - Hybrid"` while `machine3dConfigs` expected `'Toyota TS050 Hybrid'`. Added support for both keys in `machine3dConfigs` and harmonized vehicle identifiers across `machine_wins.json`, `machine_metadata.json`, and `MachinesExperience.tsx`.
