@@ -92,8 +92,8 @@ export const PHOTO_CREDITS: PhotoCreditEntry[] = [
   // ─── CHAPTER 01: THE ANATOMY ─────────────────────────────────────────────
   {
     id: "scale-grid",
-    filename: "scale-grid.jpg",
-    assetPath: "src/assets/editorial/scale-grid.jpg",
+    filename: "scale-grid.webp",
+    assetPath: "src/assets/editorial/scale-grid.webp",
     sectionUsed: "Chapter 01 (The Anatomy)",
     isDisplayedInStory: true,
     category: "editorial",
@@ -114,8 +114,8 @@ export const PHOTO_CREDITS: PhotoCreditEntry[] = [
   },
   {
     id: "multiclass-silverstone",
-    filename: "multiclass-silverstone.jpg",
-    assetPath: "src/assets/editorial/multiclass-silverstone.jpg",
+    filename: "multiclass-silverstone.webp",
+    assetPath: "src/assets/editorial/multiclass-silverstone.webp",
     sectionUsed: "Chapter 01 (The Anatomy)",
     isDisplayedInStory: true,
     category: "editorial",
@@ -136,8 +136,8 @@ export const PHOTO_CREDITS: PhotoCreditEntry[] = [
   },
   {
     id: "gt-prototype-contrast",
-    filename: "gt-prototype-contrast.jpg",
-    assetPath: "src/assets/editorial/gt-prototype-contrast.jpg",
+    filename: "gt-prototype-contrast.webp",
+    assetPath: "src/assets/editorial/gt-prototype-contrast.webp",
     sectionUsed: "Chapter 01 (The Anatomy)",
     isDisplayedInStory: true,
     category: "editorial",
@@ -157,8 +157,8 @@ export const PHOTO_CREDITS: PhotoCreditEntry[] = [
   },
   {
     id: "lone-star-le-mans-start",
-    filename: "lone-star-le-mans-start.jpg",
-    assetPath: "src/assets/editorial/lone-star-le-mans-start.jpg",
+    filename: "lone-star-le-mans-start.webp",
+    assetPath: "src/assets/editorial/lone-star-le-mans-start.webp",
     sectionUsed: "Chapter 01 (The Anatomy)",
     isDisplayedInStory: true,
     category: "editorial",
@@ -181,8 +181,8 @@ export const PHOTO_CREDITS: PhotoCreditEntry[] = [
   // ─── CHAPTER 02: THE LAST MANUFACTURER STANDING ──────────────────────────
   {
     id: "toyota-ts050",
-    filename: "toyota-ts050.jpg",
-    assetPath: "src/assets/editorial/toyota-ts050.jpg",
+    filename: "toyota-ts050.webp",
+    assetPath: "src/assets/editorial/toyota-ts050.webp",
     sectionUsed: "Chapter 02 (The Last Manufacturer Standing)",
     isDisplayedInStory: true,
     category: "editorial",
@@ -204,8 +204,8 @@ export const PHOTO_CREDITS: PhotoCreditEntry[] = [
   // ─── CHAPTER 03: THE ARMADA EFFECT ───────────────────────────────────────
   {
     id: "aston-martin-armada",
-    filename: "aston-martin-armada.jpg",
-    assetPath: "src/assets/editorial/aston-martin-armada.jpg",
+    filename: "aston-martin-armada.webp",
+    assetPath: "src/assets/editorial/aston-martin-armada.webp",
     sectionUsed: "Chapter 03 (The Armada Effect)",
     isDisplayedInStory: true,
     category: "editorial",
