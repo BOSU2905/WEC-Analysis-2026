@@ -59,15 +59,13 @@ export default function Story() {
   return (
     <>
       <ChapterNav />
-      <main>
-        <Hero />
-        <Chapter00 />
-        <LazyChapter id="chapter-01-wrap" component={Ch1} preloadNext={loadCh2} />
-        <LazyChapter id="chapter-02-wrap" component={Ch2} preloadNext={loadCh3} />
-        <LazyChapter id="chapter-03-wrap" component={Ch3} preloadNext={loadCh4} />
-        <LazyChapter id="chapter-04-wrap" component={Ch4} preloadNext={loadCh5} />
-        <LazyChapter id="chapter-05-wrap" component={Ch5} preloadNext={null} />
-      </main>
+      <Hero />
+      <Chapter00 />
+      <LazyChapter id="chapter-01-wrap" component={Ch1} preloadNext={loadCh2} />
+      <LazyChapter id="chapter-02-wrap" component={Ch2} preloadNext={loadCh3} />
+      <LazyChapter id="chapter-03-wrap" component={Ch3} preloadNext={loadCh4} />
+      <LazyChapter id="chapter-04-wrap" component={Ch4} preloadNext={loadCh5} />
+      <LazyChapter id="chapter-05-wrap" component={Ch5} preloadNext={null} />
     </>
   );
 }

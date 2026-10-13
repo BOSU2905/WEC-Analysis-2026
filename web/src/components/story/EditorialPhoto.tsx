@@ -1,4 +1,4 @@
-import { m } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 import styles from "./EditorialPhoto.module.css";
 
 type Props = {
@@ -20,10 +20,12 @@ export default function EditorialPhoto({
   duration = 1.2,
   priority = false,
 }: Props) {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
     <m.div 
       className={styles.container}
-      initial="hidden"
+      initial={shouldReduceMotion ? false : "hidden"}
       whileInView="visible"
       viewport={{ once: true, margin: viewportMargin }}
     >
@@ -37,15 +39,22 @@ export default function EditorialPhoto({
           decoding="async"
           variants={{
             hidden: {
-              x: direction === "left" ? "-10%" : "10%",
+              x: shouldReduceMotion ? 0 : direction === "left" ? "-10%" : "10%",
               opacity: 0,
-              clipPath: direction === "left" ? "inset(0% 100% 0% 0%)" : "inset(0% 0% 0% 100%)",
+              clipPath: shouldReduceMotion
+                ? "inset(0% 0% 0% 0%)"
+                : direction === "left"
+                  ? "inset(0% 100% 0% 0%)"
+                  : "inset(0% 0% 0% 100%)",
             },
             visible: {
               x: 0,
               opacity: 1,
               clipPath: "inset(0% 0% 0% 0%)",
-              transition: { duration, ease: [0.16, 1, 0.3, 1] },
+              transition: {
+                duration: shouldReduceMotion ? 0 : duration,
+                ease: [0.16, 1, 0.3, 1],
+              },
             },
           }}
         />
@@ -57,8 +66,11 @@ export default function EditorialPhoto({
             hidden: { opacity: 0 },
             visible: { 
               opacity: 1,
-              transition: { duration: 0.8, delay: duration * 0.4 } // Modest stagger based on image duration
-            }
+              transition: {
+                duration: shouldReduceMotion ? 0 : 0.8,
+                delay: shouldReduceMotion ? 0 : duration * 0.4,
+              },
+            },
           }}
         >
           {caption}

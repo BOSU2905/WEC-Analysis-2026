@@ -1,6 +1,54 @@
 # KIRO
 
 ## Completed Work
+- **Scroll-Responsive Scatter Animation Refinements (October 2026)**:
+  - **Chapter 1 — Scale Scatter (`ScaleScatter.tsx`)**:
+    - *Scroll-Progress Emergence*: Replaced the fixed 500ms wall-clock entrance timer with a continuous scroll-linked emergence progression mapped across the opening narrative segment (`v in [0.0, 0.22]`). As the visitor enters Chapter 1, points bloom progressively in scale (`0.55 -> 1.0`) and opacity, with deterministic golden-ratio stagger (`(i * 137) % 1000 / 1000`).
+    - *Class-Depth Parallax*: Introduced subtle, layered vertical and horizontal parallax weighted by vehicle class hierarchy: Top Class (LMP1/Hypercar: 1.0), LMP2 (0.72), Experimental (0.58), GT (0.42). Maximum vertical shift is constrained to +/-4.5px, providing an editorial sense of physical depth without altering grid positions or misrepresenting analytical values.
+    - *Cluster Settling*: Parallax is modulated by `clusterSettle = (1 - easedT * 0.85)`, dampening by 85% as the dots migrate and lock into their final class clusters, ensuring exact cluster coordinates and SVG hover label alignment.
+    - *Accessibility*: Added dynamic `prefers-reduced-motion` listener; when active, parallax is zeroed and points are rendered at nominal size and opacity.
+  - **Chapter 3 — Armada Scatter (`ArmadaScatter.tsx`)**:
+    - *Organic Radial Bloom*: Replaced the rigid, uniform scalar balloon expansion (`centerX + (targetBaseX - centerX) * enterEase`) where all 3,011 dots expanded identically. Introduced an organic radial bloom driven by precomputed per-node normalized distance from center (`normDist`), deterministic pseudo-random jitter (`jitter`), and harmonic perimeter wave (`wave`). Core points lead the dispersion and outer wings follow in a natural flocking/bloom pattern.
+    - *Continuous Scroll-Linked Progression*: Bloom progress is mapped continuously to scroll progress `v` through the opening section (`v in [0.0, 0.32]`). Scrolling forward expands the armada; scrolling slowly reveals it gradually; scrolling backward contracts the bloom naturally without jumps or timer restarts. At `v = 0`, a subtle baseline seed (0.08) ensures an intriguing nucleus is visible upon arrival.
+    - *Preserved High-Performance Batching*: Preserved the 3-draw-call canvas architecture (`gt`, `topClass`, `other`). Node radius and local position are calculated per-node, while group opacity applies across the single `ctx.fill()` call, maintaining 120+ FPS.
+    - *Reversible Cluster Transition*: Team clustering transitions smoothly over `v in [0.32, 0.86]`, and team annotation cards fade in continuously with zero scroll jank.
+    - *Accessibility*: Full dynamic `prefers-reduced-motion` support cleanly bypasses the bloom and renders nominal coordinates.
+
+- **Targeted UI Refinement & Bug Fixes (October 2026)**:
+  - **1. Fuji Speedway Track Silhouette Fix**:
+    - *Root Cause Diagnosed*: In `scratch/fuji_alt.svg`, track path `path2609` was nested within an inner `<g>` group having `transform="translate(1330.146, 674.76135)"` inside an outer `<g>` having `transform="translate(-1288.2294, -918.78876)"`. The dataset builder recorded only the outer transform as `groupTransform`, leaving the track path starting at relative coordinate `m -14.25933, 690.50898`. With the combined net translation, the path coordinates mapped to `X: [-1302, 64]`, `Y: [-228, 188]`, completely outside the positive SVG viewBox (`0 0 1400 480`).
+    - *Fix Applied*: Updated Fuji's `trackPath` start offset to `m 1315.88667, 1365.27033` in `web/src/data/circuits_data.ts`. The rendered path bounds now fall strictly within `X: [6.27, 1372.28]`, `Y: [30.29, 447.18]`, rendering the authentic geometry cleanly in both the card silhouette and the Circuit Explorer modal in both themes. Added a regression test in `circuits_data.test.ts`.
+  - **2. Replaced Subjective Taglines with Country Flags & Names**:
+    - *Subjective Labels Removed*: "The Ultimate Endurance Test", "The Art of Commitment", "Racing in Italy", and "The Pursuit of Reliability" were removed from the circuit cards and Circuit Explorer dialog.
+    - *Accurate Metadata Added*: Replaced with country metadata and flags: `🇫🇷 France`, `🇧🇪 Belgium`, `🇮🇹 Italy`, and `🇯🇵 Japan`. Added `countryFlag` and `country` properties in `CircuitData`, rendering accessible badge elements on cards and explorer headers.
+  - **3. Separated The Paddock into Dedicated Archives Destination**:
+    - *Architecture*: Created two distinct destinations within the Archives area: **01 Machines** (car collection and 3D models) and **02 The Paddock** (4-circuit guide and interactive Circuit Explorer).
+    - *Routing & State Preservation*: Synchronized with URL hash (`#machines` / `#archive` vs. `#paddock` / `#circuits`). Both sections remain mounted in the DOM using accessible `role="tabpanel"` and `hidden` attributes, preventing accidental remounting, texture reloading, or loss of Three.js 3D camera/orbit state when switching between sections. Added automated unit tests in `Archive.test.tsx`.
+  - **4. Restored Clean White Light Mode Palette**:
+    - *Decision & Tokens Implemented*: In accordance with the decision to discontinue the warm ivory direction, restored a clean neutral white-based palette in `web/src/styles/tokens.css`:
+      - Page canvas background: `#F5F6F8` (neutral light canvas)
+      - Content surface: `#FFFFFF` (crisp white cards, dialogs, panels)
+      - Subtle surface: `#F0F2F5` (nested panels, maps, secondary controls)
+      - Primary text: `#202224` (dark, crisp headings and body)
+      - Secondary text: `#5A6065` (legible descriptions and metadata)
+      - Soft border: `#DCDFE3` (clean neutral soft border)
+      - Burnt orange accent: `#D97736` (retained for interactive clarity and focus highlights)
+    - Dark mode preserved 100% without regression.
+  - **5. Fixed Navbar Flickering During Rapid Theme Switching**:
+    - *Root Causes Diagnosed*:
+      1. `SiteHeader.module.css` applied `background-image: var(--bg-texture)`. When toggling themes, background color and border interpolated over 200ms while the SVG noise background texture could not interpolate, causing an inverted gradient blink.
+      2. In `ThemeToggle.tsx`, asynchronous React `setTheme` state updates created closure race conditions when clicking rapidly, causing `document.documentElement.getAttribute("data-theme")` and React state to desynchronize.
+    - *Fix Applied*: Removed the texture gradient from the header, applied a clean solid background with smooth border interpolation, and made `toggleTheme()` inspect `document.documentElement.getAttribute("data-theme")` synchronously on each click. Added `prefers-reduced-motion` overrides.
+  - **6. Fixed Chapter Container Animation Timing**:
+    - *Root Causes Diagnosed*:
+      1. In `Chapter04.tsx` and `Chapter05.tsx`, `useScroll` target had `offset: ["start center", "end center"]`. This delayed the header entrance until the chapter reached 50vh down the viewport, causing an anomalous delay compared to `Chapter00.tsx` (`offset: ["start end", "end start"]`).
+      2. In `Chapter00.tsx`, the first `EditorialPhoto` had ad-hoc `viewportMargin="0px 0px 200px 0px"` and `duration={0.6}`, firing prematurely compared to other editorial images (`-100px`, `1.2s`).
+    - *Fix Applied*: Synchronized scroll offsets to `["start end", "end start"]` across Chapters 00, 04, and 05. Standardized `EditorialPhoto` margins and durations. Added full `useReducedMotion()` support across all chapter containers and photos.
+  - **7. Validation & Automated Test Results**:
+    - `npm test -- --run` / `npx vitest run`: 7 test files, 27 tests passed (100%).
+    - `npm run typecheck`: 0 errors.
+    - `npm run lint`: 0 errors, 1 existing script warning.
+    - `npm run build`: built production bundle cleanly in 785ms.
 - **Animation Refinement and Michelin Icon Polish**:
   - **Task 1 — Restore Chapter 4 and Chapter 5 Entrance Animations**:
     - *Root Cause Diagnosed*: Both `TyreShare.tsx` and `EvolutionLineChart.tsx` attached a `ResizeObserver` immediately after initial render. By W3C specification, `ResizeObserver` always fires an initial callback on the very next frame (~16ms). The unthrottled callback invoked `renderChart()`, which called `svg.selectAll("*").interrupt()` and `svg.selectAll("*").remove()`. Because `hasAnimatedRef.current` was already flagged `true`, the second render executed with `shouldAnimate = false`, immediately aborting the entrance transitions and rendering static completed charts before the user could ever see them.
@@ -408,10 +456,40 @@ To introduce unfamiliar readers to the sport, Chapter 0 leverages factual explan
     *   The caption has a separate `whileInView` observer and a transition delay.
     *   Further work should begin by inspecting the current component, CSS, and `Chapter00.tsx` together, then isolating the trigger issue instead of changing multiple parameters at once.
 
-### Future development — Circuit Experience
-*   **Status**: Not implemented today. Planned as the next feature to discuss after the image recovery and Chapter 00 fix.
-*   **Approach**: The Circuit experience should be planned as a separate feature within the existing Archive/story architecture. Tomorrow, clarify its analytical purpose, intended user interaction, available circuit data, and visual direction before writing implementation code.
-*   **Rule**: Do not invent data or begin a circuit visualization without inspecting the available dataset and the project's source-of-truth documents.
+### The Paddock: Circuit Guide & Interactive Circuit Explorer + Reset 3D View
+*   **Status**: Completed, tested, and validated.
+*   **Features Implemented**:
+    1.  **The Paddock Circuit Guide (`CircuitGuide.tsx`)**:
+        * Main section heading: *"Four Tracks. Four Challenges."* with supporting copy: *"Every circuit tells a different story of endurance, precision, and performance."*
+        * Four editorial circuit cards featuring verified vector SVG layouts:
+          * **Circuit de la Sarthe — France**: *The Ultimate Endurance Test*
+          * **Circuit de Spa-Francorchamps — Belgium**: *The Art of Commitment*
+          * **Autodromo Enzo e Dino Ferrari — Imola, Italy**: *Racing in Italy*
+          * **Fuji Speedway — Japan**: *The Pursuit of Reliability*
+        * Integrated directly into The Paddock tab within `Archive.tsx`, accessible via `#paddock` or `#circuits`.
+    2.  **Near-Fullscreen Interactive Circuit Explorer (`CircuitExplorerModal.tsx`)**:
+        * Responsive two-column composition (left: interactive SVG map with sector filters and turn markers; right: persistent information panel with telemetry, endurance significance, and "Did You Know?" callout with attribution).
+        * Full sector filtering (All Circuit, Sector 1, Sector 2, Sector 3) with SVG path highlights and turn filtering.
+        * Smooth progressive track drawing and marker reveals using Framer Motion; respects `prefers-reduced-motion`.
+        * Accessible keyboard controls, focus trap, Escape key handling, and background scroll lock with scroll position restoration.
+    3.  **Reset 3D View for Interactive Models (`MachineModel.tsx`)**:
+        * Audited all interactive 3D models: `MachineModel.tsx` is the sole component rendering user-manipulated 3D assets (covering Toyota TS050, Aston Martin Vantage V8, Porsche 911 RSR, and Porsche 919 Hybrid; Oreca 07 is 2D image cutout).
+        * Built `<CameraManager>` controller restoring camera position `(5.5, 2.0, 5.5)` and OrbitControls target `(0, 0.6, 0)` deterministically.
+        * Smooth 280ms cubic-out interpolation or direct restoration when `prefers-reduced-motion` is enabled. Aborts safely without jitter if the user interacts mid-reset.
+        * Added accessible `[ ↺ Reset View ]` button with tooltip and aria-label.
+*   **Circuit Geometry & Metadata Provenance**:
+    * **Circuit de la Sarthe**: Automobile Club de l'Ouest (ACO) / Wikimedia Commons (Will Pittenger, `Circuit_de_la_Sarthe.svg`). 2018–present 13.626 km layout.
+    * **Circuit de Spa-Francorchamps**: Will Pittenger / Wikimedia Commons (`Spa-Francorchamps_of_Belgium.svg`). Modern 7.004 km FIA Grade 1 layout (2007–present).
+    * **Autodromo Enzo e Dino Ferrari**: Sentoan / Wikimedia Commons (`Imola_2009.svg`). 4.909 km Grand Prix configuration (Variante Bassa bypassed for sports cars).
+    * **Fuji Speedway**: Wikimedia Commons (`GrandPrix_Circuit_Fuji_2007.svg`). 4.563 km Hermann Tilke layout (2005–present).
+*   **Factual Context & Limitations**:
+    * Imola served as an ILMC endurance round in 2011 and returned to the WEC calendar in 2024; its inclusion is an editorial spotlight on Italian endurance heritage rather than equal representation in the 2012–2023 core WEC dataset.
+    * Telemetry and sector boundaries reflect verified modern FIA Grade 1 / ACO homologation records and do not imply identical technical regulations applied across all historical seasons.
+*   **Validation Results**:
+    * `npm test`: 6 test files, 22 tests passing (`MachineModel.test.tsx`, `CircuitGuide.test.tsx`, `CircuitExplorerModal.test.tsx`, `circuits_data.test.ts`, `App.test.tsx`, `photo_credits.test.ts`).
+    * `npm run typecheck`: 0 errors.
+    * `npm run lint`: 0 errors, 1 unrelated warning in `measure_throttled.js`.
+    * `npm run build`: Production bundle succeeded with automatic code-splitting of `CircuitGuide` and `MachineModel`.
 
 ### Chapters 3, 4, 5 Entrance Animation Restoration & Whole-Web Optimization Pass
 *   **Status**: Completed and verified.

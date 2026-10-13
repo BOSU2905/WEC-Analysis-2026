@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { m, useScroll, useTransform } from "framer-motion";
+import { m, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import styles from "./Chapter00.module.css";
 import EditorialPhoto from "../../components/story/EditorialPhoto";
 import photoGrid from "../../assets/editorial/wec-starting-grid.webp";
@@ -7,6 +7,7 @@ import photoPit from "../../assets/editorial/wec-pit-operations.webp";
 
 export default function Chapter00() {
   const containerRef = useRef<HTMLElement>(null);
+  const shouldReduceMotion = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -19,7 +20,10 @@ export default function Chapter00() {
   return (
     <article id="chapter-00" className={styles.chapter} ref={containerRef}>
       <div className={styles.stickyContainer}>
-        <m.header className={styles.header} style={{ opacity, y }}>
+        <m.header
+          className={styles.header}
+          style={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity, y }}
+        >
           <h2 className={styles.chapterNumber}>Chapter 00</h2>
           <h3 className={styles.chapterTitle}>Understanding WEC</h3>
           <p className={styles.chapterIntro}>
@@ -47,8 +51,6 @@ export default function Chapter00() {
           alt="Starting grid of the 2020 24 Hours of Le Mans with prototypes and GT cars lined up on the pit straight"
           caption="The multiclass starting grid lined up on the pit straight before 24 hours of continuous racing."
           direction="left"
-          viewportMargin="0px 0px 200px 0px"
-          duration={0.6}
         />
 
         <div className={styles.proseBlock}>
