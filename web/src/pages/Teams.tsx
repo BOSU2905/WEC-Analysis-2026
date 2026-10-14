@@ -367,7 +367,7 @@ function SeasonPanel({
         {/* Official Season Champions Grid (Integrated cleanly within the same card) */}
         <section className={styles.championsSection} aria-label="Official Season Champions">
           <div className={styles.championsHeader}>
-            <span className={styles.trophyIcon} aria-hidden="true">🏆</span>
+
             <span>Official Season Champions</span>
           </div>
           <div className={styles.championsGrid}>
