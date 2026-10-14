@@ -1,0 +1,180 @@
+{
+  "viewports": {
+    "desktop": {
+      "canvasInfo": {
+        "width": 863,
+        "height": 780,
+        "left": 0,
+        "top": 120
+      }
+    },
+    "tablet": {
+      "canvasInfo": {
+        "width": 613.390625,
+        "height": 648,
+        "left": 0,
+        "top": 120
+      }
+    },
+    "mobile": {
+      "canvasInfo": {
+        "width": 388,
+        "height": 722,
+        "left": 1,
+        "top": -1368.5
+      }
+    }
+  },
+  "pointerTests": [
+    {
+      "test": "hover_topclass_center",
+      "activeState": [
+        {
+          "className": "Top Class (LMP1/Hypercar)",
+          "opacity": 1,
+          "transform": "translate(283, 220)",
+          "text": "TOP CLASS | 629 | ENTRIES"
+        }
+      ]
+    },
+    {
+      "test": "hover_lmp2_center",
+      "activeState": [
+        {
+          "className": "LMP2",
+          "opacity": 1,
+          "transform": "translate(551.9999999999668, 220)",
+          "text": "LMP2 | 971 | ENTRIES"
+        }
+      ]
+    },
+    {
+      "test": "hover_gt_center",
+      "activeState": [
+        {
+          "className": "GT (GTE Pro/Am)",
+          "opacity": 1,
+          "transform": "translate(386.0000000000056, 499.9999999999905)",
+          "text": "GT (GTE PRO/AM) | 1406 | ENTRIES"
+        }
+      ]
+    },
+    {
+      "test": "hover_experimental",
+      "activeState": []
+    },
+    {
+      "test": "hover_topclass_outer_edge",
+      "activeState": []
+    },
+    {
+      "test": "hover_lmp2_outer_edge",
+      "activeState": [
+        {
+          "className": "LMP2",
+          "opacity": 1,
+          "transform": "translate(685, 220)",
+          "text": "LMP2 | 971 | ENTRIES"
+        }
+      ]
+    },
+    {
+      "test": "hover_gt_outer_edge",
+      "activeState": [
+        {
+          "className": "GT (GTE Pro/Am)",
+          "opacity": 1,
+          "transform": "translate(386.000000000024, 659.9999999999648)",
+          "text": "GT (GTE PRO/AM) | 1406 | ENTRIES"
+        }
+      ]
+    },
+    {
+      "test": "upper_pair_boundary_switch",
+      "boundaryTransitions": [
+        {
+          "x": 375,
+          "state": "Top Class (LMP1/Hypercar)"
+        },
+        {
+          "x": 395,
+          "state": "Top Class (LMP1/Hypercar)"
+        },
+        {
+          "x": 405,
+          "state": "Top Class (LMP1/Hypercar)"
+        },
+        {
+          "x": 425,
+          "state": "LMP2"
+        },
+        {
+          "x": 405,
+          "state": "Top Class (LMP1/Hypercar)"
+        },
+        {
+          "x": 395,
+          "state": "Top Class (LMP1/Hypercar)"
+        },
+        {
+          "x": 375,
+          "state": "Top Class (LMP1/Hypercar)"
+        }
+      ]
+    },
+    {
+      "test": "topclass_gt_boundary_switch",
+      "topGtTransitions": [
+        {
+          "t": 0.3,
+          "x": 314,
+          "y": 304,
+          "state": "Top Class (LMP1/Hypercar)"
+        },
+        {
+          "t": 0.45,
+          "x": 329,
+          "y": 346,
+          "state": "GT (GTE Pro/Am)"
+        },
+        {
+          "t": 0.52,
+          "x": 337,
+          "y": 366,
+          "state": "GT (GTE Pro/Am)"
+        },
+        {
+          "t": 0.58,
+          "x": 343,
+          "y": 382,
+          "state": "GT (GTE Pro/Am)"
+        },
+        {
+          "t": 0.7,
+          "x": 355,
+          "y": 416,
+          "state": "GT (GTE Pro/Am)"
+        }
+      ]
+    },
+    {
+      "test": "central_junction",
+      "activeState": [
+        {
+          "className": "GT (GTE Pro/Am)",
+          "opacity": 1,
+          "transform": "translate(409.9999999999988, 335.00000000000176)",
+          "text": "GT (GTE PRO/AM) | 1406 | ENTRIES"
+        }
+      ]
+    },
+    {
+      "test": "empty_space_clears",
+      "activeState": []
+    },
+    {
+      "test": "narrative_outside_clears",
+      "activeState": []
+    }
+  ]
+}
