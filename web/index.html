@@ -4,18 +4,23 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WEC / 2011–2023 | FIA World Endurance Championship Analysis</title>
+    <title>ENDURANCE IN DATA — WEC 2011–2023 | Editorial Motorsport Investigation</title>
+    <meta name="description" content="An independent, interactive editorial data investigation exploring the evolution of the FIA World Endurance Championship from 2011 to 2023." />
     <script>
       (function() {
+        if ('scrollRestoration' in history) {
+          history.scrollRestoration = 'manual';
+        }
         try {
           var savedTheme = localStorage.getItem("wec-theme");
-          var prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
-          if (savedTheme === "light" || (savedTheme === null && prefersLight)) {
+          if (savedTheme === "light") {
             document.documentElement.setAttribute("data-theme", "light");
           } else {
             document.documentElement.setAttribute("data-theme", "dark");
           }
-        } catch (e) {}
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        }
       })();
     </script>
   </head>

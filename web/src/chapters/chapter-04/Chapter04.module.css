@@ -8,7 +8,7 @@
   min-height: 90vh; /* Reduced from 150vh to eliminate oversized blank regions */
   padding: 0;
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   border-top: 1px solid var(--color-border);
 }
 
@@ -30,7 +30,7 @@
 
 @media (min-width: 768px) {
   .chapter {
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
   }
 }
 
@@ -279,5 +279,23 @@
   .rotate3,
   .rotate4 {
     animation: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .header {
+    padding: 3rem 1.25rem 2rem;
+  }
+  .content {
+    padding: 2rem 1.25rem 3rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .tyresGrid {
+    gap: 1rem;
+  }
+  .tyreCard {
+    padding: 0.75rem 0.5rem;
   }
 }

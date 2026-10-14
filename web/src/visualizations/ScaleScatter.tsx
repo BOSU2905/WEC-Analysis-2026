@@ -175,34 +175,75 @@ export default function ScaleScatter({ progress }: Props) {
   const activeClusterRef = useRef<string | null>(null);
   const clusterIntensitiesRef = useRef<Record<string, number>>({});
 
+  // Touchscreen tap-to-inspect persistent selection
+  const [selectedCluster, setSelectedCluster] = useState<string | null>(null);
+  const selectedClusterRef = useRef<string | null>(null);
+  useEffect(() => {
+    selectedClusterRef.current = selectedCluster;
+  }, [selectedCluster]);
+
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    // Only track continuous movement for desktop mouse; do not hijack touch gestures
+    if (e.pointerType !== "mouse") return;
+    const rect = e.currentTarget.getBoundingClientRect();
     pointerRef.current = {
-      x: e.nativeEvent.offsetX,
-      y: e.nativeEvent.offsetY,
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
       active: true,
     };
   };
 
-  const handlePointerLeave = () => {
+  const handlePointerLeave = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== "mouse") return;
+    if (selectedClusterRef.current) {
+      const center = clusters[selectedClusterRef.current];
+      if (center) {
+        pointerRef.current = { x: center.x, y: center.y, active: true };
+        return;
+      }
+    }
     pointerRef.current.active = false;
   };
 
-  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    // Touch events do not have nativeEvent.offsetX, so we must calculate it manually
-    // But since touch interactions are rare/different, we can compute the rect here ONCE per touch start
-    // instead of binding to the scroll event for the entire page lifecycle.
-    if (!canvasRef.current) return;
-    const rect = canvasRef.current.getBoundingClientRect();
-    const touch = e.touches[0];
-    pointerRef.current = {
-      x: touch.clientX - rect.left,
-      y: touch.clientY - rect.top,
-      active: true,
-    };
+  const handleSelectCluster = (className: string) => {
+    if (selectedClusterRef.current === className) {
+      setSelectedCluster(null);
+      pointerRef.current.active = false;
+      stimulusRef.current.strength = 0;
+    } else {
+      setSelectedCluster(className);
+      const center = clusters[className];
+      if (center) {
+        pointerRef.current = { x: center.x, y: center.y, active: true };
+        stimulusRef.current = { x: center.x, y: center.y, strength: 1 };
+      }
+    }
   };
 
-  const handleTouchEnd = () => {
-    pointerRef.current.active = false;
+  const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const clickY = e.clientY - rect.top;
+
+    let closest: string | null = null;
+    let minDist = isMobile ? 85 : 110;
+
+    for (const [className, center] of Object.entries(clusters)) {
+      const dist = Math.hypot(center.x - clickX, center.y - clickY);
+      if (dist < minDist) {
+        minDist = dist;
+        closest = className;
+      }
+    }
+
+    if (closest) {
+      handleSelectCluster(closest);
+    } else if (selectedClusterRef.current) {
+      // Tap on empty space deselects
+      setSelectedCluster(null);
+      pointerRef.current.active = false;
+      stimulusRef.current.strength = 0;
+    }
   };
 
   // 3. Continuous Animation & Interpolation Loop (Canvas Renderer)
@@ -258,7 +299,6 @@ export default function ScaleScatter({ progress }: Props) {
     };
 
     updateColors();
-    window.addEventListener("wec-theme-change", updateColors);
 
     const syncNodes = (v: number) => {
       const nodes = nodesRef.current;
@@ -399,8 +439,17 @@ export default function ScaleScatter({ progress }: Props) {
 
         const p = pointerRef.current;
         const s = stimulusRef.current;
+        const sel = selectedClusterRef.current;
 
-        if (p.active) {
+        if (sel) {
+          const center = clusters[sel];
+          if (center) {
+            s.x = center.x;
+            s.y = center.y;
+            s.strength += (1 - s.strength) * 0.12;
+            activeClusterRef.current = sel;
+          }
+        } else if (p.active) {
           if (s.strength < 0.01) {
             s.x = p.x;
             s.y = p.y;
@@ -408,32 +457,32 @@ export default function ScaleScatter({ progress }: Props) {
             s.x += (p.x - s.x) * 0.15;
             s.y += (p.y - s.y) * 0.15;
           }
-        }
 
-        const targetStrength = p.active ? 1 : 0;
-        s.strength += (targetStrength - s.strength) * 0.04;
+          const targetStrength = 1;
+          s.strength += (targetStrength - s.strength) * 0.04;
 
-        if (s.strength > 0.01) {
-          let minDist = Infinity;
-          let closest = null;
-          for (const [className, center] of Object.entries(clusters)) {
-            const dSq = (center.x - s.x) ** 2 + (center.y - s.y) ** 2;
-            if (dSq < minDist) {
-              minDist = dSq;
-              closest = className;
+          if (s.strength > 0.01) {
+            let minDist = Infinity;
+            let closest = null;
+            for (const [className, center] of Object.entries(clusters)) {
+              const dSq = (center.x - s.x) ** 2 + (center.y - s.y) ** 2;
+              if (dSq < minDist) {
+                minDist = dSq;
+                closest = className;
+              }
             }
+            activeClusterRef.current = closest;
           }
-          activeClusterRef.current = closest;
+        } else {
+          s.strength += (0 - s.strength) * 0.04;
         }
 
         for (const className of Object.keys(clusters)) {
           const currentH = clusterIntensitiesRef.current[className] || 0;
-          const targetH =
-            p.active &&
-            s.strength > 0.01 &&
-            className === activeClusterRef.current
-              ? 1
-              : 0;
+          const isTarget = sel
+            ? sel === className
+            : p.active && s.strength > 0.01 && className === activeClusterRef.current;
+          const targetH = isTarget ? 1 : 0;
           const rate = targetH > currentH ? 0.045 : 0.04;
           clusterIntensitiesRef.current[className] =
             currentH + (targetH - currentH) * rate;
@@ -452,10 +501,16 @@ export default function ScaleScatter({ progress }: Props) {
       }
     });
 
+    const handleThemeChange = () => {
+      updateColors();
+      syncNodes(progress.get());
+    };
+    window.addEventListener("wec-theme-change", handleThemeChange);
+
     return () => {
       unsubscribe();
       if (timer) timer.stop();
-      window.removeEventListener("wec-theme-change", updateColors);
+      window.removeEventListener("wec-theme-change", handleThemeChange);
     };
   }, [isAnimated, isInView, isLayoutReady, width, height, clusters, progress]);
 
@@ -465,9 +520,7 @@ export default function ScaleScatter({ progress }: Props) {
       ref={containerRef}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-      onTouchCancel={handleTouchEnd}
+      onClick={handleContainerClick}
     >
       <canvas
         ref={canvasRef}
@@ -492,6 +545,47 @@ export default function ScaleScatter({ progress }: Props) {
           Scatter plot representing {datasetScale.total_entries} entries across{" "}
           {datasetScale.total_events} events.
         </title>
+
+        {/* Interactive Touch Target Zones for Clusters */}
+        {dimensions.width > 0 && (
+          <g>
+            {Object.entries(clusters).map(([className, center]) => (
+              <g
+                key={`touch-${className}`}
+                transform={`translate(${center.x}, ${center.y})`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSelectCluster(className);
+                }}
+                style={{ cursor: "pointer", pointerEvents: "auto" }}
+                role="button"
+                tabIndex={0}
+                aria-pressed={selectedCluster === className}
+                aria-label={`Inspect ${className}`}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleSelectCluster(className);
+                  }
+                }}
+              >
+                {/* Touch Hit Area (Generous touch target) */}
+                <circle r={isMobile ? 48 : 58} fill="transparent" />
+                {/* Visual feedback indicator when selected on touchscreen */}
+                {selectedCluster === className && (
+                  <circle
+                    r={isMobile ? 38 : 48}
+                    fill="none"
+                    stroke="var(--color-accent)"
+                    strokeWidth="1.5"
+                    strokeDasharray="4 4"
+                    opacity="0.8"
+                  />
+                )}
+              </g>
+            ))}
+          </g>
+        )}
 
         {/* Native SVG Annotations */}
         {dimensions.width > 0 && (

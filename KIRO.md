@@ -504,3 +504,103 @@ To introduce unfamiliar readers to the sport, Chapter 0 leverages factual explan
     1.  Removed all performance audit `console.log` statements in `ManufacturerPersistence.tsx` and `Story.tsx` to eliminate string allocations and runtime overhead during scrolling.
     2.  Fixed title vehicle matching in `MachinesExperience.tsx` to support both `Oreca 07 Gibson` and `Oreca 07 - Gibson` without hyphens in displayed titles.
     3.  Verified 0 warnings, 0 lint errors (`npm run lint`), passing test suite (`npm test`), and clean production bundle build (`npm run build`).
+
+---
+
+### Phase C: Final Refinement & Release Candidate Verification
+*   **Status**: Completed and fully verified across all 10 project dimensions.
+*   **1. Theme Behavior & Transition Synchronization**:
+    *   **Default Mode**: Updated `index.html` inline script and `ThemeToggle.tsx` (`getInitialTheme`) to default unconditionally to `"dark"` for first-time visitors (removing OS-level light mode overrides).
+    *   **Persistence**: Strictly persists user preference (`localStorage.getItem("wec-theme")`). Subsequent visits respect explicit user choices.
+    *   **Transition Sync**: Synchronized structural transitions across `body`, `header`, `nav`, `main`, `section`, `article`, `footer`, modals, and cards with restrained 200ms ease transitions (`global.css`). Removed delayed text transitions and theme flashes.
+    *   **Canvas Canvas Sync**: ScaleScatter (Chapter 1) and ArmadaScatter (Chapter 3) listen to `wec-theme-change` custom events and immediately repaint color tokens even when resting/offscreen.
+    *   **Palette Integrity**: Preserved pure dark background tokens (`#08080A`, `#101014`) and neutral light background tokens (`#F5F5F7`, `#FFFFFF`), completely eliminating warm ivory tints. Added shared `--sector-1/2/3` and status badge tokens.
+*   **2. Scroll Restoration & Navigation Architecture**:
+    *   **Deterministic Scroll Restoration**: In `Story.tsx`, re-engineered `Story` and `LazyChapter` with `getInitialTargetChapterIndex()`. On ordinary page reload, preceding chapters mount their true DOM dimensions immediately, eliminating the height-collapse defect where unmounted lazy chapters collapsed from ~4,000px to 500px, which previously clamped scroll position and caused false jumps to Chapter 05.
+    *   **Route Position Reset**: In `App.tsx`, set `history.scrollRestoration = "manual"`. Navigating between Story and Archives strictly resets the viewport to the top (`window.scrollTo({ top: 0, left: 0, behavior: "instant" })`).
+    *   **Direct Hash Navigation**: Direct URLs and chapter hashes (`#chapter-01`, `#chapter-02`, `#chapter-03`, `#chapter-04`, `#chapter-05`, `#paddock`, `#machines`, `#archive`) continue to resolve deterministically.
+    *   **Hard Reload / Explicit Restart**: Added `keydown` listener for `Shift+R`, `Ctrl+Shift+R`, and `Shift+F5` to clear `wec-story-scroll-y` and set `wec-hard-restart`. Brand logo in the header acts as an explicit restart mechanism resetting Story state and scrolling to top.
+    *   **Native Scrolling**: Zero scroll hijacking; 100% native browser scrolling preserved.
+*   **3. Archives Hero — Interactive Topographic Elevation**:
+    *   **Component**: Built `TopographicHero.tsx` and `TopographicHero.module.css`.
+    *   **Design**: Original 4-plane vector SVG contour landscape inspired by topographic elevation maps and circuit curves (Sector 2 apex crest). Subtly layered with restrained 3D parallax depth responsive to pointer coordinates via lerp damping.
+    *   **Performance & Efficiency**:
+        *   Pure SVG + CSS transforms (`translate3d`), avoiding heavy WebGL scenes.
+        *   `IntersectionObserver` pauses RAF loop completely when the hero is offscreen.
+        *   Pointer move coordinates throttled to animation frames.
+        *   `prefers-reduced-motion` provides a graceful static fallback without RAF loops.
+    *   **Tabs Preserved**: Preserved user-authored archive tab buttons (`Machines` and `The Paddock`) without `01`/`02` numerical prefixes.
+*   **4. Independent Brand Identity — ENDURANCE IN DATA**:
+    *   **Brand Mark**: Created `BrandLogo.tsx` and `BrandLogo.module.css` featuring an original "Racing Line Monogram" vector ribbon geometry (metallic gray/white `#E2E8F0` transitioning smoothly to restrained burnt-orange `#D97736`).
+    *   **Wordmark Lockup**: Brand name `"ENDURANCE IN DATA"` paired with project descriptor `"WEC 2011–2023"`.
+    *   **Favicon**: Replaced default Vite SVG with the simplified geometric Racing Line Monogram favicon (`web/public/favicon.svg`).
+    *   **Navbar Placement**: Placed on the far left of `SiteHeader.tsx`. Clicking it explicitly resets reading progress and returns to `#story`.
+    *   **Non-Affiliation**: Distinguishes project clearly from official championship branding.
+*   **5. Performance & Animation Audit**:
+    *   **Chapter 1 (ScaleScatter)**: Preserved organic scroll-linked emergence, staggered dot fading, and subtle parallax with deterministic settling.
+    *   **Chapter 3 (ArmadaScatter)**: Preserved the 3-draw-call canvas batching architecture and outward bloom animation (`d3.easeCubicOut`). Canvas repaints immediately on theme switch.
+    *   **Code Splitting**: Eager loaded `Story.tsx` for optimal LCP paint, while lazy loading `Archive.tsx`, `MachinesExperience.tsx`, `CircuitGuide.tsx`, and `MachineModel.tsx` (Three.js isolated chunk 286 kB gzipped).
+*   **6. Chapter 4 — Michelin Pilot Sport Tire Graphic**:
+    *   **Correction**: Replaced fragmented typographic vector SVGs (`michelin-medium.svg`, `michelin-soft.svg`, `michelin-hard.svg`, `michelin-wet.svg`) with authentic vector tire decal badges featuring the signature curved blue upper plate (`#002B66`), yellow lower stripe (`#FFD200`), bold italic white "MICHELIN" branding, and "PILOT SPORT" lettering directly underneath.
+    *   **Compliance**: Original clean vector artwork avoiding proprietary CAD/copyrighted files; accompanied by nominative fair use and non-sponsorship disclaimers.
+*   **7. Footer Refinement**:
+    *   **Layout**: Compacted vertical padding from `6rem` to `3rem 2rem 3.25rem` and flex gap from `4rem` to `2.5rem` (`Footer.module.css`).
+    *   **Attributions**: Preserved all Kaggle dataset credits, analytical authorship notes, independent disclaimer, and clickable Photo Credits Ledger link opening `PhotoCreditsModal.tsx`.
+*   **8. Comprehensive Asset License Audit (`docs/asset_license_audit.md`)**:
+    *   Cataloged 100% of deployed assets across 6 categories (16 motorsport photos, 10 machine assets, 4 3D GLB models, 4 circuit SVGs, 3 open-source fonts, UI vector badges).
+    *   Classified each asset into the required 4-tier taxonomy:
+        *   **Verified for intended use**: 11 assets (Fonts under OFL 1.1, original vector marks, Topographic SVG map, Michelin illustrative decal vectors, UI icons).
+        *   **Usable subject to attribution**: 25 assets (All 16 editorial/filmstrip photos under CC BY / CC BY-SA, 5 main machine photos under CC BY / CC BY-SA, 4 circuit SVGs under CC BY-SA / GFDL, 4 3D GLB models under CC BY / CC BY-NC-SA).
+        *   **Unverified / unclear**: 5 assets (Transparent machine 2D cutouts `*-side.webp` derived from press release media; identified targeted vector replacement recommendations).
+        *   **Requires replacement**: 0 assets (All synthetic placeholders and unverified candidate leads resolved).
+*   **9. Validation Commands & Automated E2E Results**:
+    *   `npm run typecheck`: 0 errors.
+    *   `npm run lint` (oxlint): 0 errors, 0 warnings.
+    *   `npm run test` (Vitest): 7 test files, 27 tests passing (100%).
+    *   `npm run build`: Production bundle built in 1.07s.
+    *   **Automated Headless E2E Browser Test** (`scratch/validate_e2e.mjs` running Chrome 155 via Puppeteer):
+        *   31 passed, 0 failed.
+        *   Verified: default dark mode, theme toggling, localStorage persistence, BrandLogo and descriptor in navbar, SVG favicon HTTP 200, Story to Archive top scroll reset, TopographicHero multi-plane SVG rendering and pointer 3D parallax, Archive tabs "Machines" and "The Paddock" without numerical prefixes, BrandLogo reset to top of Story, Chapter 4 Michelin tire graphic badge colors and hierarchy, compact footer with attribution, Chapter 1 & Chapter 3 canvas rendering, 0 console errors, 0 failed network requests.
+
+---
+
+### Phase D: Cross-Device Refinement & Visual Polish (October 2026)
+*   **Status**: Completed and fully verified across all 6 targeted requirements.
+*   **1. Story Refresh Bug — Permanent Architectural Resolution**:
+    *   **Root Cause Diagnosed**: The previous `LazyChapter` implementation dynamically mounted chapters as the visitor scrolled, leaving unvisited chapters at fallback skeleton heights (~500px). Upon ordinary page refresh, the document collapsed from its full ~13,645px height to under 2,500px before lazy components could initialize. Because the browser restored scroll position against this shrunken DOM, native scroll clamping clamped the viewport to the bottom of the page, erroneously tripping Chapter 05 intersection observers and overwriting `wec-story-scroll-y` and `wec-active-chapter`.
+    *   **Permanent Architectural Fix**:
+        1. In `web/index.html`, pre-empted native browser clamping by executing `if ('scrollRestoration' in history) history.scrollRestoration = 'manual';` in `<head>`.
+        2. In `web/src/pages/Story.tsx`, converted `Chapter01` through `Chapter05` to direct eager imports. The entire document renders with its true ~13,645px height on initial DOM layout, completely eliminating height collapse.
+        3. Enforced deterministic scroll restoration in `useLayoutEffect` utilizing an `isRestoringRef` guard flag that suppresses intermediate scroll listeners and prevents `sessionStorage` overwrites during the restoration window.
+        4. In `web/src/components/layout/ChapterNav.tsx`, initialized active state from `sessionStorage.getItem("wec-active-chapter")` for immediate visual consistency on reload.
+        5. Verified pixel-exact restoration (0px difference across multiple iterations) for Chapter 00 (800px), Chapter 01 (4200px), Chapter 02 (7200px), Chapter 03 (9000px), Chapter 04 (10500px), and Chapter 05 (12000px).
+*   **2. Mobile & Tablet Responsive Experience Audit**:
+    *   **Zero Horizontal Overflow**: Tested across 360px, 390px, 430px, 768px, 834px, 1024px, and 1440px viewports. Document scrollWidth strictly equals clientWidth at all breakpoints.
+    *   **Grid Track Optimization**: Updated `.chapter` (`Chapter04.module.css`) and `.gridContainer` (`Chapter05.module.css`) from `1fr` to `minmax(0, 1fr)` (and `minmax(0, 1fr) minmax(0, 2fr)` on `>= 768px`), preventing CSS grid items from expanding beyond the viewport when content minimum widths are computed.
+    *   **Filmstrip Clipping**: Added `overflow: hidden` to `.filmstripContainer` in `Hero.module.css`.
+    *   **Responsive Spacing & Typography**: Added mobile media queries (`< 768px` and `< 640px`) reducing container padding, tuning tyre card grid gaps (`gap: 1rem`), and ensuring narrative cards adapt with `rgba(var(--color-surface-rgb), 0.92)` across both light and dark themes.
+*   **3. Scatter Touch Interactions (ScaleScatter & ArmadaScatter)**:
+    *   **Native Scroll Priority**: Applied `touch-action: pan-y` on container elements and canvases to allow vertical scrolling gestures without pointer hijacking.
+    *   **ScaleScatter**: Added tap-to-inspect persistent selection with accessible touch hit-targets (`g[role="button"]`), allowing mobile visitors to tap any cluster to lock its inspection overlay without holding a finger down.
+    *   **ArmadaScatter**: Added tap-to-inspect team card selection that highlights the tapped team and dims others, preventing card collisions and visual clutter on mobile touchscreens.
+    *   **MachineModel**: Added `touch-action: pan-y` on container and canvas, with responsive mobile height (`min-height: 240px`).
+*   **4. Archives Hero Track Particles & Compact Tab Selector**:
+    *   **Subtle Animated Track Particles**: Integrated continuous SVG `<animateMotion>` luminous particles traversing elevation contour lines `hero-track-p2` and `hero-track-p4` with burnt-orange glow. Includes dynamic `prefers-reduced-motion` bypass and offscreen pause via `IntersectionObserver`.
+    *   **Compact Editorial Selector**: Redesigned Machines / The Paddock tab control in `Archive.tsx` and `Archive.module.css` into a sleek 44px pill container with active burnt-orange indicator, non-wrapping layout, and preserved exact labels ("Machines" and "The Paddock").
+*   **5. Circuit Alignment & Imola Geometry Correction**:
+    *   **Circuit Quick Stats Alignment**: Grouped and left-aligned circuit metadata ("13.626 km / 38 Corners / Clockwise") directly below the circuit title in `CircuitExplorerModal`, establishing clean vertical hierarchy across desktop, tablet, and mobile.
+    *   **Imola Sector 3 Geometry Fix**: Diagnosed and corrected missing SVG command at line 535 of `web/src/data/circuits_data.ts` (`C 106.107,554.589 ...`), eliminating stray disconnected line artifacts.
+*   **6. Chapter 4 Sporty 18-Inch Forged Motorsport Wheel**:
+    *   **Authentic Motorsport Proportions**: Redesigned procedural SVG wheel in `web/src/assets/tyres/michelin-*.svg` into an authentic 18-inch forged motorsport wheel (`r=121` out of 390 total diameter, ~63% rim-to-tire proportion).
+    *   **Forged Details**: Added 5 sculpted split Y-spokes (10 aerodynamic arms), slotted carbon-ceramic brake rotor, Brembo-style motorsport caliper with twin hydraulic bleeders, and center-lock nut with safety spindle.
+*   **7. Independent Brand Logo Monogram Correction**:
+    *   **Precision Vector Ribbon**: Replaced freehand/doodle-style SVG paths in `BrandLogo.tsx` and `web/public/favicon.svg` with an engineered, continuous geometric Racing Line Monogram ribbon (`viewBox="0 0 40 28"`, metallic gray/white transitioning smoothly to burnt-orange `#D97736`).
+    *   **Wordmark Preserved**: Retained official wordmark lockup ("ENDURANCE IN DATA" and "WEC 2011–2023").
+*   **8. Comprehensive Verification Results**:
+    *   `npm run typecheck`: 0 errors.
+    *   `npm run lint` (oxlint): 0 errors, 0 warnings.
+    *   `npm test` (Vitest): 7 test files, 27 tests passing (100%).
+    *   `npm run build`: Production bundle built cleanly in 1.19s.
+    *   `test_polish.js` (Puppeteer Automated Validation Suite): 33 / 33 checks passed (100%).
+
+

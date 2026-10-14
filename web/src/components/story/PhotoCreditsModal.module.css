@@ -263,21 +263,21 @@
 }
 
 .statusVerified {
-  background-color: rgba(137, 159, 130, 0.15);
-  color: #a4c99b;
-  border: 1px solid rgba(137, 159, 130, 0.4);
+  background-color: var(--status-verified-bg);
+  color: var(--status-verified-text);
+  border: 1px solid var(--status-verified-border);
 }
 
 .statusLead {
-  background-color: rgba(182, 161, 111, 0.15);
-  color: #dfca92;
-  border: 1px solid rgba(182, 161, 111, 0.4);
+  background-color: var(--status-lead-bg);
+  color: var(--status-lead-text);
+  border: 1px solid var(--status-lead-border);
 }
 
 .statusUnverified {
-  background-color: rgba(185, 95, 89, 0.15);
-  color: #df8882;
-  border: 1px solid rgba(185, 95, 89, 0.4);
+  background-color: var(--status-unverified-bg);
+  color: var(--status-unverified-text);
+  border: 1px solid var(--status-unverified-border);
 }
 
 .deployTag {
@@ -293,9 +293,9 @@
 }
 
 .deployAction {
-  color: #df8882;
-  border: 1px dashed rgba(185, 95, 89, 0.5);
-  background-color: rgba(185, 95, 89, 0.05);
+  color: var(--status-unverified-text);
+  border: 1px dashed var(--status-unverified-border);
+  background-color: var(--status-unverified-bg);
 }
 
 .metadataGrid {

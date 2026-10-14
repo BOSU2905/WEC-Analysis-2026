@@ -10,12 +10,12 @@
   min-height: 90vh;
   padding: 0;
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
 }
 
 @media (min-width: 768px) {
   .gridContainer {
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
   }
 }
 
@@ -142,4 +142,23 @@
   font-weight: 400;
   color: var(--color-primary);
   letter-spacing: -0.02em;
+}
+
+@media (max-width: 640px) {
+  .header {
+    padding: 2.5rem 1.25rem;
+  }
+
+  .content {
+    padding: 2rem 1.25rem;
+  }
+
+  .closingSection {
+    padding: 4.5rem 1.25rem;
+  }
+
+  .closingContent p {
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
 }

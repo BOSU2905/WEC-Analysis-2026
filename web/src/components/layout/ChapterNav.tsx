@@ -11,7 +11,12 @@ const CHAPTERS = [
 ];
 
 export default function ChapterNav() {
-  const [activeId, setActiveId] = useState("chapter-00");
+  const [activeId, setActiveId] = useState(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("wec-active-chapter") || "chapter-00";
+    }
+    return "chapter-00";
+  });
 
   useEffect(() => {
     // Keep track of all currently intersecting chapters
@@ -65,6 +70,9 @@ export default function ChapterNav() {
 
           if (bestId) {
             setActiveId((prev) => (prev !== bestId ? bestId : prev));
+            try {
+              sessionStorage.setItem("wec-active-chapter", bestId);
+            } catch {}
           }
         }
       },

@@ -1,26 +1,65 @@
 import styles from "./SiteHeader.module.css";
 import ThemeToggle from "./ThemeToggle";
+import BrandLogo from "./BrandLogo";
+
+interface SiteHeaderProps {
+  currentView?: "story" | "archive";
+  onBrandClick?: () => void;
+  onNavigate?: (view: "story" | "archive") => void;
+}
 
 export default function SiteHeader({
   currentView = "story",
-}: {
-  currentView?: "story" | "archive";
-}) {
+  onBrandClick,
+  onNavigate,
+}: SiteHeaderProps) {
+  const handleBrandClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if (onBrandClick) {
+      onBrandClick();
+    } else {
+      window.location.hash = "story";
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    }
+  };
+
+  const handleLinkClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    view: "story" | "archive",
+  ) => {
+    if (onNavigate) {
+      e.preventDefault();
+      onNavigate(view);
+    }
+  };
+
   return (
     <header className={styles.header}>
-      <div className={styles.logo}>WEC / 2011–2023</div>
+      <a
+        href="#story"
+        onClick={handleBrandClick}
+        className={styles.brandLink}
+        aria-label="ENDURANCE IN DATA — Return to start of Story"
+        title="ENDURANCE IN DATA — Return to start of Story"
+      >
+        <BrandLogo variant="navbar" showDescriptor />
+      </a>
+
       <div className={styles.progress}>
-        {/* Placeholder for progress indicator */}
+        {/* Telemetry spacer */}
       </div>
-      <nav className={styles.nav}>
+
+      <nav className={styles.nav} aria-label="Main Navigation">
         <a
           href="#story"
+          onClick={(e) => handleLinkClick(e, "story")}
           className={`${styles.navLink} ${currentView === "story" ? styles.active : ""}`}
         >
           Story
         </a>
         <a
           href="#archive"
+          onClick={(e) => handleLinkClick(e, "archive")}
           className={`${styles.navLink} ${currentView === "archive" ? styles.active : ""}`}
         >
           Archive

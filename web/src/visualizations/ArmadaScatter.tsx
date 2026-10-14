@@ -181,6 +181,7 @@ export default function ArmadaScatter({ progress }: Props) {
         computed.getPropertyValue("--chart-top-class-rgb").trim() ||
         topClassRgb;
       expRgb = computed.getPropertyValue("--chart-exp-rgb").trim() || expRgb;
+      syncNodesRef.current?.();
     };
 
     updateColors();
@@ -374,8 +375,25 @@ export default function ArmadaScatter({ progress }: Props) {
     return { display: "none" };
   };
 
+  const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
+
+  const handleTeamClick = (team: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedTeam((prev) => (prev === team ? null : team));
+  };
+
+  const handleContainerClick = () => {
+    if (selectedTeam) {
+      setSelectedTeam(null);
+    }
+  };
+
   return (
-    <div className={styles.container} ref={containerRef}>
+    <div
+      className={styles.container}
+      ref={containerRef}
+      onClick={handleContainerClick}
+    >
       <canvas
         ref={canvasRef}
         style={{
@@ -405,11 +423,27 @@ export default function ArmadaScatter({ progress }: Props) {
           MAIN_TEAMS.map((team) => {
             const center = clusters[team as keyof typeof clusters];
             if (!center) return null;
+            const isSelected = selectedTeam === team;
+            const isDimmed = selectedTeam !== null && !isSelected;
+
             return (
               <div
                 key={team}
-                className={styles.annotationCard}
+                className={`${styles.annotationCard} ${
+                  isSelected ? styles.selectedCard : ""
+                } ${isDimmed ? styles.dimmedCard : ""}`}
                 style={getAnnotationStyle(team, center)}
+                onClick={(e) => handleTeamClick(team, e)}
+                role="button"
+                tabIndex={0}
+                aria-pressed={isSelected}
+                aria-label={`Inspect ${team} statistics`}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleTeamClick(team, e as unknown as React.MouseEvent);
+                  }
+                }}
               >
                 <div className={styles.teamName}>{team}</div>
                 <div className={styles.teamMetric}>

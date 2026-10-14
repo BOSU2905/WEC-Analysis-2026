@@ -1,6 +1,8 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import styles from "./Archive.module.css";
 
+import TopographicHero from "../components/archive/TopographicHero";
+
 const MachinesExperience = lazy(() => import("../components/archive/MachinesExperience"));
 const CircuitGuide = lazy(() => import("../components/circuits/CircuitGuide"));
 
@@ -45,43 +47,39 @@ export default function Archive() {
 
   return (
     <div className={styles.archive}>
-      <header className={styles.header}>
-        <h1 className={styles.title}>The WEC Archive</h1>
-        <p className={styles.intro}>
-          A user-driven exploration of the machines and circuits that defined
-          the 2011–2023 era of the FIA World Endurance Championship.
-        </p>
+      <header className={styles.heroWrapper}>
+        <TopographicHero>
+          {/* Archival Destination Navigation */}
+          <nav className={styles.sectionNav} aria-label="Archive Destinations">
+            <div className={styles.navTrack} role="tablist">
+              <button
+                id="tab-machines"
+                role="tab"
+                aria-selected={activeSection === "machines"}
+                aria-controls="panel-machines"
+                tabIndex={activeSection === "machines" ? 0 : -1}
+                className={`${styles.navButton} ${activeSection === "machines" ? styles.active : ""}`}
+                onClick={() => navigateTo("machines")}
+              >
+                <span className={styles.navIndicator} aria-hidden="true" />
+                <span className={styles.navLabel}>Machines</span>
+              </button>
 
-        {/* Archival Destination Navigation */}
-        <nav className={styles.sectionNav} aria-label="Archive Destinations">
-          <div className={styles.navTrack} role="tablist">
-            <button
-              id="tab-machines"
-              role="tab"
-              aria-selected={activeSection === "machines"}
-              aria-controls="panel-machines"
-              tabIndex={activeSection === "machines" ? 0 : -1}
-              className={`${styles.navButton} ${activeSection === "machines" ? styles.active : ""}`}
-              onClick={() => navigateTo("machines")}
-            >
-              <span className={styles.navLabel}>Machines</span>
-              <span className={styles.navTag}>Car Collection &amp; 3D</span>
-            </button>
-
-            <button
-              id="tab-paddock"
-              role="tab"
-              aria-selected={activeSection === "paddock"}
-              aria-controls="panel-paddock"
-              tabIndex={activeSection === "paddock" ? 0 : -1}
-              className={`${styles.navButton} ${activeSection === "paddock" ? styles.active : ""}`}
-              onClick={() => navigateTo("paddock")}
-            >
-              <span className={styles.navLabel}>The Paddock</span>
-              <span className={styles.navTag}>Circuit Guide &amp; Explorer</span>
-            </button>
-          </div>
-        </nav>
+              <button
+                id="tab-paddock"
+                role="tab"
+                aria-selected={activeSection === "paddock"}
+                aria-controls="panel-paddock"
+                tabIndex={activeSection === "paddock" ? 0 : -1}
+                className={`${styles.navButton} ${activeSection === "paddock" ? styles.active : ""}`}
+                onClick={() => navigateTo("paddock")}
+              >
+                <span className={styles.navIndicator} aria-hidden="true" />
+                <span className={styles.navLabel}>The Paddock</span>
+              </button>
+            </div>
+          </nav>
+        </TopographicHero>
       </header>
 
       {/* Separate destinations: keep mounted to prevent 3D state loss */}

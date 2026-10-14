@@ -157,18 +157,17 @@ export default function CircuitExplorerModal({
         transition={{ duration: prefersReducedMotion ? 0.05 : 0.25, ease: "easeOut" }}
       >
         {/* Modal Top Bar */}
-        <header className={styles.header}>
+        <header className={styles.topBar}>
           <div className={styles.circuitIdentity}>
-            <span className={styles.countryBadge}>
-              <span className={styles.flagEmoji} aria-hidden="true">{circuit.countryFlag}</span>{" "}
-              {circuit.country}
-            </span>
-            <h2 id={titleId} className={styles.circuitTitle}>
-              {circuit.name}
-            </h2>
-          </div>
-
-          <div className={styles.topControls}>
+            <div className={styles.titleRow}>
+              <h2 id={titleId} className={styles.circuitTitle}>
+                {circuit.name}
+              </h2>
+              <span className={styles.countryBadge}>
+                <span className={styles.flagEmoji} aria-hidden="true">{circuit.countryFlag}</span>{" "}
+                {circuit.country}
+              </span>
+            </div>
             <div className={styles.circuitQuickStats}>
               <span>{circuit.stats.length}</span>
               <span className={styles.quickStatDivider}>/</span>
@@ -176,7 +175,9 @@ export default function CircuitExplorerModal({
               <span className={styles.quickStatDivider}>/</span>
               <span>{circuit.stats.direction}</span>
             </div>
+          </div>
 
+          <div className={styles.topControls}>
             <button
               type="button"
               ref={closeButtonRef}
@@ -348,7 +349,7 @@ export default function CircuitExplorerModal({
                           r={isSelected ? "9" : isHovered ? "8" : "6.5"}
                           className={styles.markerCircle}
                           style={{
-                            fill: isSelected ? "#ffffff" : markerColor,
+                            fill: isSelected ? "var(--color-surface)" : markerColor,
                             stroke: isSelected ? markerColor : "var(--color-bg)",
                           }}
                         />

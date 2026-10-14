@@ -27,6 +27,18 @@ body {
     color 200ms ease;
 }
 
+header,
+main,
+section,
+article,
+nav,
+footer {
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease;
+}
+
 /* Textures are now defined dynamically in tokens.css */
 
 h1,

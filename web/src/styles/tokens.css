@@ -60,6 +60,24 @@
   --chart-mfg-porsche: #b6a16f; /* antique brass */
   --chart-mfg-other: #718fa8; /* steel blue */
 
+  /* Sector Colors (Circuit Explorer) */
+  --sector-1: #e69d45;
+  --sector-2: #5a9bd4;
+  --sector-3: #4ea37e;
+
+  /* Status Badges */
+  --status-verified-text: #a4c99b;
+  --status-verified-bg: rgba(137, 159, 130, 0.15);
+  --status-verified-border: rgba(137, 159, 130, 0.4);
+
+  --status-lead-text: #dfca92;
+  --status-lead-bg: rgba(182, 161, 111, 0.15);
+  --status-lead-border: rgba(182, 161, 111, 0.4);
+
+  --status-unverified-text: #df8882;
+  --status-unverified-bg: rgba(185, 95, 89, 0.15);
+  --status-unverified-border: rgba(185, 95, 89, 0.4);
+
   /* Global Textures (Dark) - Carbon Fibre Twill */
   --bg-texture: repeating-linear-gradient(45deg, rgba(255,255,255,0.04) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.04) 75%, rgba(255,255,255,0.04)),
                 repeating-linear-gradient(45deg, rgba(255,255,255,0.04) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.04) 75%, rgba(255,255,255,0.04));
@@ -106,57 +124,27 @@
   --chart-mfg-porsche: #b66b43;
   --chart-mfg-other: #3d7184;
 
+  /* Sector Colors (Circuit Explorer) */
+  --sector-1: #d97736;
+  --sector-2: #3d7ea6;
+  --sector-3: #3b8764;
+
+  /* Status Badges */
+  --status-verified-text: #2f6834;
+  --status-verified-bg: rgba(71, 134, 78, 0.12);
+  --status-verified-border: rgba(71, 134, 78, 0.35);
+
+  --status-lead-text: #7d601b;
+  --status-lead-bg: rgba(182, 107, 67, 0.12);
+  --status-lead-border: rgba(182, 107, 67, 0.35);
+
+  --status-unverified-text: #9e2a22;
+  --status-unverified-bg: rgba(184, 73, 62, 0.12);
+  --status-unverified-border: rgba(184, 73, 62, 0.35);
+
   /* Global Textures (Light) - Subtle Carbon Twill */
   --bg-texture: repeating-linear-gradient(45deg, rgba(0,0,0,0.025) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.025) 75%, rgba(0,0,0,0.025)),
                 repeating-linear-gradient(45deg, rgba(0,0,0,0.025) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.025) 75%, rgba(0,0,0,0.025));
   --bg-texture-position: 0 0, 2px 2px;
   --bg-texture-size: 4px 4px;
-}
-
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) {
-    --color-bg: #f5f6f8;
-    --color-surface: #ffffff;
-    --color-surface-subtle: #f0f2f5;
-    --color-primary: #202224;
-    --color-secondary: #5a6065;
-    --color-border: #dcdfe3;
-    --color-accent: #d97736;
-    --color-accent-hover: #c46427;
-
-    --color-bg-rgb: 245, 246, 248;
-    --color-surface-rgb: 255, 255, 255;
-    --color-surface-subtle-rgb: 240, 242, 245;
-    --color-primary-rgb: 32, 34, 36;
-    --color-secondary-rgb: 90, 96, 101;
-    --color-border-rgb: 220, 223, 227;
-    --color-accent-rgb: 217, 119, 54;
-
-    /* Chart Colors (Light) */
-    --chart-top-class: #315e75;
-    --chart-top-class-rgb: 49, 94, 117;
-    --chart-lmp2: #3d7184;
-    --chart-lmp2-rgb: 61, 113, 132;
-    --chart-gt: #b66b43;
-    --chart-gt-rgb: 182, 107, 67;
-    --chart-exp: #71866e;
-    --chart-exp-rgb: 113, 134, 110;
-    
-    --chart-evo-lmp2: #a98438;
-    --chart-evo-gt: #8a7b9c;
-    
-    --chart-mfg-highlight: #b8493e;
-    --chart-mfg-muted: #8a7b9c;
-    
-    --chart-mfg-toyota: #b8493e;
-    --chart-mfg-audi: #71866e;
-    --chart-mfg-porsche: #b66b43;
-    --chart-mfg-other: #3d7184;
-
-    /* Global Textures (Light) - Silver Carbon Fibre */
-    --bg-texture: repeating-linear-gradient(45deg, rgba(0,0,0,0.04) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.04) 75%, rgba(0,0,0,0.04)),
-                  repeating-linear-gradient(45deg, rgba(0,0,0,0.04) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.04) 75%, rgba(0,0,0,0.04));
-    --bg-texture-position: 0 0, 2px 2px;
-    --bg-texture-size: 4px 4px;
-  }
 }

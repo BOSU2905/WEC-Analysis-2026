@@ -1,59 +1,103 @@
-import { lazy, Suspense, useRef, useEffect } from "react";
-import { useInView } from "framer-motion";
+import { useRef, useEffect, useLayoutEffect } from "react";
 import Hero from "../components/story/Hero";
 import ChapterNav from "../components/layout/ChapterNav";
 import Chapter00 from "../chapters/chapter-00/Chapter00";
-
-const loadCh1 = () => import("../chapters/chapter-01/Chapter01");
-const loadCh2 = () => import("../chapters/chapter-02/Chapter02");
-const loadCh3 = () => import("../chapters/chapter-03/Chapter03");
-const loadCh4 = () => import("../chapters/chapter-04/Chapter04");
-const loadCh5 = () => import("../chapters/chapter-05/Chapter05");
-
-const Ch1 = lazy(loadCh1);
-const Ch2 = lazy(loadCh2);
-const Ch3 = lazy(loadCh3);
-const Ch4 = lazy(loadCh4);
-const Ch5 = lazy(loadCh5);
-
-function LazyChapter({ id, component: Component, preloadNext }: any) {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "1000px 0px" });
-
-  useEffect(() => {
-    if (isInView && preloadNext) {
-      preloadNext();
-    }
-  }, [isInView, preloadNext]);
-
-  return (
-    <div id={id} ref={ref}>
-      {isInView ? (
-        <Suspense fallback={<div style={{ minHeight: "100vh" }} />}>
-          <Component />
-        </Suspense>
-      ) : (
-        <div style={{ minHeight: "100vh" }} />
-      )}
-    </div>
-  );
-}
+import Chapter01 from "../chapters/chapter-01/Chapter01";
+import Chapter02 from "../chapters/chapter-02/Chapter02";
+import Chapter03 from "../chapters/chapter-03/Chapter03";
+import Chapter04 from "../chapters/chapter-04/Chapter04";
+import Chapter05 from "../chapters/chapter-05/Chapter05";
 
 export default function Story() {
-  useEffect(() => {
-    // Gracefully warm Chapter 01 during idle time so it is ready when scrolling past Chapter 00.
-    // Subsequent chapters are progressively warmed via LazyChapter's 1000px viewport margin.
-    const warmNext = () => {
-      loadCh1().catch(() => {});
-    };
+  const isRestoringRef = useRef(true);
 
-    if ("requestIdleCallback" in window) {
-      const handle = (window as any).requestIdleCallback(warmNext, { timeout: 4000 });
-      return () => (window as any).cancelIdleCallback?.(handle);
-    } else {
-      const timer = setTimeout(warmNext, 3000);
+  // Deterministic scroll restoration on layout mount (before paint)
+  useLayoutEffect(() => {
+    isRestoringRef.current = true;
+
+    // Check if hard restart was requested via Shift+R or Brand Logo
+    if (sessionStorage.getItem("wec-hard-restart") === "true") {
+      sessionStorage.removeItem("wec-hard-restart");
+      sessionStorage.removeItem("wec-story-scroll-y");
+      sessionStorage.removeItem("wec-active-chapter");
+      window.scrollTo(0, 0);
+      isRestoringRef.current = false;
+      return;
+    }
+
+    // Check if URL contains an explicit chapter hash (e.g. #chapter-03)
+    const hash = window.location.hash.replace("#", "");
+    if (hash && hash.startsWith("chapter-")) {
+      const el =
+        document.getElementById(hash) ||
+        document.getElementById(`${hash}-wrap`);
+      if (el) {
+        el.scrollIntoView({ behavior: "instant" });
+      }
+      const timer = setTimeout(() => {
+        isRestoringRef.current = false;
+      }, 100);
       return () => clearTimeout(timer);
     }
+
+    // Check navigation type: reload vs initial navigation
+    let isReload = false;
+    if (typeof performance !== "undefined" && performance.getEntriesByType) {
+      const navEntries = performance.getEntriesByType("navigation");
+      if (navEntries.length > 0) {
+        isReload = (navEntries[0] as PerformanceNavigationTiming).type === "reload";
+      }
+    }
+
+    // If page reload, restore previous exact scroll position
+    if (isReload) {
+      const savedScroll = sessionStorage.getItem("wec-story-scroll-y");
+      if (savedScroll) {
+        const yPos = parseInt(savedScroll, 10);
+        if (!isNaN(yPos) && yPos > 0) {
+          window.scrollTo({ top: yPos, behavior: "instant" });
+        }
+      }
+    } else {
+      // Fresh navigation without chapter hash always starts at Chapter 00 top
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      sessionStorage.removeItem("wec-story-scroll-y");
+      sessionStorage.removeItem("wec-active-chapter");
+    }
+
+    // Release restoration guard after browser layout has settled
+    const raf = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        isRestoringRef.current = false;
+      });
+    });
+
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  // Persist scroll position during active reading
+  useEffect(() => {
+    let ticking = false;
+    const handleScroll = () => {
+      if (isRestoringRef.current) return;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (!isRestoringRef.current) {
+            try {
+              sessionStorage.setItem(
+                "wec-story-scroll-y",
+                window.scrollY.toString(),
+              );
+            } catch {}
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
@@ -61,11 +105,21 @@ export default function Story() {
       <ChapterNav />
       <Hero />
       <Chapter00 />
-      <LazyChapter id="chapter-01-wrap" component={Ch1} preloadNext={loadCh2} />
-      <LazyChapter id="chapter-02-wrap" component={Ch2} preloadNext={loadCh3} />
-      <LazyChapter id="chapter-03-wrap" component={Ch3} preloadNext={loadCh4} />
-      <LazyChapter id="chapter-04-wrap" component={Ch4} preloadNext={loadCh5} />
-      <LazyChapter id="chapter-05-wrap" component={Ch5} preloadNext={null} />
+      <div id="chapter-01-wrap">
+        <Chapter01 />
+      </div>
+      <div id="chapter-02-wrap">
+        <Chapter02 />
+      </div>
+      <div id="chapter-03-wrap">
+        <Chapter03 />
+      </div>
+      <div id="chapter-04-wrap">
+        <Chapter04 />
+      </div>
+      <div id="chapter-05-wrap">
+        <Chapter05 />
+      </div>
     </>
   );
 }

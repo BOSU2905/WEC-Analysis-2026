@@ -1,0 +1,130 @@
+.heroContainer {
+  position: relative;
+  width: 100%;
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4.5rem 2rem 3rem;
+  overflow: hidden;
+  user-select: none;
+}
+
+.topographicBackdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.topographicSvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.contourLayer {
+  transform-origin: center center;
+  will-change: transform;
+  transition: transform 0.12s cubic-bezier(0.2, 0.9, 0.4, 1);
+}
+
+.topoText {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  fill: var(--color-secondary);
+  opacity: 0.75;
+  user-select: none;
+}
+
+.apexLabel {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  user-select: none;
+}
+
+.contentWrap {
+  position: relative;
+  z-index: 2;
+  max-width: 840px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.badgeRow {
+  margin-bottom: 1.25rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.85rem;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 99px;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--color-accent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4.25rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--color-primary);
+  margin-bottom: 1.25rem;
+  line-height: 1.1;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+}
+
+.intro {
+  font-family: var(--font-body);
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  line-height: 1.65;
+  color: var(--color-secondary);
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+@media (max-width: 640px) {
+  .heroContainer {
+    min-height: 420px;
+    padding: 3rem 1.25rem 2rem;
+  }
+
+  .badge {
+    font-size: 0.6rem;
+    padding: 0.25rem 0.65rem;
+  }
+
+  .title {
+    font-size: 2.25rem;
+  }
+
+  .intro {
+    font-size: 0.95rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contourLayer {
+    transform: none !important;
+    transition: none !important;
+  }
+}

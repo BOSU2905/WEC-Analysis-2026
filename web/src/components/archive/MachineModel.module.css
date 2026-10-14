@@ -124,6 +124,37 @@
 }
 
 /* Ensure canvas doesn't steal all touch events if user tries to scroll past */
+.canvasContainer,
 .canvasContainer canvas {
   touch-action: pan-y;
+}
+
+@media (max-width: 640px) {
+  .canvasContainer {
+    aspect-ratio: 16 / 11;
+    min-height: 240px;
+  }
+
+  .instructionLayer {
+    top: 0.5rem;
+    padding: 0 0.5rem;
+  }
+
+  .instructionText,
+  .resetButton {
+    font-size: 0.68rem;
+    padding: 0.2rem 0.55rem;
+  }
+
+  .attributionPanel {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .carLabel {
+    font-size: 0.875rem;
+  }
+
+  .licenseInfo {
+    font-size: 0.6rem;
+  }
 }

@@ -4,8 +4,7 @@ import styles from "./ThemeToggle.module.css";
 const getInitialTheme = (): "dark" | "light" => {
   if (typeof window !== "undefined") {
     const savedTheme = localStorage.getItem("wec-theme");
-    const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
-    if (savedTheme === "light" || (savedTheme === null && prefersLight)) {
+    if (savedTheme === "light") {
       return "light";
     }
   }

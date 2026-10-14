@@ -3,6 +3,7 @@
   height: 100%;
   position: relative;
   overflow: hidden; /* Ensure nothing visually escapes */
+  touch-action: pan-y;
 }
 
 .svg {
