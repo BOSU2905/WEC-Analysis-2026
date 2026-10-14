@@ -25,24 +25,25 @@ export default function Chapter02() {
           <div className={styles.step}>
             <div className={styles.narrativeCard}>
               <p>
-                If this championship was so vast and volatile, who actually managed to survive it?
-                At the pinnacle of the grid, the Top Class was the ultimate battleground for global manufacturers—an environment of extreme engineering, massive budgets, and unforgiving endurance constraints.
-                While legends like Porsche and Audi defined their own eras of supremacy, Toyota Gazoo Racing didn't just win; they accumulated <strong>44 Top-Class victories</strong>.
+                At the front of the grid, the Top Class was an unforgiving proving ground. Factory programs poured immense resources into experimental hybrid powertrains, only to face the brutal reality of 24-hour attrition.
+              </p>
+              <p>
+                While Audi and Porsche engineered unforgettable eras of dominance before bowing out, Toyota Gazoo Racing stayed the course—ultimately collecting <strong>44 Top-Class victories</strong> across the 13-year span.
               </p>
 
               <EditorialPhoto
                 src={toyotaImage}
                 alt="Toyota TS050 Hybrid at Le Mans"
-                caption="The Toyota TS050 Hybrid secured multiple victories during Toyota's dominant era."
+                caption="The Toyota TS050 Hybrid was the technical backbone of Toyota's historic Super Season sweep."
                 direction="right"
               />
 
               <p>
-                The defining characteristic of this achievement wasn't just peaking for one season, but persistence. While competitors entered and exited as regulations and corporate strategies shifted, Toyota consistently adapted, enduring both competitive eras and periods of isolation to establish an unprecedented record of sustained success.
+                What set Toyota apart wasn't just peaking for a single season; it was persistence. As rival factory programs departed and regulations evolved from LMP1-Hybrid into the modern Hypercar era, Toyota kept racing, refining, and winning.
               </p>
 
               <p>
-                However, Toyota's manufacturer dominance in the top class was only part of the story. To understand the true scale of WEC, we must look beyond the solitary factory prototypes and toward the broader competitive ecosystem that populated the rest of the grid.
+                Yet factory prototype trophies only tell half the story. To understand how endurance racing actually functions, we have to look past the top step of the podium and into the swarms of privateer and GT teams that kept the grid alive.
               </p>
             </div>
           </div>

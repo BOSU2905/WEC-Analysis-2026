@@ -1,0 +1,819 @@
+.teamsExperience {
+  position: relative;
+  width: 100%;
+  background-color: var(--color-bg);
+  background-image: var(--bg-texture);
+  background-position: var(--bg-texture-position);
+  background-size: var(--bg-texture-size);
+  color: var(--color-primary);
+}
+
+/* Sticky Viewport for Desktop: Pinned cleanly below the 68px site header */
+.stickyViewport {
+  position: sticky;
+  top: 68px;
+  height: calc(100vh - 68px);
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobileWrapper {
+  width: 100%;
+  position: relative;
+  padding: 4.5rem 1rem 3rem 1rem;
+}
+
+/* Segmented Year Progress Indicator Bar */
+.yearNavigator {
+  position: relative;
+  z-index: 30;
+  background: rgba(13, 14, 17, 0.96);
+  background-image: var(--bg-texture);
+  background-position: var(--bg-texture-position);
+  background-size: var(--bg-texture-size);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.65rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.mobileWrapper .yearNavigator {
+  position: sticky;
+  top: 60px;
+  margin: -1rem -1rem 2rem -1rem;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.navHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+.navSectionLabel {
+  letter-spacing: 0.12em;
+  color: var(--color-accent);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.navEraIndicator {
+  color: var(--color-secondary);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+}
+
+.segmentedBar {
+  display: flex;
+  gap: 0.25rem;
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+
+.segmentedBar::-webkit-scrollbar {
+  display: none;
+}
+
+.segmentButton {
+  flex: 1;
+  min-width: 58px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.35rem 0.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.2s ease;
+}
+
+.segmentTick {
+  width: 100%;
+  height: 3px;
+  background: var(--color-border);
+  border-radius: 2px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.segmentYear {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--color-secondary);
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.segmentButton:hover .segmentTick {
+  background: var(--color-primary);
+}
+
+.segmentButton:hover .segmentYear {
+  color: var(--color-primary);
+}
+
+.segmentButton.activeSegment .segmentTick {
+  background: var(--color-accent);
+  transform: scaleY(1.6);
+}
+
+.segmentButton.activeSegment .segmentYear {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* Horizontal Track for Desktop */
+.horizontalTrack {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  will-change: transform;
+}
+
+.seasonSlide {
+  flex: 0 0 100vw;
+  width: 100vw;
+  height: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 2rem 4rem 3.5rem 4rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+.mobileStream {
+  display: flex;
+  flex-direction: column;
+  gap: 3.5rem;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.slideContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+/* Single Cohesive Editorial Season Card */
+.editorialSeasonCard {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-surface);
+  background-image: var(--bg-texture);
+  background-position: var(--bg-texture-position);
+  background-size: var(--bg-texture-size);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 2.25rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+.cardHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  position: relative;
+  z-index: 2;
+}
+
+.yearRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.yearAndBadges {
+  display: flex;
+  align-items: baseline;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.seasonYear {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 4.5vw, 4rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.badgeRow {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.seriesBadge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  color: var(--color-accent);
+  padding: 0.25rem 0.65rem;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+
+.eraBadge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--color-secondary);
+  letter-spacing: 0.03em;
+}
+
+.dominanceBadge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--color-secondary);
+}
+
+.historicalInsight {
+  font-family: var(--font-body);
+  font-size: clamp(0.98rem, 1.15vw, 1.08rem);
+  line-height: 1.6;
+  color: var(--color-secondary);
+  margin: 0;
+  max-width: 950px;
+}
+
+.cardDivider {
+  width: 100%;
+  height: 1px;
+  background: var(--color-border);
+  position: relative;
+  z-index: 2;
+}
+
+/* Primary Featured Entry Section */
+.primaryEntrySection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.entryTopMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.carIdentity {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.carNumber {
+  font-family: var(--font-mono);
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--color-accent);
+}
+
+.classTag {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  padding: 0.2rem 0.55rem;
+  border-radius: 2px;
+  color: var(--color-secondary);
+  letter-spacing: 0.05em;
+}
+
+.teamHeading {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2vw, 1.85rem);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.entryRoleBadge {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--color-accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.entryDetailsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  background: rgba(var(--color-bg-rgb), 0.5);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 1rem 1.25rem;
+}
+
+.entryDetailCol {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.detailLabel {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--color-secondary);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.detailValueBold {
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.detailValue {
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  color: var(--color-primary);
+  line-height: 1.4;
+}
+
+.recordBadge {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--color-accent);
+  background: rgba(var(--color-accent-rgb), 0.08);
+  border: 1px solid rgba(var(--color-accent-rgb), 0.3);
+  padding: 0.25rem 0.55rem;
+  border-radius: 3px;
+  width: fit-content;
+}
+
+.tacticalNote {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--color-secondary);
+  margin: 0;
+}
+
+/* Official Season Champions Section */
+.championsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  position: relative;
+  z-index: 2;
+}
+
+.championsHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+.trophyIcon {
+  font-size: 0.95rem;
+}
+
+.championsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.85rem;
+}
+
+.champCard {
+  background: var(--color-surface-subtle);
+  border-left: 2px solid var(--color-accent);
+  border-top: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0 3px 3px 0;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  transition: background-color 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.champCard:hover {
+  background: rgba(var(--color-surface-rgb), 0.95);
+  border-color: rgba(var(--color-accent-rgb), 0.45);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.champCategory {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.champTeam {
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.champCar {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--color-secondary);
+}
+
+.champDrivers {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--color-secondary);
+  line-height: 1.35;
+  margin-top: 0.2rem;
+}
+
+.champNote {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--color-secondary);
+  opacity: 0.75;
+  margin-top: 0.2rem;
+}
+
+/* Watermark typography in the background */
+.watermarkManufacturer {
+  position: absolute;
+  right: -10px;
+  bottom: -30px;
+  font-family: var(--font-display);
+  font-size: clamp(6rem, 14vw, 11rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: var(--color-primary);
+  opacity: 0.03;
+  user-select: none;
+  pointer-events: none;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* Expandable Secondary Controls & Panels */
+.expandableControls {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.expandButton {
+  flex: 1;
+  min-width: 260px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-primary);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+  padding: 0.75rem 1.15rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  cursor: pointer;
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+  text-align: left;
+}
+
+.expandButton:hover {
+  background: var(--color-surface-subtle);
+  border-color: var(--color-accent);
+}
+
+.toggleIcon {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--color-accent);
+  width: 14px;
+  display: inline-block;
+}
+
+.expandedDetailPanel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  animation: panelFadeIn 0.25s ease-out;
+}
+
+@keyframes panelFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Detailed Champions Grid inside Expandable Roster */
+.detailedChampionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.detailedChampCard {
+  background: var(--color-surface-subtle);
+  border-left: 2px solid var(--color-accent);
+  border-top: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0 3px 3px 0;
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  transition: background-color 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.detailedChampCard:hover {
+  background: rgba(var(--color-surface-rgb), 0.95);
+  border-color: rgba(var(--color-accent-rgb), 0.45);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.detailedChampCategory {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.detailedChampTeam {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.detailedChampCar {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--color-secondary);
+}
+
+.detailedChampDrivers {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--color-secondary);
+  line-height: 1.35;
+  margin-top: 0.2rem;
+}
+
+.detailedChampNote {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--color-secondary);
+  opacity: 0.8;
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+/* Secondary Teams Grid */
+.secondaryTeamsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.secondaryTeamCard {
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  transition: background-color 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.secondaryTeamCard:hover {
+  background: rgba(var(--color-surface-rgb), 0.95);
+  border-color: rgba(var(--color-accent-rgb), 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.secondaryCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.secondaryTeamName {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.secondaryCarModel {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-secondary);
+}
+
+.secondaryDrivers {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--color-primary);
+}
+
+.secondarySignificance {
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: var(--color-secondary);
+}
+
+/* Races Table */
+.racesTableWrapper {
+  overflow-x: auto;
+}
+
+.racesTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  text-align: left;
+}
+
+.racesTable th {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.6rem 0.75rem;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.racesTable td {
+  padding: 0.7rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  vertical-align: top;
+}
+
+.raceNameCell {
+  font-family: var(--font-mono);
+  white-space: nowrap;
+  color: var(--color-primary);
+}
+
+.overallWinnerCell {
+  white-space: nowrap;
+}
+
+.overallCarBadge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  background: rgba(var(--color-accent-rgb), 0.15);
+  color: var(--color-accent);
+  padding: 0.15rem 0.45rem;
+  border-radius: 2px;
+  margin-bottom: 0.2rem;
+}
+
+.winnerTeamName {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.driversCell {
+  font-family: var(--font-body);
+  color: var(--color-secondary);
+  font-size: 0.78rem;
+}
+
+.classWinnersCell {
+  min-width: 280px;
+}
+
+.classPillList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.classWinnerPill {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--color-secondary);
+  background: var(--color-surface-subtle);
+  padding: 0.2rem 0.45rem;
+  border-radius: 2px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.classWinnerPill strong {
+  color: var(--color-primary);
+}
+
+.racesTable tbody tr {
+  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.racesTable tbody tr:hover {
+  background-color: rgba(var(--color-surface-subtle-rgb, 255, 255, 255), 0.05);
+}
+
+/* Historical Provenance Footnote */
+.provenanceFootnote,
+.panelFooter {
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.provenanceText {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--color-secondary);
+  opacity: 0.7;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .seasonSlide {
+    padding: 1.25rem 1rem 2.5rem 1rem;
+  }
+
+  .yearNavigator {
+    padding: 0.5rem 1rem;
+  }
+
+  .editorialSeasonCard {
+    padding: 1.5rem 1.25rem;
+    gap: 1.25rem;
+  }
+
+  .expandableControls {
+    flex-direction: column;
+  }
+}

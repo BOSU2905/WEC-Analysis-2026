@@ -207,20 +207,21 @@ export default function ArmadaScatter({ progress }: Props) {
       const centerX = width / 2;
       const centerY = height / 2;
 
-      // Organic bloom progression driven directly by scroll (opening narrative: v in [0.0, 0.34])
-      const rawBloom = Math.min(1, Math.max(0, v / 0.32));
+      // Organic bloom progression driven directly by scroll (opening narrative: v in [0.0, 0.50])
+      const rawBloom = Math.min(1, Math.max(0, v / 0.50));
       const bloomProgress = isReducedMotion ? 1 : 0.08 + 0.92 * rawBloom;
 
-      // Team clustering progression: v in [0.32, 0.86]
-      const clusterStart = 0.32;
-      const clusterEnd = 0.86;
+      // Team clustering progression: starts gently at v = 0.45 and settles at v = 0.90
+      const clusterStart = 0.45;
+      const clusterEnd = 0.90;
       let t = 0;
       if (v <= clusterStart) t = 0;
       else if (v >= clusterEnd) t = 1;
       else {
         t = (v - clusterStart) / (clusterEnd - clusterStart);
       }
-      const easedT = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      // Sinusoidal ease-in-out for fluid acceleration and gentle settling without harsh jerks
+      const easedT = 0.5 - 0.5 * Math.cos(t * Math.PI);
 
       const staggerWindow = 0.42;
       const enterFade = isReducedMotion ? 1 : Math.min(1, 0.35 + 0.65 * bloomProgress);
@@ -250,7 +251,8 @@ export default function ArmadaScatter({ progress }: Props) {
               localP = (bloomProgress - delay * staggerWindow) / (1 - delay * staggerWindow);
             }
             if (localP > 1) localP = 1;
-            const nodeEase = 1 - Math.pow(1 - localP, 3);
+            // Gentle sinusoidal ease-in-out replaces harsh cubic-out burst
+            const nodeEase = 0.5 - 0.5 * Math.cos(localP * Math.PI);
 
             cx = centerX + (targetBaseX - centerX) * nodeEase;
             cy = centerY + (targetBaseY - centerY) * nodeEase;
@@ -298,10 +300,14 @@ export default function ArmadaScatter({ progress }: Props) {
     if (isAnimated) {
       timer = d3.timer(() => {
         timeRef.current = performance.now();
+        const targetV = progress.get();
+        // Gentle cinematic smoothing: tracks scroll faithfully without abrupt jumps
+        tRef.current += (targetV - tRef.current) * 0.16;
         syncNodes();
       });
     } else {
       timeRef.current = performance.now();
+      tRef.current = progress.get();
       syncNodes();
     }
 
@@ -310,13 +316,13 @@ export default function ArmadaScatter({ progress }: Props) {
       syncNodesRef.current = null;
       window.removeEventListener("wec-theme-change", updateColors);
     };
-  }, [isAnimated, width, height]);
+  }, [isAnimated, width, height, progress]);
 
   // Progress tracking
   useEffect(() => {
     const unsubscribe = progress.on("change", (v) => {
-      tRef.current = v;
       if (!isAnimated) {
+        tRef.current = v;
         syncNodesRef.current?.();
       }
     });

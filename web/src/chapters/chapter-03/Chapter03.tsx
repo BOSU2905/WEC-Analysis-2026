@@ -31,27 +31,23 @@ export default function Chapter03() {
           <div className={styles.step}>
             <div className={styles.narrativeCard}>
               <p>
-                While Toyota achieved sustained success through elite engineering in the top class, dominating the GT and LMP2 classes required a different strategy: sheer volume. Instead of focusing all resources on a single factory prototype, manufacturers like Ferrari and Aston Martin created an "Armada Effect" by flooding the grid with massive fleets of customer and factory entries. These massive swarms were the lifeblood of the championship, proving that survival isn't just about having the fastest car—it's about fielding enough cars that one is bound to finish first.
+                While Toyota built its dynasty by concentrating engineering firepower on two prototype seats, winning the GT ranks required a completely different playbook: sheer numbers. Instead of staking everything on a single entry, Ferrari and Aston Martin turned up with an "Armada"—supporting customer squads and semi-factory operations that filled out every corner of the grid.
               </p>
               
               <EditorialPhoto
                 src={armadaImage}
                 alt="Aston Martin Vantage GTE"
-                caption="GT manufacturers fielded massive armadas of customer and factory entries."
+                caption="GT manufacturers countered prototype exclusivity by fielding expansive fleets of factory and customer cars."
                 direction="left"
               />
 
               <p>
-                AF Corse (Ferrari's primary proxy) fielded an astonishing{" "}
-                <strong>269 total entries</strong> across the 13-year period.
-                Aston Martin Racing followed closely with{" "}
-                <strong>217 entries</strong>.
+                Leading the charge was AF Corse, Ferrari's long-standing frontline operation, which logged an astounding{" "}
+                <strong>269 race entries</strong> across the 13-year dataset. Aston Martin Racing answered with{" "}
+                <strong>217 entries</strong> of their own.
               </p>
               <p>
-                By fielding a sprawling armada—often up to 11 different unique
-                vehicles per race—AF Corse secured 41 absolute GT wins. This strategy nearly matched
-                Toyota's win count, but achieved it through overwhelming
-                participation rather than sheer speed.
+                By keeping as many as 11 cars in competition across a single weekend, AF Corse secured 41 GT class victories. That nearly matched Toyota's entire top-class win count, but they did it through relentless presence and tactical depth rather than solitary prototype speed.
               </p>
             </div>
           </div>

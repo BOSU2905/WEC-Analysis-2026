@@ -22,24 +22,24 @@ body {
   font-family: var(--font-body);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  transition:
-    background-color 200ms ease,
-    color 200ms ease;
 }
 
-header,
-main,
-section,
-article,
-nav,
-footer {
+/* Explicit, synchronized theme transitions triggered only upon user toggle */
+html.theme-transitioning body,
+html.theme-transitioning header,
+html.theme-transitioning main,
+html.theme-transitioning section,
+html.theme-transitioning article,
+html.theme-transitioning nav,
+html.theme-transitioning footer,
+html.theme-transitioning div,
+html.theme-transitioning button,
+html.theme-transitioning a {
   transition:
-    background-color 200ms ease,
-    border-color 200ms ease,
-    color 200ms ease;
+    background-color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 200ms cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
-
-/* Textures are now defined dynamically in tokens.css */
 
 h1,
 h2,
@@ -68,5 +68,17 @@ a {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  html.theme-transitioning body,
+  html.theme-transitioning header,
+  html.theme-transitioning main,
+  html.theme-transitioning section,
+  html.theme-transitioning article,
+  html.theme-transitioning nav,
+  html.theme-transitioning footer,
+  html.theme-transitioning div,
+  html.theme-transitioning button,
+  html.theme-transitioning a {
+    transition: none !important;
   }
 }

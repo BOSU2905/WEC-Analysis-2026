@@ -1,8 +1,9 @@
 .chapter {
-  --chart-ch4-michelin: var(--color-primary);
-  --chart-ch4-dunlop: var(--chart-evo-lmp2);
-  --chart-ch4-goodyear: var(--chart-evo-gt);
-  --chart-ch4-other: var(--color-surface);
+  --chart-ch4-michelin: #4F83AD;
+  --chart-ch4-dunlop: #D6B84C;
+  --chart-ch4-goodyear: #426B9C;
+  --chart-ch4-goodyear-accent: #D9BD55;
+  --chart-ch4-other: #24272D;
 
   position: relative;
   min-height: 90vh; /* Reduced from 150vh to eliminate oversized blank regions */
@@ -13,17 +14,19 @@
 }
 
 :root[data-theme="light"] .chapter {
-  --chart-ch4-michelin: #565b60;
-  --chart-ch4-dunlop: #a98438;
-  --chart-ch4-goodyear: #25282b;
+  --chart-ch4-michelin: #4F83AD;
+  --chart-ch4-dunlop: #D6B84C;
+  --chart-ch4-goodyear: #426B9C;
+  --chart-ch4-goodyear-accent: #D9BD55;
   --chart-ch4-other: #dedad2;
 }
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) .chapter {
-    --chart-ch4-michelin: #565b60;
-    --chart-ch4-dunlop: #a98438;
-    --chart-ch4-goodyear: #25282b;
+    --chart-ch4-michelin: #4F83AD;
+    --chart-ch4-dunlop: #D6B84C;
+    --chart-ch4-goodyear: #426B9C;
+    --chart-ch4-goodyear-accent: #D9BD55;
     --chart-ch4-other: #dedad2;
   }
 }

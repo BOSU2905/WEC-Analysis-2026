@@ -38,24 +38,21 @@ export default function Chapter01() {
           <div className={styles.step}>
             <div className={styles.narrativeCard}>
               <p>
-                Before asking who dominated WEC, we must understand the sheer
-                logistical scale of the championship.
+                Before looking at who won, it helps to take in the sheer scale of the championship over its first thirteen seasons.
               </p>
               <p>
-                Between 2011 and 2023, the World Endurance Championship staged{" "}
+                Between 2011 and 2023, the championship staged{" "}
                 <strong>
                   {datasetScale.total_events} official race events
                 </strong>
-                . Across these events, there were{" "}
+                . Across those rounds,{" "}
                 <strong>
-                  {datasetScale.total_entries.toLocaleString()} valid car
-                  entries
+                  {datasetScale.total_entries.toLocaleString()} cars
                 </strong>{" "}
-                taking the green flag.
+                took the green flag.
               </p>
               <p>
-                Each dot here represents a single car entering a single race.
-                Together, they form the foundation of our analysis.
+                Every dot on this screen represents one car lining up on the grid for one race. Together, they map out the entire operational footprint of the era.
               </p>
               
               <EditorialPhoto
@@ -66,9 +63,7 @@ export default function Chapter01() {
               />
 
               <p>
-                However, these entries were not competing in a single homogenous
-                race. WEC is a multi-class championship, where distinct
-                competitive ecosystems race simultaneously on the same track.
+                These entries weren't racing in a single pack, though. WEC runs several distinct categories at once on the same circuit, each with its own technical rules, tyre allotments, and championship stakes.
               </p>
 
               <EditorialPhoto
@@ -79,10 +74,7 @@ export default function Chapter01() {
               />
 
               <p>
-                The vast majority of the grid belonged to the GT
-                ecosystem—production-based cars fighting their own logistical
-                war. At the pinnacle sat the Top Class (LMP1 and later
-                Hypercar), where manufacturers fought for overall victory.
+                The vast majority of the grid belonged to the GT ranks—production-based sports cars fighting brutal door-to-door battles. Above them sat LMP2, and at the summit was the Top Class (first LMP1, then Hypercar), where factory giants fought for overall victory.
               </p>
 
               <EditorialPhoto
@@ -93,11 +85,7 @@ export default function Chapter01() {
               />
 
               <p>
-                Surviving this sprawling, multi-class battlefield demanded
-                immense logistical and engineering consistency. While hundreds of
-                privateer entries came and went over the 13-year period, true
-                dominance in the top class belonged to the few factory programs
-                capable of weathering the chaos of the full endurance era.
+                Surviving this multiclass grinder over 13 seasons took extraordinary consistency. While dozens of privateer outfits came and went, only a handful of factory programs had the resources and reliability to endure across the entire decade.
               </p>
 
               <EditorialPhoto

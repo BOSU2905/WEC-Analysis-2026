@@ -226,20 +226,22 @@ export default function TopographicHero({ children }: TopographicHeroProps) {
                 opacity="0.75"
                 strokeLinecap="round"
               />
-              <circle cx="760" cy="320" r="4" fill="var(--color-accent)" />
+              {/* Apex marker moved to the right flank (x=1080) to prevent title interference */}
+              <circle cx="1080" cy="216" r="3.5" fill="var(--color-accent)" opacity="0.75" />
               <circle
-                cx="760"
-                cy="320"
-                r="9"
+                cx="1080"
+                cy="216"
+                r="8"
                 stroke="var(--color-accent)"
                 strokeWidth="1"
-                opacity="0.4"
+                opacity="0.35"
               />
               <text
-                x="776"
-                y="324"
+                x="1096"
+                y="220"
                 className={styles.apexLabel}
                 fill="var(--color-accent)"
+                opacity="0.65"
               >
                 APEX CREST // SECTOR 2
               </text>

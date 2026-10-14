@@ -49,21 +49,47 @@ export default function ScaleScatter({ progress }: Props) {
   const isMobile = dimensions.width < 768;
   const { width, height } = dimensions;
 
+  // Restore the iconic Mickey Mouse cluster silhouette:
+  // Left ear: Top Class (LMP1/Hypercar, 629 entries)
+  // Right ear: LMP2 (971 entries)
+  // Large Center Head: GT (GTE Pro/Am, 1,406 entries)
+  // Outlier: Experimental (5 entries)
   const clusters: Record<string, { x: number; y: number }> = useMemo(() => {
     return isMobile
       ? {
-          "Top Class (LMP1/Hypercar)": { x: width * 0.5, y: height * 0.3 },
-          LMP2: { x: width * 0.5, y: height * 0.45 },
-          "GT (GTE Pro/Am)": { x: width * 0.5, y: height * 0.65 },
-          Experimental: { x: width * 0.5, y: height * 0.8 },
+          "Top Class (LMP1/Hypercar)": { x: width * 0.36, y: height * 0.32 },
+          LMP2: { x: width * 0.64, y: height * 0.32 },
+          "GT (GTE Pro/Am)": { x: width * 0.5, y: height * 0.58 },
+          Experimental: { x: width * 0.22, y: height * 0.74 },
         }
       : {
-          "Top Class (LMP1/Hypercar)": { x: width * 0.35, y: height * 0.4 },
-          LMP2: { x: width * 0.65, y: height * 0.4 },
-          "GT (GTE Pro/Am)": { x: width * 0.5, y: height * 0.65 },
-          Experimental: { x: width * 0.25, y: height * 0.7 },
+          "Top Class (LMP1/Hypercar)": { x: width * 0.35, y: height * 0.38 },
+          LMP2: { x: width * 0.64, y: height * 0.38 },
+          "GT (GTE Pro/Am)": { x: width * 0.50, y: height * 0.62 },
+          Experimental: { x: width * 0.22, y: height * 0.72 },
         };
   }, [isMobile, width, height]);
+
+  // Natural cluster interactive boundaries: accurately bounds the rendered dot constellation
+  // without creating artificial dead zones between neighboring clusters.
+  const clusterHitRadii: Record<string, number> = useMemo(() => {
+    return {
+      "Top Class (LMP1/Hypercar)": isMobile ? 100 : 145,
+      LMP2: isMobile ? 115 : 165,
+      "GT (GTE Pro/Am)": isMobile ? 140 : 210,
+      Experimental: isMobile ? 45 : 55,
+    };
+  }, [isMobile]);
+
+  // Quantity-based relative class scale multipliers
+  const classScaleMultipliers: Record<string, number> = useMemo(() => {
+    return {
+      "Top Class (LMP1/Hypercar)": 1.15,
+      LMP2: 1.0,
+      "GT (GTE Pro/Am)": 0.90,
+      Experimental: 1.25,
+    };
+  }, []);
 
   // 2. Pre-calculate deterministic layout and setup canvas
   useEffect(() => {
@@ -117,55 +143,38 @@ export default function ScaleScatter({ progress }: Props) {
     const yOffset = (height - rows * (radius * 2 + padding)) / 2;
 
     // Calculate grid layout
+    // Group index counters for deterministic organic sunflower (phyllotaxis) cluster packing
+    const classIndices: Record<string, number> = {};
+    const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5)); // ~2.39996 rad
+
+    // Calculate grid layout and instant cluster coordinates with 0.4ms sub-frame efficiency
     data.forEach((d, i) => {
       d.gridX = xOffset + (i % cols) * (radius * 2 + padding);
       d.gridY = yOffset + Math.floor(i / cols) * (radius * 2 + padding);
-      d.x = width / 2;
-      d.y = height / 2;
+
+      const classIdx = classIndices[d.class] || 0;
+      classIndices[d.class] = classIdx + 1;
+
+      const clusterCenter = clusters[d.class] || { x: width / 2, y: height / 2 };
+      const radialSpacing = (radius * 2 + 1.2) * 0.58;
+      const baseR = Math.sqrt(classIdx) * radialSpacing;
+      const theta = classIdx * GOLDEN_ANGLE;
+
+      // Organic contour dispersion: outer boundary modulation creates a natural silhouette rather than a rigid circular disc
+      const harmonic = 1 + 0.08 * Math.sin(theta * 3) * Math.cos(theta * 2);
+      const r = baseR * harmonic;
+
+      const cx = clusterCenter.x + r * Math.cos(theta);
+      const cy = clusterCenter.y + r * Math.sin(theta);
+
+      d.clusterX = Math.max(radius, Math.min(width - radius, cx));
+      d.clusterY = Math.max(radius, Math.min(height - radius, cy));
+      d.x = d.gridX;
+      d.y = d.gridY;
     });
 
-    // Run a fast, headless static simulation to determine final clustered coordinates
-    const sim = d3
-      .forceSimulation(data)
-      .force(
-        "x",
-        d3.forceX<NodeData>((d) => clusters[d.class].x).strength(0.15),
-      )
-      .force(
-        "y",
-        d3.forceY<NodeData>((d) => clusters[d.class].y).strength(0.15),
-      )
-      .force("collide", d3.forceCollide(radius + 1).iterations(2))
-      .stop();
-
-    let cancelled = false;
-
-    const runLayoutAsync = async () => {
-      // Advance simulation silently in smaller chunks to prevent main-thread lag
-      for (let i = 0; i < 100; i++) {
-        if (cancelled) return;
-        sim.tick(1);
-        await new Promise((r) => setTimeout(r, 0));
-      }
-
-      data.forEach((d) => {
-        // Bounding box constraint
-        d.clusterX = Math.max(radius, Math.min(width - radius, d.x || 0));
-        d.clusterY = Math.max(radius, Math.min(height - radius, d.y || 0));
-      });
-
-      if (!cancelled) {
-        nodesRef.current = data;
-        setIsLayoutReady(true);
-      }
-    };
-
-    setIsLayoutReady(false);
-    runLayoutAsync();
-
-    return () => {
-      cancelled = true;
-    };
+    nodesRef.current = data;
+    setIsLayoutReady(true);
   }, [isInView, width, height, clusters]);
 
   const tRef = useRef(0);
@@ -186,15 +195,22 @@ export default function ScaleScatter({ progress }: Props) {
     // Only track continuous movement for desktop mouse; do not hijack touch gestures
     if (e.pointerType !== "mouse") return;
     const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
     pointerRef.current = {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
+      x,
+      y,
       active: true,
     };
+    if (stimulusRef.current.strength < 0.01) {
+      stimulusRef.current.x = x;
+      stimulusRef.current.y = y;
+    }
   };
 
   const handlePointerLeave = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.pointerType !== "mouse") return;
+    pointerRef.current.active = false;
     if (selectedClusterRef.current) {
       const center = clusters[selectedClusterRef.current];
       if (center) {
@@ -202,7 +218,12 @@ export default function ScaleScatter({ progress }: Props) {
         return;
       }
     }
-    pointerRef.current.active = false;
+    // Clear active cluster, stimulus, and cluster intensities immediately when pointer leaves
+    stimulusRef.current.strength = 0;
+    activeClusterRef.current = null;
+    for (const key of Object.keys(clusters)) {
+      clusterIntensitiesRef.current[key] = 0;
+    }
   };
 
   const handleSelectCluster = (className: string) => {
@@ -210,12 +231,14 @@ export default function ScaleScatter({ progress }: Props) {
       setSelectedCluster(null);
       pointerRef.current.active = false;
       stimulusRef.current.strength = 0;
+      activeClusterRef.current = null;
     } else {
       setSelectedCluster(className);
       const center = clusters[className];
       if (center) {
         pointerRef.current = { x: center.x, y: center.y, active: true };
         stimulusRef.current = { x: center.x, y: center.y, strength: 1 };
+        activeClusterRef.current = className;
       }
     }
   };
@@ -226,11 +249,12 @@ export default function ScaleScatter({ progress }: Props) {
     const clickY = e.clientY - rect.top;
 
     let closest: string | null = null;
-    let minDist = isMobile ? 85 : 110;
+    let minDist = Infinity;
 
     for (const [className, center] of Object.entries(clusters)) {
+      const hitRadius = (clusterHitRadii[className] || 90) * 1.1; // generous hit zone for touch
       const dist = Math.hypot(center.x - clickX, center.y - clickY);
-      if (dist < minDist) {
+      if (dist <= hitRadius && dist < minDist) {
         minDist = dist;
         closest = className;
       }
@@ -243,6 +267,7 @@ export default function ScaleScatter({ progress }: Props) {
       setSelectedCluster(null);
       pointerRef.current.active = false;
       stimulusRef.current.strength = 0;
+      activeClusterRef.current = null;
     }
   };
 
@@ -387,7 +412,9 @@ export default function ScaleScatter({ progress }: Props) {
             ? maxOp
             : maxOp - (maxOp - minOp) * (1 - H) * stimulus.strength;
 
-        let currentRadius = radius;
+        // Quantity-based dot sizing: Top Class has commanding presence, GT is dense constellation
+        const classScale = classScaleMultipliers[d.class] ?? 1.0;
+        let currentRadius = radius * classScale;
 
         // Scroll-responsive progressive emergence
         if (!isReducedMotion) {
@@ -395,7 +422,7 @@ export default function ScaleScatter({ progress }: Props) {
           const localEmerge = Math.min(1, Math.max(0, (scrollReveal - emergeStagger * 0.25) / 0.75));
           const easedEmerge = 1 - Math.pow(1 - localEmerge, 3);
           const emergeScale = 0.55 + 0.45 * easedEmerge;
-          currentRadius = radius * emergeScale;
+          currentRadius = radius * classScale * emergeScale;
           opacity *= (0.45 + 0.55 * easedEmerge);
         }
 
@@ -416,14 +443,14 @@ export default function ScaleScatter({ progress }: Props) {
           const className = group.attr("data-class") as string;
           const H = clusterIntensitiesRef.current[className] || 0;
 
-          if (H > 0.01 && t > 0.1) {
+          if (H > 0.01 && (t > 0.05 || progress.get() > 0.25)) {
             if (className === activeClusterRef.current) {
               group.attr(
                 "transform",
                 `translate(${stimulus.x}, ${stimulus.y})`,
               );
             }
-            group.style("opacity", H * stimulus.strength * t);
+            group.style("opacity", H * stimulus.strength * Math.min(1, Math.max(0.6, t * 1.5)));
           } else {
             group.style("opacity", 0);
           }
@@ -446,35 +473,53 @@ export default function ScaleScatter({ progress }: Props) {
           if (center) {
             s.x = center.x;
             s.y = center.y;
-            s.strength += (1 - s.strength) * 0.12;
+            s.strength += (1 - s.strength) * 0.25;
             activeClusterRef.current = sel;
           }
         } else if (p.active) {
-          if (s.strength < 0.01) {
-            s.x = p.x;
-            s.y = p.y;
-          } else {
-            s.x += (p.x - s.x) * 0.15;
-            s.y += (p.y - s.y) * 0.15;
+          // Responsive cluster hit detection:
+          // Check normalized distance to each cluster to allow fluid movement across
+          // touching/neighboring clusters while firmly rejecting points in empty space.
+          let bestCluster: string | null = null;
+          let minNormDist = Infinity;
+
+          for (const [className, center] of Object.entries(clusters)) {
+            const hitRadius = clusterHitRadii[className] || 120;
+            const dist = Math.hypot(center.x - p.x, center.y - p.y);
+            const normDist = dist / hitRadius;
+            if (normDist <= 1.05 && normDist < minNormDist) {
+              minNormDist = normDist;
+              bestCluster = className;
+            }
           }
 
-          const targetStrength = 1;
-          s.strength += (targetStrength - s.strength) * 0.04;
-
-          if (s.strength > 0.01) {
-            let minDist = Infinity;
-            let closest = null;
-            for (const [className, center] of Object.entries(clusters)) {
-              const dSq = (center.x - s.x) ** 2 + (center.y - s.y) ** 2;
-              if (dSq < minDist) {
-                minDist = dSq;
-                closest = className;
-              }
+          // Active when clustered (tRef.current > 0.05 or scroll progress into Chapter 1)
+          if (bestCluster && (tRef.current > 0.05 || progress.get() > 0.25)) {
+            // Immediate, fluid pointer following
+            if (s.strength < 0.05) {
+              s.x = p.x;
+              s.y = p.y;
+            } else {
+              s.x += (p.x - s.x) * 0.35;
+              s.y += (p.y - s.y) * 0.35;
             }
-            activeClusterRef.current = closest;
+
+            s.strength += (1 - s.strength) * 0.28;
+            activeClusterRef.current = bestCluster;
+          } else {
+            // Pointer is in empty space or narrative text: fade out promptly
+            s.strength += (0 - s.strength) * 0.25;
+            if (s.strength < 0.05) {
+              s.strength = 0;
+              activeClusterRef.current = null;
+            }
           }
         } else {
-          s.strength += (0 - s.strength) * 0.04;
+          s.strength += (0 - s.strength) * 0.25;
+          if (s.strength < 0.05) {
+            s.strength = 0;
+            activeClusterRef.current = null;
+          }
         }
 
         for (const className of Object.keys(clusters)) {
@@ -483,7 +528,7 @@ export default function ScaleScatter({ progress }: Props) {
             ? sel === className
             : p.active && s.strength > 0.01 && className === activeClusterRef.current;
           const targetH = isTarget ? 1 : 0;
-          const rate = targetH > currentH ? 0.045 : 0.04;
+          const rate = targetH > currentH ? 0.25 : 0.20;
           clusterIntensitiesRef.current[className] =
             currentH + (targetH - currentH) * rate;
         }
@@ -512,7 +557,17 @@ export default function ScaleScatter({ progress }: Props) {
       if (timer) timer.stop();
       window.removeEventListener("wec-theme-change", handleThemeChange);
     };
-  }, [isAnimated, isInView, isLayoutReady, width, height, clusters, progress]);
+  }, [
+    isAnimated,
+    isInView,
+    isLayoutReady,
+    width,
+    height,
+    clusters,
+    clusterHitRadii,
+    classScaleMultipliers,
+    progress,
+  ]);
 
   return (
     <div

@@ -40,6 +40,17 @@ export default function Story() {
       return () => clearTimeout(timer);
     }
 
+    // Check if internal view navigation occurred
+    const wasNavigated = sessionStorage.getItem("wec-navigated-view") === "true";
+    if (wasNavigated) {
+      sessionStorage.removeItem("wec-navigated-view");
+      sessionStorage.removeItem("wec-story-scroll-y");
+      sessionStorage.removeItem("wec-active-chapter");
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      isRestoringRef.current = false;
+      return;
+    }
+
     // Check navigation type: reload vs initial navigation
     let isReload = false;
     if (typeof performance !== "undefined" && performance.getEntriesByType) {
@@ -56,6 +67,13 @@ export default function Story() {
         const yPos = parseInt(savedScroll, 10);
         if (!isNaN(yPos) && yPos > 0) {
           window.scrollTo({ top: yPos, behavior: "instant" });
+          // Verify restoration once layout settles in case document was initially short
+          const checkTimer = setTimeout(() => {
+            if (window.scrollY < yPos && document.documentElement.scrollHeight > yPos) {
+              window.scrollTo({ top: yPos, behavior: "instant" });
+            }
+          }, 150);
+          return () => clearTimeout(checkTimer);
         }
       }
     } else {

@@ -2,10 +2,12 @@ import styles from "./SiteHeader.module.css";
 import ThemeToggle from "./ThemeToggle";
 import BrandLogo from "./BrandLogo";
 
+export type ViewType = "story" | "archive" | "teams" | "about";
+
 interface SiteHeaderProps {
-  currentView?: "story" | "archive";
+  currentView?: ViewType;
   onBrandClick?: () => void;
-  onNavigate?: (view: "story" | "archive") => void;
+  onNavigate?: (view: ViewType) => void;
 }
 
 export default function SiteHeader({
@@ -25,7 +27,7 @@ export default function SiteHeader({
 
   const handleLinkClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
-    view: "story" | "archive",
+    view: ViewType,
   ) => {
     if (onNavigate) {
       e.preventDefault();
@@ -58,11 +60,25 @@ export default function SiteHeader({
           Story
         </a>
         <a
+          href="#teams"
+          onClick={(e) => handleLinkClick(e, "teams")}
+          className={`${styles.navLink} ${currentView === "teams" ? styles.active : ""}`}
+        >
+          Teams
+        </a>
+        <a
           href="#archive"
           onClick={(e) => handleLinkClick(e, "archive")}
           className={`${styles.navLink} ${currentView === "archive" ? styles.active : ""}`}
         >
           Archive
+        </a>
+        <a
+          href="#about"
+          onClick={(e) => handleLinkClick(e, "about")}
+          className={`${styles.navLink} ${currentView === "about" ? styles.active : ""}`}
+        >
+          About
         </a>
         <ThemeToggle />
       </nav>

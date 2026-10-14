@@ -1,14 +1,17 @@
 import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { LazyMotion, domAnimation } from "framer-motion";
 import SiteHeader from "./components/layout/SiteHeader";
+import type { ViewType } from "./components/layout/SiteHeader";
 import Footer from "./components/layout/Footer";
 import Story from "./pages/Story"; // Eager load default view for LCP
 import PhotoCreditsModal from "./components/story/PhotoCreditsModal";
 
 const Archive = lazy(() => import("./pages/Archive"));
+const Teams = lazy(() => import("./pages/Teams"));
+const About = lazy(() => import("./pages/About"));
 
 const isArchiveHash = (hash: string) => {
-  const clean = hash.replace("#", "").toLowerCase();
+  const clean = hash.replace("#", "").toLowerCase().replace(/^\//, "");
   return (
     clean === "archive" ||
     clean === "machines" ||
@@ -17,15 +20,23 @@ const isArchiveHash = (hash: string) => {
   );
 };
 
+const resolveViewFromHash = (hash: string): ViewType => {
+  const clean = hash.replace("#", "").toLowerCase().replace(/^\//, "");
+  if (clean === "teams") return "teams";
+  if (clean === "about") return "about";
+  if (isArchiveHash(clean)) return "archive";
+  return "story";
+};
+
 function App() {
-  const [currentView, setCurrentView] = useState<"story" | "archive">(() => {
+  const [currentView, setCurrentView] = useState<ViewType>(() => {
     if (typeof window !== "undefined") {
-      return isArchiveHash(window.location.hash) ? "archive" : "story";
+      return resolveViewFromHash(window.location.hash);
     }
     return "story";
   });
   const [isCreditsOpen, setIsCreditsOpen] = useState(false);
-  const previousViewRef = useRef<"story" | "archive">(currentView);
+  const previousViewRef = useRef<ViewType>(currentView);
 
   useEffect(() => {
     if (typeof history !== "undefined" && "scrollRestoration" in history) {
@@ -60,10 +71,13 @@ function App() {
         return;
       }
 
-      const nextView = isArchiveHash(hash) ? "archive" : "story";
+      const nextView = resolveViewFromHash(hash);
 
       if (nextView !== previousViewRef.current) {
         previousViewRef.current = nextView;
+        try {
+          sessionStorage.setItem("wec-navigated-view", "true");
+        } catch {}
         setCurrentView(nextView);
         // Navigation between views always starts at the top
         window.scrollTo({ top: 0, left: 0, behavior: "instant" });
@@ -84,7 +98,7 @@ function App() {
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
-  const handleNavigate = (view: "story" | "archive") => {
+  const handleNavigate = (view: ViewType) => {
     if (view === currentView) {
       if (view === "story") {
         handleResetStory();
@@ -94,9 +108,13 @@ function App() {
       return;
     }
 
+    try {
+      sessionStorage.setItem("wec-navigated-view", "true");
+    } catch {}
+
     previousViewRef.current = view;
     setCurrentView(view);
-    const targetHash = view === "archive" ? "#archive" : "#story";
+    const targetHash = `#${view}`;
     if (window.location.hash !== targetHash) {
       history.pushState(null, "", targetHash);
     }
@@ -122,8 +140,7 @@ function App() {
       history.replaceState(
         null,
         "",
-        window.location.pathname +
-          (currentView === "archive" ? "#archive" : "#story"),
+        window.location.pathname + `#${currentView}`,
       );
     }
   };
@@ -140,19 +157,27 @@ function App() {
           fallback={
             <div
               style={{
-                padding: "5rem",
+                padding: "8rem 2rem",
                 textAlign: "center",
-                color: "var(--text-secondary)",
+                fontFamily: "var(--font-mono)",
+                color: "var(--color-secondary)",
+                letterSpacing: "0.08em",
               }}
             >
-              Loading...
+              INITIALIZING TELEMETRY...
             </div>
           }
         >
-          {currentView === "story" ? <Story /> : <Archive />}
+          {currentView === "story" && <Story />}
+          {currentView === "teams" && <Teams />}
+          {currentView === "archive" && <Archive />}
+          {currentView === "about" && <About />}
         </Suspense>
       </main>
-      <Footer onOpenCredits={() => setIsCreditsOpen(true)} />
+      <Footer
+        onOpenCredits={() => setIsCreditsOpen(true)}
+        onNavigate={handleNavigate}
+      />
       <PhotoCreditsModal isOpen={isCreditsOpen} onClose={handleCloseCredits} />
     </LazyMotion>
   );

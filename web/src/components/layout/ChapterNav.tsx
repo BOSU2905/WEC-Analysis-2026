@@ -46,23 +46,22 @@ export default function ChapterNav() {
 
           let bestId = "";
           let maxRatio = -1;
-          let highestTop = -Infinity;
+          let minDistanceToCenter = Infinity;
+          const viewportCenter = window.innerHeight / 2;
 
           visibleChapters.forEach((entry, id) => {
-            // If the chapter is massive (like Chapter 1), intersectionRatio might be small,
-            // but we still want it to be active if it spans the viewport.
-            // Using the top position relative to viewport center is more reliable.
             const rect = entry.boundingClientRect;
+            const elementCenter = rect.top + rect.height / 2;
+            const distance = Math.abs(elementCenter - viewportCenter);
 
-            // For very tall sticky containers, the container might cover the whole screen.
-            // In that case, it is clearly the active chapter.
-            if (entry.intersectionRatio > maxRatio) {
+            if (entry.intersectionRatio > maxRatio + 0.1) {
               maxRatio = entry.intersectionRatio;
+              minDistanceToCenter = distance;
               bestId = id;
-            } else if (entry.intersectionRatio === maxRatio) {
-              // Tie-breaker: which one is further down the page?
-              if (rect.top > highestTop) {
-                highestTop = rect.top;
+            } else if (Math.abs(entry.intersectionRatio - maxRatio) <= 0.1) {
+              // Tie-breaker: which chapter center is closest to viewport center?
+              if (distance < minDistanceToCenter) {
+                minDistanceToCenter = distance;
                 bestId = id;
               }
             }

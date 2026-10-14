@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import styles from "./ThemeToggle.module.css";
 
 const getInitialTheme = (): "dark" | "light" => {
@@ -13,6 +13,7 @@ const getInitialTheme = (): "dark" | "light" => {
 
 export default function ThemeToggle() {
   const [theme, setTheme] = useState<"dark" | "light">(getInitialTheme);
+  const transitionTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     // Ensure initial DOM state matches if not set
@@ -26,13 +27,21 @@ export default function ThemeToggle() {
       if (customEvent.detail?.theme) {
         setTheme(customEvent.detail.theme);
       } else {
-        const liveTheme = (document.documentElement.getAttribute("data-theme") as "dark" | "light") || "dark";
+        const liveTheme =
+          (document.documentElement.getAttribute("data-theme") as
+            | "dark"
+            | "light") || "dark";
         setTheme(liveTheme);
       }
     };
 
     window.addEventListener("wec-theme-change", handleThemeChange);
-    return () => window.removeEventListener("wec-theme-change", handleThemeChange);
+    return () => {
+      window.removeEventListener("wec-theme-change", handleThemeChange);
+      if (transitionTimerRef.current !== null) {
+        clearTimeout(transitionTimerRef.current);
+      }
+    };
   }, [theme]);
 
   const toggleTheme = () => {
@@ -41,6 +50,8 @@ export default function ThemeToggle() {
     const current = currentDom === "light" ? "light" : "dark";
     const nextTheme: "dark" | "light" = current === "dark" ? "light" : "dark";
 
+    // Trigger controlled, synchronized CSS transition
+    document.documentElement.classList.add("theme-transitioning");
     document.documentElement.setAttribute("data-theme", nextTheme);
     try {
       localStorage.setItem("wec-theme", nextTheme);
@@ -48,7 +59,17 @@ export default function ThemeToggle() {
       // ignore storage access errors
     }
     setTheme(nextTheme);
-    window.dispatchEvent(new CustomEvent("wec-theme-change", { detail: { theme: nextTheme } }));
+    window.dispatchEvent(
+      new CustomEvent("wec-theme-change", { detail: { theme: nextTheme } }),
+    );
+
+    if (transitionTimerRef.current !== null) {
+      clearTimeout(transitionTimerRef.current);
+    }
+    transitionTimerRef.current = window.setTimeout(() => {
+      document.documentElement.classList.remove("theme-transitioning");
+      transitionTimerRef.current = null;
+    }, 250);
   };
 
   return (
@@ -58,7 +79,9 @@ export default function ThemeToggle() {
       aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
       title={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
     >
-      <div className={`${styles.icon} ${theme === "dark" ? styles.dark : styles.light}`} />
+      <div
+        className={`${styles.icon} ${theme === "dark" ? styles.dark : styles.light}`}
+      />
     </button>
   );
 }
