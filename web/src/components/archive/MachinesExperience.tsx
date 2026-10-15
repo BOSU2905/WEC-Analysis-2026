@@ -132,7 +132,7 @@ export default function MachinesExperience() {
       <div className={styles.header}>
         <h2>Machines That Defined an Era</h2>
         <p>
-          Explore the statistically dominant platforms in the WEC 2011–2023
+          Explore the statistically dominant platforms in the WEC 2011 to 2023
           dataset.
         </p>
       </div>

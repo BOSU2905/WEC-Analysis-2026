@@ -24,7 +24,7 @@ export default function Footer({ onOpenCredits, onNavigate }: FooterProps) {
           <BrandLogo variant="navbar" />
           <p className={styles.brandTagline}>
             An independent, interactive editorial motorsport data story exploring
-            the 2011–2023 era of the FIA World Endurance Championship.
+            the 2011 to 2023 era of the FIA World Endurance Championship.
           </p>
           <div className={styles.navQuickLinks}>
             <a href="#story" onClick={(e) => handleNav(e, "story")}>

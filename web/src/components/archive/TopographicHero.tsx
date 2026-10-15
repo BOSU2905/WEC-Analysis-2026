@@ -283,7 +283,7 @@ export default function TopographicHero({ children }: TopographicHeroProps) {
         <h1 className={styles.title}>The WEC Archive</h1>
         <p className={styles.intro}>
           A user-driven exploration of the machines and circuits that defined
-          the 2011–2023 era of the FIA World Endurance Championship.
+          the 2011 to 2023 era of the FIA World Endurance Championship.
         </p>
         {children}
       </div>

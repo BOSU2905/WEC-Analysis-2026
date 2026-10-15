@@ -107,10 +107,7 @@ export default function PhotoCreditsModal({
                   Photo Credits & Provenance
                 </h2>
                 <p className={styles.description}>
-                  Complete attribution ledger for photographic assets rendered
-                  across the WEC 2011–2023 story. This record distinguishes
-                  between original source links, photographer credits, copyright
-                  owners, and verified legal reuse rights.
+                  Attribution ledger for photographic assets across the WEC 2011 to 2023 story. This record documents source links, photographer credits, copyright ownership, and verified Creative Commons licenses.
                 </p>
               </div>
               <button
@@ -192,12 +189,7 @@ export default function PhotoCreditsModal({
             {/* Content List */}
             <div className={styles.scrollArea}>
               <div className={styles.distinctionNotice}>
-                <strong>Legal & Attribution Principle</strong>A source lead URL,
-                a photographer credit, and an image copyright are legally
-                distinct from permission to reuse an image. All public-domain
-                and Creative Commons assets are verified below, while
-                proprietary press leads and developmental placeholders are
-                rigorously documented pending formal clearance or replacement.
+                <strong>Attribution &amp; Licensing Principles:</strong> Source links, photographer credits, and copyright ownership are documented alongside verified reuse licenses. All assets displayed in the editorial narrative are verified under open Creative Commons terms.
               </div>
 
               {filteredEntries.map((item: PhotoCreditEntry) => (

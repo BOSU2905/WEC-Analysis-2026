@@ -236,17 +236,17 @@ export default function About() {
           <section className={styles.sectionBlock}>
             <h2>The Curiosity Behind the Project</h2>
             <p>
-              <em>ENDURANCE IN DATA</em> began from genuine curiosity. After following the FIA World Endurance Championship, I found myself drawn to the sheer unpredictability of multi-class sports car racing—where outright lap pace, mechanical preservation, weather transitions, and traffic management constantly collide.
+              <em>ENDURANCE IN DATA</em> began from genuine curiosity. After following the FIA World Endurance Championship, I was drawn to the strategic depth of multi-class sports car racing, where lap pace, mechanical preservation, changing weather, and traffic management interact continuously.
             </p>
             <p>
-              Browsing motorsport data repositories, I discovered a comprehensive competition dataset compiled by Felipe Roll on Kaggle covering the 2011 to 2023 seasons. Rather than presenting the data through a conventional dashboard or corporate report, I wanted to craft an interactive, editorial documentary that captures both statistical truth and narrative tension.
+              While reviewing motorsport data archives, I came across Felipe Roll's competition dataset on Kaggle covering the 2011 to 2023 seasons. Rather than building a conventional dashboard, I set out to create an interactive editorial narrative that combines statistical rigor with the rhythm of endurance racing.
             </p>
           </section>
 
           <section className={styles.sectionBlock}>
             <h2>The Formula 1 &amp; Endurance Cross-Over</h2>
             <p>
-              One of the most fascinating patterns discovered while examining the telemetry and rosters was how frequently elite Formula 1 drivers crossed over to test themselves in endurance prototypes:
+              A prominent pattern across the championship's rosters is how frequently Formula 1 drivers crossed over to endurance prototypes:
             </p>
             <div className={styles.driverGrid}>
               <div className={styles.driverCard}>
@@ -260,21 +260,21 @@ export default function About() {
                 <span className={styles.driverName}>Fernando Alonso</span>
                 <span className={styles.driverAchievement}>2018–2019 World Champion</span>
                 <p>
-                  Pursued the Triple Crown during his F1 hiatus, taking back-to-back 24 Hours of Le Mans victories and the FIA World Endurance Championship with Toyota Gazoo Racing.
+                  Joined Toyota Gazoo Racing during a break from Formula 1, taking consecutive 24 Hours of Le Mans victories and securing the 2018–2019 World Endurance Championship.
                 </p>
               </div>
               <div className={styles.driverCard}>
                 <span className={styles.driverName}>Robert Kubica</span>
                 <span className={styles.driverAchievement}>2023 LMP2 World Champion</span>
                 <p>
-                  Rebuilt his top-tier racing career in endurance prototypes, capturing the 2023 FIA Endurance Trophy for LMP2 with Team WRT before stepping up to the 499P Hypercar.
+                  Transitioned into prototype racing, winning the 2023 FIA Endurance Trophy for LMP2 with Team WRT before advancing to the Ferrari 499P Hypercar.
                 </p>
               </div>
               <div className={styles.driverCard}>
                 <span className={styles.driverName}>Nyck de Vries</span>
                 <span className={styles.driverAchievement}>LMP2 Winner &amp; Hypercar Pilot</span>
                 <p>
-                  Showcased blistering pace in LMP2 with Racing Team Nederland before transitions between Formula E, Formula 1, and the Toyota Gazoo Racing Hypercar squad.
+                  Competed in LMP2 with Racing Team Nederland before racing in Formula E and Formula 1, later joining the Toyota Gazoo Racing Hypercar squad.
                 </p>
               </div>
             </div>
@@ -283,7 +283,7 @@ export default function About() {
           <section className={styles.sectionBlock}>
             <h2>Dataset Coverage &amp; Methodological Transparency</h2>
             <p>
-              Scientific integrity requires transparency regarding dataset boundaries and analytical constraints:
+              Analytical integrity requires clear dataset boundaries and methodological context:
             </p>
             <ul className={styles.transparencyList}>
               <li>
@@ -340,7 +340,7 @@ export default function About() {
             </div>
 
             <p className={styles.authorBio}>
-              As an undergraduate data science student, this project represents an ongoing exploration in motorsport data analysis, interactive visualization, and editorial craft. Every chart, model, and comparison was designed to balance rigorous data analysis with clear narrative context.
+              As an undergraduate data science student, I created this project to explore motorsport data analysis, interactive visualization, and editorial presentation. Each chart and comparison is designed to balance empirical detail with clear narrative context.
             </p>
 
             <div className={styles.learningNote}>

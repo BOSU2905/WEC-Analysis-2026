@@ -25,25 +25,25 @@ export default function Chapter02() {
           <div className={styles.step}>
             <div className={styles.narrativeCard}>
               <p>
-                At the front of the grid, the Top Class was an unforgiving proving ground. Factory programs poured immense resources into experimental hybrid powertrains, only to face the brutal reality of 24-hour attrition.
+                At the front of the field, the premier prototype class demanded heavy technical investment. Factory programs developed complex hybrid powertrains operating at the limit of mechanical endurance.
               </p>
               <p>
-                While Audi and Porsche engineered unforgettable eras of dominance before bowing out, Toyota Gazoo Racing stayed the course—ultimately collecting <strong>44 Top-Class victories</strong> across the 13-year span.
+                While Audi and Porsche mounted successful multi-year campaigns before withdrawing, Toyota Gazoo Racing maintained an unbroken factory presence, ultimately collecting <strong>44 top-class victories</strong> across the 13-year period.
               </p>
 
               <EditorialPhoto
                 src={toyotaImage}
                 alt="Toyota TS050 Hybrid at Le Mans"
-                caption="The Toyota TS050 Hybrid was the technical backbone of Toyota's historic Super Season sweep."
+                caption="The Toyota TS050 Hybrid secured back-to-back Le Mans victories during the 2018–2019 Super Season."
                 direction="right"
               />
 
               <p>
-                What set Toyota apart wasn't just peaking for a single season; it was persistence. As rival factory programs departed and regulations evolved from LMP1-Hybrid into the modern Hypercar era, Toyota kept racing, refining, and winning.
+                Toyota's statistical dominance stemmed from long-term participation. When rival factory teams withdrew and regulations transitioned from LMP1 to Hypercar, Toyota remained committed, developing the GR010 Hybrid and continuing its winning record.
               </p>
 
               <p>
-                Yet factory prototype trophies only tell half the story. To understand how endurance racing actually functions, we have to look past the top step of the podium and into the swarms of privateer and GT teams that kept the grid alive.
+                Overall prototype victories represent only one dimension of the championship. The broader health of endurance racing relied on the privateer and GT squads that filled the grid round after round.
               </p>
             </div>
           </div>

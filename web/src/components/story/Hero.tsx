@@ -56,15 +56,15 @@ export default function Hero() {
     },
     {
       src: img6,
-      alt: "Porsche 919 Hybrid racing into the night with blazing headlights at the 2016 24 Hours of Le Mans",
+      alt: "Porsche 919 Hybrid racing at night during the 2016 24 Hours of Le Mans",
     },
     {
       src: img7,
-      alt: "United Autosports pit crew conducting a rapid pit stop with fuel rig and pneumatic wheel guns at Le Mans 2019",
+      alt: "United Autosports pit crew servicing a prototype during the 2019 24 Hours of Le Mans",
     },
     {
       src: img8,
-      alt: "Toyota TS040 Hybrid LMP1 powering through heavy rain and rooster tails of spray at the 2014 6 Hours of Silverstone",
+      alt: "Toyota TS040 Hybrid LMP1 racing in wet conditions at the 2014 6 Hours of Silverstone",
     },
   ];
 
@@ -145,14 +145,14 @@ export default function Hero() {
           transition={{ delay: 0.4 }}
         >
           <p className={styles.editorial}>
-            Between 2011 and 2023, the FIA World Endurance Championship survived
-            dramatic regulation shifts, manufacturer exoduses, and a global
-            pandemic. Through race results, team participation, and pace
-            evolution, this data story examines how the championship changed—and
-            who actually dominated it.
+            Between 2011 and 2023, the FIA World Endurance Championship weathered
+            major regulation shifts, manufacturer departures, and a global
+            pandemic. Drawing on timing records, grid participation, and lap
+            data, this analysis examines how the championship evolved and
+            where competitive dominance emerged.
           </p>
           <div className={styles.metadata}>
-            <span>Analytical Record: 2011 — 2023</span>
+            <span>Analytical Record: 2011 to 2023</span>
           </div>
         </m.div>
       </div>

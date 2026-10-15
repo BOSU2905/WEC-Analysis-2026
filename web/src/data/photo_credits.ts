@@ -48,7 +48,7 @@ export const PHOTO_CREDITS: PhotoCreditEntry[] = [
     id: "wec-starting-grid",
     filename: "wec-starting-grid.webp",
     assetPath: "src/assets/editorial/wec-starting-grid.webp",
-    sectionUsed: "Chapter 00 (Understanding WEC — Grid)",
+    sectionUsed: "Chapter 00 (Understanding WEC: Grid)",
     isDisplayedInStory: true,
     category: "editorial",
     originalSourceUrl:
@@ -70,7 +70,7 @@ export const PHOTO_CREDITS: PhotoCreditEntry[] = [
     id: "wec-pit-operations",
     filename: "wec-pit-operations.webp",
     assetPath: "src/assets/editorial/wec-pit-operations.webp",
-    sectionUsed: "Chapter 00 (Understanding WEC — Pit Operations)",
+    sectionUsed: "Chapter 00 (Understanding WEC: Pit Operations)",
     isDisplayedInStory: true,
     category: "editorial",
     originalSourceUrl:

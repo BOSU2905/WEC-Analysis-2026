@@ -26,7 +26,7 @@ describe("Archive Page Separation & Navigation", () => {
     expect(screen.getByText("The WEC Archive")).toBeDefined();
     expect(
       screen.getByText(
-        /A user-driven exploration of the machines and circuits that defined the 2011–2023 era/i
+        /A user-driven exploration of the machines and circuits that defined the 2011 to 2023 era/i
       )
     ).toBeDefined();
 

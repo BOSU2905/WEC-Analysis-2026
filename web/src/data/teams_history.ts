@@ -68,7 +68,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
     "seriesContext": "Pre-WEC: Intercontinental Le Mans Cup (ILMC) & 79th 24 Hours of Le Mans",
     "era": "ILMC Era",
     "dominantManufacturer": "Audi & Peugeot",
-    "summary": "Before the rebirth of the World Endurance Championship in 2012, endurance sports car racing contested the Intercontinental Le Mans Cup. The 2011 24 Hours of Le Mans delivered one of the closest finishes in history, with Audi's lone surviving R18 TDI holding off three charging factory Peugeots by a razor-thin 13.854 seconds.",
+    "summary": "Prior to the establishment of the FIA World Endurance Championship in 2012, top-level sports car competition was organized under the Intercontinental Le Mans Cup. At the 2011 24 Hours of Le Mans, Audi's sole remaining factory R18 TDI held off three Peugeot 908 entries to win by 13.854 seconds.",
     "champions": [
       {
         "category": "Overall / Top Class",
@@ -80,7 +80,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "Andr\u00e9 Lotterer",
           "Beno\u00eet Tr\u00e9luyer (Le Mans)"
         ],
-        "note": "FIA WEC was inaugurated in 2012; 2011 records reflect the predecessor Intercontinental Le Mans Cup."
+        "note": "FIA WEC was inaugurated in 2012, and 2011 records reflect the predecessor Intercontinental Le Mans Cup."
       },
       {
         "category": "LMP2",
@@ -118,7 +118,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "Andr\u00e9 Lotterer",
           "Beno\u00eet Tr\u00e9luyer"
         ],
-        "historicalSignificance": "Surviving catastrophic crashes that eliminated sister cars #1 and #3, the #2 R18 TDI defended Audi's honor against the entire Peugeot fleet in a breathtaking 24-hour sprint.",
+        "historicalSignificance": "Following heavy accidents that eliminated the #1 and #3 entries, the sole remaining #2 R18 TDI held off the three-car Peugeot team to win Le Mans by under 14 seconds.",
         "keyStat": "13.854s margin of victory at Le Mans",
         "accentColor": "#b8493e"
       },
@@ -134,7 +134,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "Simon Pagenaud",
           "Pedro Lamy"
         ],
-        "historicalSignificance": "Peugeot claimed the 2011 ILMC LMP1 team championship with five race victories across the globe before abruptly shuttering their prototype program in early 2012.",
+        "historicalSignificance": "Peugeot claimed the 2011 ILMC LMP1 team championship with five race victories before closing its prototype programme ahead of the 2012 season.",
         "keyStat": "5 ILMC race victories in 2011",
         "accentColor": "#002c6c"
       }
@@ -208,7 +208,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
     "seriesContext": "Inaugural FIA World Endurance Championship Season",
     "era": "LMP1 Golden Hybrid Era",
     "dominantManufacturer": "Audi",
-    "summary": "The FIA World Championship returned to endurance racing for the first time since 1992. Audi introduced hybrid all-wheel drive with the R18 e-tron quattro, claiming the inaugural World Championship and the first hybrid overall victory at the 24 Hours of Le Mans, while Toyota made an emphatic late-season debut.",
+    "summary": "The FIA World Championship status returned to endurance racing for the first time since 1992. Audi introduced hybrid all-wheel drive with the R18 e-tron quattro, claiming the inaugural championship and the first hybrid overall victory at Le Mans, while Toyota entered the series mid-season.",
     "champions": [
       {
         "category": "Overall / Top Class",
@@ -259,7 +259,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "Andr\u00e9 Lotterer",
           "Beno\u00eet Tr\u00e9luyer"
         ],
-        "historicalSignificance": "Pioneered hybrid all-wheel drive at Le Mans, scoring victories at Sebring, Spa, Le Mans, and Silverstone to become the historic first WEC World Champions.",
+        "historicalSignificance": "Introduced hybrid all-wheel drive to prototype competition, scoring victories at Sebring, Spa, Le Mans, and Silverstone to become the inaugural WEC World Champions.",
         "keyStat": "Inaugural FIA WEC World Champions",
         "accentColor": "#b8493e"
       },
@@ -275,7 +275,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "Nicolas Lapierre",
           "Kazuki Nakajima"
         ],
-        "historicalSignificance": "Brought capacitor-based superhybrid technology to WEC, capturing 3 victories in their debut season (S\u00e3o Paulo, Fuji, Shanghai) to ignite a legendary rivalry.",
+        "historicalSignificance": "Introduced supercapacitor energy storage to the WEC, capturing three victories in its partial debut season (S\u00e3o Paulo, Fuji, Shanghai) against Audi.",
         "keyStat": "3 victories in 6 starts",
         "accentColor": "#d32f2f"
       }
@@ -762,7 +762,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
     "seriesContext": "2nd FIA World Endurance Championship Season",
     "era": "LMP1 Golden Hybrid Era",
     "dominantManufacturer": "Audi",
-    "summary": "Audi defended their World Championship against a full-season assault from Toyota. Tom Kristensen earned his record-extending ninth 24 Hours of Le Mans victory and clinched his maiden FIA World Championship alongside Lo\u00efc Duval and Allan McNish.",
+    "summary": "Audi retained the World Championship against a full-season campaign from Toyota. Tom Kristensen took a record ninth 24 Hours of Le Mans victory, securing the World Championship alongside Lo\u00efc Duval and Allan McNish.",
     "champions": [
       {
         "category": "Overall / Top Class",
@@ -812,7 +812,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "Lo\u00efc Duval",
           "Allan McNish"
         ],
-        "historicalSignificance": "Mastered relentless wet-and-dry conditions to capture the Le Mans 24 Hours and three WEC round victories, sealing Allan McNish and Tom Kristensen's world title crowning achievement.",
+        "historicalSignificance": "Navigated variable wet-and-dry conditions to win the 24 Hours of Le Mans and three WEC rounds, securing the World Championship for Allan McNish, Tom Kristensen, and Lo\u00efc Duval.",
         "keyStat": "Kristensen's 9th Le Mans win & World Title",
         "accentColor": "#b8493e"
       },
@@ -828,7 +828,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "Martin Plowman",
           "Ricardo Gonz\u00e1lez"
         ],
-        "historicalSignificance": "Scored an emphatic 1-2 finish for the team at Le Mans and swept the LMP2 Drivers' and Teams' trophies through unmatched consistency.",
+        "historicalSignificance": "Recorded a 1-2 class finish at Le Mans and secured the LMP2 Drivers' and Teams' trophies through consistent podium finishes across the season.",
         "keyStat": "LMP2 Class 1-2 sweep at Le Mans",
         "accentColor": "#e69d45"
       }
@@ -1308,7 +1308,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
     "seriesContext": "3rd FIA World Endurance Championship Season",
     "era": "LMP1 Golden Hybrid Era",
     "dominantManufacturer": "Toyota",
-    "summary": "New fuel-flow regulations welcomed Porsche back to top-flight endurance racing, creating a titanic three-way factory battle between Audi, Porsche, and Toyota. Toyota Racing captured their first World Championship with the 1,000-hp TS040 Hybrid, winning 5 of 8 rounds.",
+    "summary": "New fuel-flow regulations marked Porsche's return to top-level prototype racing alongside Audi and Toyota. Toyota Racing secured its first World Championship with the TS040 Hybrid, winning five of the eight rounds.",
     "champions": [
       {
         "category": "Overall / Top Class",
@@ -1372,7 +1372,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "Neel Jani",
           "Marc Lieb"
         ],
-        "historicalSignificance": "Marked Porsche's historic return to premier prototype racing, overcoming teething challenges to take their breakthrough maiden victory in the S\u00e3o Paulo season finale.",
+        "historicalSignificance": "Marked Porsche's return to top-tier prototype racing, developing the 919 Hybrid across the year before taking its first race win at the S\u00e3o Paulo season finale.",
         "keyStat": "Porsche's 1st modern hybrid victory (Interlagos)",
         "accentColor": "#b6a16f"
       }
@@ -1860,7 +1860,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
     "seriesContext": "4th FIA World Endurance Championship Season",
     "era": "LMP1 Golden Hybrid Era",
     "dominantManufacturer": "Porsche",
-    "summary": "The peak of the 8MJ hybrid era saw Porsche unleash the devastatingly fast 919 Hybrid. Nico H\u00fclkenberg made headlines by winning Le Mans as an active F1 driver, while Mark Webber, Timo Bernhard, and Brendon Hartley stormed to the World Championship.",
+    "summary": "At the height of the 8-megajoule hybrid regulations, Porsche claimed the manufacturers' title with the 919 Hybrid. Nico H\u00fclkenberg won Le Mans as an active Formula 1 driver, while Mark Webber, Timo Bernhard, and Brendon Hartley secured the World Endurance Drivers' Championship.",
     "champions": [
       {
         "category": "Overall / Top Class",
@@ -1910,7 +1910,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "Mark Webber",
           "Brendon Hartley"
         ],
-        "historicalSignificance": "Secured 4 consecutive race wins (N\u00fcrburgring, COTA, Fuji, Shanghai) to deliver Mark Webber his crowning motorsport world championship.",
+        "historicalSignificance": "Secured four consecutive race wins (N\u00fcrburgring, Circuit of the Americas, Fuji, Shanghai) to win the World Championship for Mark Webber, Brendon Hartley, and Timo Bernhard.",
         "keyStat": "4 consecutive race wins & World Championship",
         "accentColor": "#b6a16f"
       },
@@ -1926,7 +1926,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "Earl Bamber",
           "Nick Tandy"
         ],
-        "historicalSignificance": "Entered as a third car for Spa and Le Mans, active Formula 1 driver Nico H\u00fclkenberg and GT aces Bamber and Tandy scored an unforgettable overall Le Mans victory on debut.",
+        "historicalSignificance": "Entered as a third chassis for Spa and Le Mans, active Formula 1 driver Nico H\u00fclkenberg alongside Earl Bamber and Nick Tandy won the 24 Hours of Le Mans overall on their LMP1 debut.",
         "keyStat": "Active F1 driver overall Le Mans victory",
         "accentColor": "#e8e7e3"
       }
@@ -2407,7 +2407,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
     "seriesContext": "5th FIA World Endurance Championship Season",
     "era": "LMP1 Golden Hybrid Era",
     "dominantManufacturer": "Porsche",
-    "summary": "A season marked by heartbreak and farewells. Toyota looked poised to win Le Mans until heartbreak struck car #5 with 3 minutes remaining, handing victory to Porsche's #2. Audi celebrated their historic endurance legacy with a 1-2 farewell win in Bahrain as they departed LMP1.",
+    "summary": "A mechanical failure for the leading #5 Toyota with three minutes remaining handed victory to the #2 Porsche at Le Mans. Audi concluded its 18-year prototype programme at the end of the year, finishing with a 1-2 victory in Bahrain.",
     "champions": [
       {
         "category": "Overall / Top Class",
@@ -2442,7 +2442,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "Nicki Thiim",
           "Marco S\u00f8rensen"
         ],
-        "note": "World Endurance Cup for GT Drivers; Ferrari won GT Manufacturers"
+        "note": "World Endurance Cup for GT Drivers, with Ferrari winning GT Manufacturers"
       }
     ],
     "featuredTeams": [
@@ -2458,7 +2458,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "Neel Jani",
           "Marc Lieb"
         ],
-        "historicalSignificance": "Capitalized on relentless pressure to win Le Mans and built an unassailable points lead to clinch both World Championships.",
+        "historicalSignificance": "Took victory at Le Mans following Toyota's late retirement and maintained a steady points tally to secure both World Championships.",
         "keyStat": "Le Mans victory & World Championship double",
         "accentColor": "#b6a16f"
       },
@@ -2474,7 +2474,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "Lo\u00efc Duval",
           "Oliver Jarvis"
         ],
-        "historicalSignificance": "Closed an incomparable 18-year prototype dynasty that claimed 13 Le Mans victories, bowing out with an emotional 1-2 finish at Bahrain.",
+        "historicalSignificance": "Concluded an 18-year LMP1 programme that achieved 13 Le Mans victories, finishing with a 1-2 result at the Bahrain season finale.",
         "keyStat": "Audi's final LMP1 race victory (Bahrain)",
         "accentColor": "#b8493e"
       }
@@ -3023,7 +3023,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
     "seriesContext": "6th FIA World Endurance Championship Season",
     "era": "LMP1 Golden Hybrid Era",
     "dominantManufacturer": "Porsche",
-    "summary": "Porsche and Toyota fought a high-speed duel of attrition across nine rounds. At Le Mans, top-class attrition nearly saw an LMP2 car take overall victory, before Porsche #2 clawed back to win. Porsche completed a hat-trick of World Championships before shifting focus to Formula E.",
+    "summary": "Porsche and Toyota contested a closely matched season across nine rounds. Severe LMP1 attrition at Le Mans briefly put an LMP2 car in the overall lead before the #2 Porsche recovered to take the win. Porsche secured its third consecutive World Championship before exiting the category.",
     "champions": [
       {
         "category": "Overall / Top Class",
@@ -3073,7 +3073,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "Earl Bamber",
           "Brendon Hartley"
         ],
-        "historicalSignificance": "Recovered from an early 1-hour pitstop at Le Mans to execute an incredible comeback win, closing Porsche's LMP1 factory program with three straight World titles.",
+        "historicalSignificance": "Recovered from an early pitstop for front axle repairs at Le Mans to take overall victory, closing Porsche's LMP1 factory programme with three consecutive World titles.",
         "keyStat": "3rd consecutive World Title for Porsche 919",
         "accentColor": "#b6a16f"
       },
@@ -3089,7 +3089,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "Thomas Laurent",
           "Oliver Jarvis"
         ],
-        "historicalSignificance": "Made endurance history by leading the 24 Hours of Le Mans outright in an LMP2 chassis on Sunday morning, finishing 2nd overall and 1st in LMP2.",
+        "historicalSignificance": "Led the 24 Hours of Le Mans outright in an LMP2 chassis during Sunday morning attrition, ultimately finishing second overall and claiming the LMP2 class victory.",
         "keyStat": "Led Le Mans outright, finished 2nd overall",
         "accentColor": "#e69d45"
       }
@@ -3628,7 +3628,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
     "seriesContext": "7th FIA World Endurance Championship Season ('Super Season')",
     "era": "LMP1 Twilight Era",
     "dominantManufacturer": "Toyota",
-    "summary": "Spanning 14 months and two editions of the 24 Hours of Le Mans, the historic Super Season realigned the WEC calendar. Two-time F1 World Champion Fernando Alonso joined Toyota Gazoo Racing, achieving his ambition of winning Le Mans twice and capturing the World Endurance Championship.",
+    "summary": "Spanning 14 months and two editions of the 24 Hours of Le Mans, the Super Season transitioned the WEC to a winter calendar structure. Fernando Alonso joined Toyota Gazoo Racing, winning Le Mans twice and securing the World Endurance Drivers' Championship alongside S\u00e9bastien Buemi and Kazuki Nakajima.",
     "champions": [
       {
         "category": "Overall / Top Class",
@@ -3679,7 +3679,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "S\u00e9bastien Buemi",
           "Kazuki Nakajima"
         ],
-        "historicalSignificance": "Fernando Alonso pursued the motorsport Triple Crown, driving spectacular night stints at Le Mans to take victories in 2018 and 2019 alongside Buemi and Nakajima.",
+        "historicalSignificance": "Fernando Alonso joined S\u00e9bastien Buemi and Kazuki Nakajima to win consecutive editions of the 24 Hours of Le Mans in 2018 and 2019, securing the Drivers' World Championship.",
         "keyStat": "Back-to-back Le Mans wins & World Championship",
         "accentColor": "#d32f2f"
       },
@@ -3695,7 +3695,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "K\u00e9vin Estre",
           "Laurens Vanthoor"
         ],
-        "historicalSignificance": "Ran the iconic retro 'Pink Pig' livery at the 2018 24 Hours of Le Mans, dominating the deepest factory GTE Pro field ever assembled.",
+        "historicalSignificance": "Carried the retro 'Pink Pig' livery to class victory at the 2018 24 Hours of Le Mans amidst a 17-car factory LMGTE Pro field.",
         "keyStat": "GTE Pro World Championship & Le Mans victory",
         "accentColor": "#b6a16f"
       }
@@ -4177,7 +4177,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
     "seriesContext": "8th FIA World Endurance Championship Season",
     "era": "LMP1 Twilight Era",
     "dominantManufacturer": "Toyota",
-    "summary": "The farewell season for the legendary LMP1 hybrid regulations. Success handicaps brought independent non-hybrid prototypes into contention, but Toyota car #7 finally earned their long-awaited Le Mans victory and clinched the World Championship.",
+    "summary": "The final season under LMP1 regulations introduced success handicaps to balance factory hybrids with privateer entries. The #7 Toyota crew took victory at Le Mans and captured the World Championship.",
     "champions": [
       {
         "category": "Overall / Top Class",
@@ -4227,7 +4227,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "Kamui Kobayashi",
           "Jos\u00e9 Mar\u00eda L\u00f3pez"
         ],
-        "historicalSignificance": "After years of agonizing near-misses, the #7 trio delivered a masterclass campaign, winning 4 of 8 races to take their maiden World Championship.",
+        "historicalSignificance": "Following several narrow defeats in previous seasons, the #7 crew won four of eight rounds to capture the 2019\u20132020 World Championship.",
         "keyStat": "4 victories & World Championship redemption",
         "accentColor": "#d32f2f"
       },
@@ -4243,7 +4243,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "Philip Hanson",
           "Paul di Resta"
         ],
-        "historicalSignificance": "Staged one of the most dominant runs in LMP2 history, winning four consecutive rounds including the 24 Hours of Le Mans.",
+        "historicalSignificance": "Secured four consecutive class victories across the season, including the 2020 24 Hours of Le Mans, to win the LMP2 title.",
         "keyStat": "4 consecutive class wins including Le Mans",
         "accentColor": "#002c6c"
       }
@@ -4661,10 +4661,10 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
   {
     "season": "2021",
     "label": "2021",
-    "seriesContext": "9th FIA World Endurance Championship Season \u2014 Dawn of Hypercar",
+    "seriesContext": "9th FIA World Endurance Championship Season: Dawn of Hypercar",
     "era": "Hypercar Era",
     "dominantManufacturer": "Toyota",
-    "summary": "The inaugural season of the Le Mans Hypercar (LMH) formula. Toyota debuted the twin-turbo V6 GR010 Hybrid, sweeping all six rounds of the world championship and scoring a 1-2 finish at the 24 Hours of Le Mans.",
+    "summary": "The inaugural season of the Le Mans Hypercar (LMH) formula. Toyota introduced the GR010 Hybrid, winning all six rounds of the championship and recording a 1-2 finish at the 24 Hours of Le Mans.",
     "champions": [
       {
         "category": "Overall / Top Class",
@@ -4715,7 +4715,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "Kamui Kobayashi",
           "Jos\u00e9 Mar\u00eda L\u00f3pez"
         ],
-        "historicalSignificance": "Won the 24 Hours of Le Mans on the Hypercar platform's debut, completing a clean sweep of the 2021 world championship.",
+        "historicalSignificance": "Won the 24 Hours of Le Mans on the Hypercar platform's debut, completing a sweep of the six 2021 championship rounds.",
         "keyStat": "Inaugural Hypercar Le Mans Champions",
         "accentColor": "#d32f2f"
       },
@@ -4731,7 +4731,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "Ferdinand Habsburg",
           "Charles Milesi"
         ],
-        "historicalSignificance": "In their rookie endurance prototype season, Team WRT clinched the LMP2 title and survived a dramatic coasting finish to win Le Mans by 0.727 seconds.",
+        "historicalSignificance": "In its debut prototype season, Team WRT secured the LMP2 title, winning at Le Mans by 0.727 seconds after sister car #41 stopped on the final lap.",
         "keyStat": "Rookie LMP2 Le Mans victory by 0.727s",
         "accentColor": "#0a58ca"
       }
@@ -5106,7 +5106,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
     "seriesContext": "10th FIA World Endurance Championship Season",
     "era": "Hypercar Era",
     "dominantManufacturer": "Toyota",
-    "summary": "Toyota faced stiff competition from grandfathered LMP1 machinery run by Alpine and the bold wingless Peugeot 9X8. The season also marked the final championship for the prestigious factory LMGTE Pro category.",
+    "summary": "Toyota competed against grandfathered LMP1 machinery entered by Alpine and the debut of Peugeot's 9X8. The season also concluded factory competition in the LMGTE Pro category.",
     "champions": [
       {
         "category": "Overall / Top Class",
@@ -5157,7 +5157,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "Brendon Hartley",
           "Ryo Hirakawa"
         ],
-        "historicalSignificance": "Brendon Hartley took a record 4th Le Mans overall victory, while rookie Japanese sensation Ryo Hirakawa performed flawlessly to clinch the World Championship.",
+        "historicalSignificance": "Brendon Hartley took his fourth overall Le Mans victory alongside S\u00e9bastien Buemi and newcomer Ryo Hirakawa, securing the 2022 World Championship.",
         "keyStat": "5th consecutive Le Mans victory for Toyota",
         "accentColor": "#d32f2f"
       },
@@ -5172,7 +5172,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "James Calado",
           "Alessandro Pier Guidi"
         ],
-        "historicalSignificance": "Nursed a failing gearbox in the Bahrain 8 Hours finale to hold off Porsche and claim the definitive final LMGTE Pro World Championship in endurance history.",
+        "historicalSignificance": "Managed gearbox issues in the Bahrain 8 Hours finale to hold off Porsche and secure the final LMGTE Pro World Championship.",
         "keyStat": "Definitive Final LMGTE Pro World Champions",
         "accentColor": "#b8493e"
       }
@@ -5533,10 +5533,10 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
   {
     "season": "2023",
     "label": "2023",
-    "seriesContext": "11th FIA World Endurance Championship Season \u2014 Centenary of Le Mans",
+    "seriesContext": "11th FIA World Endurance Championship Season: Centenary of Le Mans",
     "era": "Hypercar Era",
     "dominantManufacturer": "Toyota & Ferrari",
-    "summary": "A golden age reborn. Hypercar swelled to include Ferrari, Porsche, Cadillac, Peugeot, and Toyota. Ferrari AF Corse made a historic return to top-flight racing after 50 years, stunning the motorsport world with victory at the 100th anniversary of the 24 Hours of Le Mans.",
+    "summary": "The Hypercar class expanded to include manufacturer entries from Ferrari, Porsche, Cadillac, Peugeot, and Toyota. In its return to top-class endurance racing after 50 years, Ferrari took overall victory at the centenary edition of the 24 Hours of Le Mans.",
     "champions": [
       {
         "category": "Overall / Top Class",
@@ -5588,7 +5588,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "James Calado",
           "Antonio Giovinazzi"
         ],
-        "historicalSignificance": "Marked Ferrari's first factory assault on the top class in 50 years, taking pole position and winning the Centenary 24 Hours of Le Mans in front of 325,000 spectators.",
+        "historicalSignificance": "Marked Ferrari's return to the top class after 50 years, starting from pole position and winning the centenary edition of the 24 Hours of Le Mans.",
         "keyStat": "Ferrari overall Le Mans win on factory return",
         "accentColor": "#b8493e"
       },
@@ -5604,7 +5604,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "Brendon Hartley",
           "Ryo Hirakawa"
         ],
-        "historicalSignificance": "Overcame fierce multi-manufacturer competition to win 6 of 7 rounds across the season, securing Toyota's fifth consecutive Hypercar World Championship.",
+        "historicalSignificance": "Won six of seven rounds during the season to secure Toyota's fifth consecutive manufacturers' championship in the top class.",
         "keyStat": "6 wins in 7 races & World Championship",
         "accentColor": "#d32f2f"
       },
@@ -5620,7 +5620,7 @@ export const TEAMS_HISTORY: SeasonHistory[] = [
           "Ben Keating",
           "Nicol\u00e1s Varrone"
         ],
-        "historicalSignificance": "Clinched the final GTE Am World Championship with two races remaining, scoring memorable victories at Sebring, Portim\u00e3o, and Le Mans.",
+        "historicalSignificance": "Clinched the final LMGTE Am World Championship with two races to spare, taking victories at Sebring, Portim\u00e3o, and Le Mans.",
         "keyStat": "Record early title clinch in final GTE season",
         "accentColor": "#fed100"
       }

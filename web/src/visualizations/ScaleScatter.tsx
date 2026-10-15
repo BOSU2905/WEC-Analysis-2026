@@ -68,7 +68,7 @@ export default function ScaleScatter({ progress }: Props) {
   // - GT (lower-center): broad warm gold mass nestled below and between the upper pair
   // - Experimental (lower-left): small separate outlier group in green
   // The complete composition is centered in its dedicated container using its total bounding box,
-  // scaling to occupy ~80-90% of the usable container area with comfortable breathing room.
+  // scaling to occupy approximately 80 to 90% of the usable container area with comfortable breathing room.
   const clusterLayout = useMemo(() => {
     if (width === 0 || height === 0) {
       return {
@@ -105,7 +105,7 @@ export default function ScaleScatter({ progress }: Props) {
       Experimental: { x: -297.6, y: 121.9 },
     };
 
-    // Dedicated container sizing: ~80-90% of usable container width and height
+    // Dedicated container sizing: approximately 80 to 90% of usable container width and height
     const targetOccupancy = isMobileVp ? 0.90 : isTabletVp ? 0.86 : 0.85;
     const scale = Math.min((width * targetOccupancy) / COMP_W, (height * targetOccupancy) / COMP_H);
 

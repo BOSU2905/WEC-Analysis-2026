@@ -26,9 +26,7 @@ export default function Chapter05() {
             <h2 className={styles.chapterNumber}>Chapter 05</h2>
             <h3 className={styles.chapterTitle}>The Evolution of Speed</h3>
             <p className={styles.chapterIntro}>
-              Did the cars become faster? At the 24 Hours of Le Mans, the
-              ultimate proving ground, engineering warfare pushed lap times
-              relentlessly downward. But progress is rarely a straight line.
+              Fastest lap times at the 24 Hours of Le Mans provide a consistent benchmark for prototype performance. Over thirteen seasons, technological development drove lap times down until intentional regulatory adjustments reset the baseline.
             </p>
           </m.header>
         </div>
@@ -39,16 +37,10 @@ export default function Chapter05() {
 
             <div className={styles.caption}>
               <p>
-                <strong>Minimum Fastest Lap Time at Le Mans.</strong> During the
-                LMP1 era (2011–2020), aerodynamic and hybrid engineering drove
-                times downward. In 2021, the Hypercar regulations deliberately
-                forced a pace reduction to manage costs and enable a converged
-                competitive field.
+                <strong>Fastest race lap per season at Le Mans.</strong> During the LMP1 era (2011–2020), hybrid power and aerodynamic refinement lowered lap times to historic marks. In 2021, Hypercar regulations introduced a targeted pace reset to contain budgets and encourage broader manufacturer participation.
                 <br />
                 <em>
-                  Note: Weather heavily influences year-to-year variation,
-                  meaning pace is not solely an indicator of engineering
-                  capability.
+                  Note: Track and weather conditions contribute to year to year variation alongside technical regulations.
                 </em>
               </p>
             </div>
@@ -65,22 +57,15 @@ export default function Chapter05() {
           transition={{ duration: shouldReduceMotion ? 0 : 1 }}
         >
           <div className={styles.divider} />
-          <h3>Endurance, Validated</h3>
+          <h3>Thirteen Years of Endurance</h3>
           <p>
-            Across 13 years, the FIA World Endurance Championship evolved from
-            the high-cost technological warfare of the LMP1 era to the
-            accessible, sustainable structure of the Hypercar era.
+            Between 2011 and 2023, the World Endurance Championship shifted from high-cost factory prototype development in LMP1 to the convergence model of the Hypercar era.
           </p>
           <p>
-            Our data reveals a championship defined by intense operational
-            realities: massive GT fields where scale dictated success, a 68.3%
-            tyre assignment dominance by Michelin, and a top-class win record
-            held firmly by Toyota. As lap times were deliberately pulled back in
-            the name of competitive convergence, the core truth of endurance
-            racing remained unchanged.
+            The data illustrates the underlying structure of that journey: large GT fields where customer scale supported the championship, sustained tyre supply led by Michelin, and an overall win record established by Toyota's continuous participation. While regulatory shifts reset ultimate lap times, the core demands of endurance racing endure.
           </p>
           <p className={styles.finalThought}>
-            Speed is essential. But survival is paramount.
+            Outright pace secures track position, but mechanical durability, operational discipline, and traffic management decide the race.
           </p>
         </m.div>
       </div>

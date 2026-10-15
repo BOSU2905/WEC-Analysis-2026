@@ -405,7 +405,7 @@ export default function TyreShare({
         .style("font-family", "var(--font-mono)")
         .style("font-size", "0.75rem")
         .style("letter-spacing", "0.04em")
-        .text("Season (Year)");
+        .text("Season");
 
       // Y-Axis
       const yAxis = svg
@@ -693,7 +693,7 @@ export default function TyreShare({
       <div className={styles.topBar}>
         <div className={styles.topMeta}>
           <span className={styles.chartBadge}>TYRE ALLOCATION SHARE</span>
-          <span className={styles.chartHint}>• Hover or tap to track crosshair</span>
+          <span className={styles.chartHint}>• Hover or tap to inspect season</span>
         </div>
 
         {/* Legend with Approved Manufacturer Colors */}

@@ -26,13 +26,12 @@ const MAIN_TEAMS = [
 ];
 
 const TEAM_INFO: Record<string, string> = {
-  "AF Corse": "Secured 41 absolute GT wins by fielding 11 unique vehicles.",
-  "Aston Martin Racing":
-    "Secured 42 absolute GT wins fielding 5 unique vehicles.",
-  "Toyota Gazoo Racing": "Accumulated 44 Top Class victories.",
-  "Porsche GT Team": "Secured 11 absolute GT wins fielding 4 unique vehicles.",
-  "Audi Sport Team Joest": "Secured 18 Top Class victories.",
-  "Rebellion Racing": "Secured 3 Top Class victories.",
+  "AF Corse": "41 GT class wins across 11 vehicle chassis models.",
+  "Aston Martin Racing": "42 GT class wins across 5 vehicle chassis models.",
+  "Toyota Gazoo Racing": "44 top-class victories across LMP1 and Hypercar.",
+  "Porsche GT Team": "11 GT class wins across 4 factory vehicle chassis models.",
+  "Audi Sport Team Joest": "18 top-class victories during the LMP1 era.",
+  "Rebellion Racing": "3 top-class victories as a leading privateer LMP1 entry.",
 };
 
 export default function ArmadaScatter({ progress }: Props) {

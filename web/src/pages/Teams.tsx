@@ -198,7 +198,7 @@ export default function Teams() {
       className={styles.teamsExperience}
       ref={containerRef}
       style={{
-        // Dynamic content-aware height: Base ~650px per collapsed season, with expanded bonuses for race winners & rosters
+        // Dynamic content-aware height: Base approximately 650px per collapsed season, with expanded bonuses for race winners & rosters
         height: isMobile ? "auto" : `${desktopContainerHeight}px`,
       }}
     >
@@ -226,7 +226,7 @@ export default function Teams() {
                   className={`${styles.segmentButton} ${isActive ? styles.activeSegment : ""}`}
                   onClick={() => handleJumpToSeason(index)}
                   aria-label={`Jump to season ${seasonItem.label}`}
-                  title={`${seasonItem.label} — ${seasonItem.dominantManufacturer}`}
+                  title={`${seasonItem.label}: ${seasonItem.dominantManufacturer}`}
                 >
                   <span className={styles.segmentTick} />
                   <span className={styles.segmentYear}>{seasonItem.label}</span>
@@ -458,7 +458,7 @@ function SeasonPanel({
           <span>
             {isWinnersExpanded
               ? `Hide Season Race Winners (${season.races.length} Races)`
-              : `View Season Race Winners (${season.races.length} Races) — Overall & Class`}
+              : `View Season Race Winners (${season.races.length} Races): Overall & Class`}
           </span>
         </button>
 
@@ -482,14 +482,14 @@ function SeasonPanel({
                       </td>
                       <td className={styles.overallWinnerCell}>
                         <span className={styles.overallCarBadge}>
-                          {raceItem.overallWinner.car}
+                           {raceItem.overallWinner.car}
                         </span>
                         <div className={styles.winnerTeamName}>
                           {raceItem.overallWinner.team}
                         </div>
                       </td>
                       <td className={styles.driversCell}>
-                        {raceItem.overallWinner.drivers.join(", ") || "—"}
+                        {raceItem.overallWinner.drivers.join(", ") || "–"}
                       </td>
                       <td className={styles.classWinnersCell}>
                         <div className={styles.classPillList}>

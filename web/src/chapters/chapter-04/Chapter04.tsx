@@ -30,9 +30,7 @@ export default function Chapter04() {
           <h2 className={styles.chapterNumber}>Chapter 04</h2>
           <h3 className={styles.chapterTitle}>The Grip</h3>
           <p className={styles.chapterIntro}>
-            Tyres dictate pace, strategy, and engineering limits. Throughout the
-            WEC's history, one supplier dominated the field, capturing 68.3% of
-            all tyre assignments across 13 years: <strong>Michelin</strong>.
+            Tyres directly influence stint length, cornering performance, and pit strategy. Throughout the 2011 to 2023 championship, Michelin was the predominant supplier, accounting for 68.3% of all recorded tyre assignments.
           </p>
         </m.header>
       </div>
@@ -93,10 +91,7 @@ export default function Chapter04() {
 
           <div className={styles.caption}>
             <p>
-              <strong>100% Stacked Area Chart</strong> showing the share of tyre
-              assignments by manufacturer across seasons. Michelin held a
-              near-monopoly until the introduction of Goodyear in recent
-              seasons. Data based on 3,011 valid entry assignments.
+              <strong>Tyre assignment share across seasons</strong> (100% stacked area). Michelin supplied the vast majority of the field before Goodyear entered as the exclusive LMP2 supplier in 2021. Data based on 3,011 verified entry records.
             </p>
           </div>
         </div>

@@ -247,7 +247,7 @@ export default function EvolutionLineChart() {
           transformX = "-100%";
         }
 
-        // Vertical positioning: default above point; flip below if close to top edge
+        // Vertical positioning: default above point, flipping below if close to top edge
         let top = pointY - 14;
         let transformY = "-100%";
         if (pointY - tooltipHeight - 14 < 0) {
@@ -348,7 +348,7 @@ export default function EvolutionLineChart() {
           .attr("fill", "var(--chart-top-class)")
           .style("font-family", "var(--font-mono)")
           .style("font-size", isMobile ? "0.65rem" : "0.75rem")
-          .text("Hypercar Era Begins (Pace Reduction)");
+          .text("Hypercar Era Begins (Targeted Pace Reset)");
 
         if (shouldAnimate) {
           annoLine
@@ -404,7 +404,7 @@ export default function EvolutionLineChart() {
         .style("font-family", "var(--font-mono)")
         .style("font-size", "0.75rem")
         .style("letter-spacing", "0.04em")
-        .text("Season (Year)");
+        .text("Season");
 
       // Y-Axis
       const yAxis = svg

@@ -31,23 +31,23 @@ export default function Chapter03() {
           <div className={styles.step}>
             <div className={styles.narrativeCard}>
               <p>
-                While Toyota built its dynasty by concentrating engineering firepower on two prototype seats, winning the GT ranks required a completely different playbook: sheer numbers. Instead of staking everything on a single entry, Ferrari and Aston Martin turned up with an "Armada"—supporting customer squads and semi-factory operations that filled out every corner of the grid.
+                While Toyota built its top class record by fielding two factory prototype entries, success in the GT ranks followed a different model. Rather than relying on a solitary factory effort, Ferrari and Aston Martin supported customer teams and semi works squads across both professional and amateur classes.
               </p>
-              
+
               <EditorialPhoto
                 src={armadaImage}
                 alt="Aston Martin Vantage GTE"
-                caption="GT manufacturers countered prototype exclusivity by fielding expansive fleets of factory and customer cars."
+                caption="GT manufacturers maintained a broad presence by supplying both factory and customer operations."
                 direction="left"
               />
 
               <p>
-                Leading the charge was AF Corse, Ferrari's long-standing frontline operation, which logged an astounding{" "}
-                <strong>269 race entries</strong> across the 13-year dataset. Aston Martin Racing answered with{" "}
-                <strong>217 entries</strong> of their own.
+                Central to this strategy was AF Corse, Ferrari's frontline partner, which logged{" "}
+                <strong>269 race entries</strong> across the 13 year dataset. Aston Martin Racing recorded{" "}
+                <strong>217 entries</strong>.
               </p>
               <p>
-                By keeping as many as 11 cars in competition across a single weekend, AF Corse secured 41 GT class victories. That nearly matched Toyota's entire top-class win count, but they did it through relentless presence and tactical depth rather than solitary prototype speed.
+                By fielding multiple entries across pro and amateur divisions, AF Corse accumulated 41 GT class victories. That total nearly equalled Toyota's overall win tally, achieved through extensive customer depth and operational consistency rather than prototype exclusivity.
               </p>
             </div>
           </div>

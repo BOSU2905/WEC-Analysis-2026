@@ -53,7 +53,7 @@ export default function BrandLogo({
           <span className={styles.titleAccent}>IN DATA</span>
         </span>
         {showDescriptor && (
-          <span className={styles.descriptor}>WEC 2011 — 2023</span>
+          <span className={styles.descriptor}>WEC 2011–2023</span>
         )}
       </div>
     </div>

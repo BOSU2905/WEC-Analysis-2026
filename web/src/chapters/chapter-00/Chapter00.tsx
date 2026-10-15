@@ -27,7 +27,7 @@ export default function Chapter00() {
           <h2 className={styles.chapterNumber}>Chapter 00</h2>
           <h3 className={styles.chapterTitle}>Understanding WEC</h3>
           <p className={styles.chapterIntro}>
-            Before digging into the numbers, it helps to understand what makes endurance racing distinct. In the FIA World Endurance Championship (WEC), raw speed is only the entry ticket—endurance is what decides who actually reaches the finish line.
+            Before examining the data, it helps to understand how endurance racing functions. In the FIA World Endurance Championship (WEC), outright pace only sets the baseline. Reliability, strategy, and traffic management determine who reaches the finish.
           </p>
         </m.header>
       </div>
@@ -36,7 +36,7 @@ export default function Chapter00() {
         <div className={styles.proseBlock}>
           <h4>A Race Against Time</h4>
           <p>
-            Unlike conventional sprint races, WEC events run for 6, 8, or 24 hours. A single weekend at Le Mans covers more race distance than an entire Formula 1 season. The real challenge is keeping up a relentless pace while managing mechanical wear, sudden rain showers, and driver fatigue around the clock.
+            Unlike sprint races, WEC rounds run for 6, 8, or 24 hours. A single 24 Hours of Le Mans covers roughly 5,000 kilometres, more race distance than an entire Formula 1 season. Teams must maintain competitive lap times while managing mechanical strain, variable weather, and driver rotations day and night.
           </p>
         </div>
 
@@ -50,34 +50,34 @@ export default function Chapter00() {
         <div className={styles.proseBlock}>
           <h4>Multiple Classes, One Circuit</h4>
           <p>
-            Between 2011 and 2023, the championship ran on a multiclass format. Purpose-built prototypes (like the hybrid <strong>LMP1</strong> and modern <strong>Hypercar</strong> machinery) share the tarmac with production-based sports cars (like <strong>LMGTE Pro</strong> and <strong>Am</strong>).
+            Throughout the 2011 to 2023 era, the championship used a multiclass structure. Purpose-built prototypes (such as hybrid <strong>LMP1</strong> and later <strong>Hypercars</strong>) shared the track with production-based sports cars (<strong>LMGTE Pro</strong> and <strong>Am</strong>).
           </p>
           <p>
-            Because every class races at the same time, top-tier prototypes spend the entire race lapping slower GT traffic. That turns every single lap into high-speed puzzle solving—balancing aggressive overtakes against the constant risk of contact.
+            Because all classes run simultaneously, top-tier prototypes spend entire stints lapping slower GT traffic. Every lap requires active traffic management, balancing decisive overtakes against the risk of race-ending contact.
           </p>
         </div>
 
         <EditorialPhoto
           src={photoPit}
           alt="United Autosports pit crew servicing a prototype during the 2019 24 Hours of Le Mans"
-          caption="Pit stops are highly choreographed operational sprints involving tyre changes, refuelling, and driver swaps."
+          caption="Pit stops are highly choreographed operational sequences involving tyre changes, refuelling, and driver swaps."
           direction="right"
         />
 
         <div className={styles.proseBlock}>
           <h4>The Machine, the Team, the Strategy</h4>
           <p>
-            Each car is shared by two to three drivers swapping out across the race. During pit stops, crews refuel and bolt on fresh tyres in seconds. Because tyre sets are strictly limited per weekend, teams frequently "double stint"—running the same rubber for two consecutive fuel loads to save precious pit lane seconds, even as grip fades.
+            Each car is shared by two or three drivers rotating through stints. Pit crews refuel, change tyres, and hand over the cockpit in seconds. With tyre allocations strictly capped per race weekend, teams routinely double-stint, running one set of tyres across two fuel loads to save pit lane time as grip deteriorates.
           </p>
           <p>
-            When the data shows a team dominating over an entire championship, it isn't just because their engine had more power. It means their crew nailed hundreds of pit stops, tyre strategies, and driver handoffs without cracking under pressure.
+            Sustained championship dominance rarely comes down to horsepower alone. It requires error-free pit stops, calculated tyre strategies, and consistent execution over hundreds of racing hours.
           </p>
         </div>
 
         <div className={styles.proseBlock}>
           <h4>From the Race to the Data</h4>
           <p>
-            The chapters ahead explore 13 years of championship history through validated timing and classification records. We trace the shape of the grid, the rise of factory dynasties, the fierce battles across the GT classes, and the quiet technical influence of the tyre war.
+            The following chapters examine 13 seasons of championship data through validated timing and classification records: the distribution of the grid, factory prototype dynasties, manufacturer competition across the GT field, and the technical role of tyre supply.
           </p>
         </div>
       </div>

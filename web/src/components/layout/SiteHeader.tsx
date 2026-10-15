@@ -41,8 +41,8 @@ export default function SiteHeader({
         href="#story"
         onClick={handleBrandClick}
         className={styles.brandLink}
-        aria-label="ENDURANCE IN DATA — Return to start of Story"
-        title="ENDURANCE IN DATA — Return to start of Story"
+        aria-label="ENDURANCE IN DATA: Return to start of Story"
+        title="ENDURANCE IN DATA: Return to start of Story"
       >
         <BrandLogo variant="navbar" showDescriptor />
       </a>

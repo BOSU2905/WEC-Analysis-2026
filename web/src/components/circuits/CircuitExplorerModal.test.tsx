@@ -18,7 +18,7 @@ describe("CircuitExplorerModal Component", () => {
 
     // Default selection is Turn 1 (La Source) in Sector 1
     expect(screen.getByRole("heading", { name: "La Source" })).toBeDefined();
-    expect(screen.getByText("Sector 1 — La Source to Kemmel Straight")).toBeDefined();
+    expect(screen.getByText("Sector 1: La Source to Kemmel Straight")).toBeDefined();
   });
 
   it("switches turns when clicking next/prev corner navigation buttons", () => {
@@ -49,7 +49,7 @@ describe("CircuitExplorerModal Component", () => {
     const sector2Tab = screen.getByRole("button", { name: /^Sector 2$/i });
     fireEvent.click(sector2Tab);
 
-    expect(screen.getByText("Sector 2 — The Ardennes Rollercoaster")).toBeDefined();
+    expect(screen.getByText("Sector 2: The Ardennes Rollercoaster")).toBeDefined();
 
     // Click All Circuit
     const allTab = screen.getByRole("button", { name: /^All Circuit$/i });
