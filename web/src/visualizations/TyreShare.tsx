@@ -180,6 +180,7 @@ export default function TyreShare({
   const clipId = `tyre-clip-${rawClipId.replace(/:/g, "")}`;
 
   const [activeInspection, setActiveInspection] = useState<ActiveInspection | null>(null);
+  const [displayedInspection, setDisplayedInspection] = useState<ActiveInspection | null>(null);
 
   useEffect(() => {
     if (!isInView || !containerRef.current || !svgRef.current) return;
@@ -332,13 +333,11 @@ export default function TyreShare({
         .data(series)
         .enter()
         .append("path")
-        .attr("class", "layer")
+        .attr("class", `layer ${styles.layerPath}`)
         .attr("d", area)
         .attr("fill", (d) => `url(#ch4-grad-${d.key.replace("_pct", "")})`)
         .attr("stroke", "var(--color-bg)")
-        .attr("stroke-width", 1.2)
-        .style("cursor", "crosshair")
-        .style("transition", "opacity 0.2s ease, filter 0.2s ease");
+        .attr("stroke-width", 1.2);
 
       // Ridge highlight strokes along the upper crest of each area
       layerGroup
@@ -457,6 +456,7 @@ export default function TyreShare({
       // Vertical guide hairline
       const hairlineV = interactionGroup
         .append("line")
+        .attr("class", styles.hairline)
         .attr("y1", margin.top)
         .attr("y2", height - margin.bottom)
         .attr("stroke", "rgba(255, 255, 255, 0.45)")
@@ -467,6 +467,7 @@ export default function TyreShare({
       // Horizontal crosshair hairline
       const hairlineH = interactionGroup
         .append("line")
+        .attr("class", styles.hairline)
         .attr("x1", margin.left)
         .attr("stroke", "rgba(255, 255, 255, 0.25)")
         .attr("stroke-width", 1)
@@ -476,6 +477,7 @@ export default function TyreShare({
       // Focus outer halo ring
       const focusRing = interactionGroup
         .append("circle")
+        .attr("class", styles.focusRing)
         .attr("r", 8)
         .attr("fill", "none")
         .attr("stroke-width", 1.5)
@@ -484,6 +486,7 @@ export default function TyreShare({
       // Focus center dot
       const focusDot = interactionGroup
         .append("circle")
+        .attr("class", styles.focusDot)
         .attr("r", 4.5)
         .attr("stroke", "#0D0E11")
         .attr("stroke-width", 2)
@@ -568,7 +571,7 @@ export default function TyreShare({
         const alignLeft = seasonX > width * 0.7;
         const flipDown = dotY < margin.top + 70;
 
-        setActiveInspection({
+        const inspectionData: ActiveInspection = {
           key,
           name: nameMap[key],
           season,
@@ -579,7 +582,9 @@ export default function TyreShare({
           dotY,
           alignLeft,
           flipDown,
-        });
+        };
+        setActiveInspection(inspectionData);
+        setDisplayedInspection(inspectionData);
       };
 
       const resetHighlight = () => {
@@ -721,35 +726,35 @@ export default function TyreShare({
       </div>
 
       {/* Synchronized tracking contextual label that follows cursor / touch position */}
-      {activeInspection && (
+      {displayedInspection && (
         <div
-          className={styles.trackingTooltip}
+          className={`${styles.trackingTooltip} ${activeInspection ? styles.visible : ""}`}
           style={{
-            left: `${activeInspection.seasonX}px`,
-            top: `${activeInspection.dotY}px`,
-            transform: activeInspection.alignLeft
-              ? activeInspection.flipDown
+            left: `${displayedInspection.seasonX}px`,
+            top: `${displayedInspection.dotY}px`,
+            transform: displayedInspection.alignLeft
+              ? displayedInspection.flipDown
                 ? "translate(-100%, 15%)"
                 : "translate(-100%, -115%)"
-              : activeInspection.flipDown
+              : displayedInspection.flipDown
                 ? "translate(0%, 15%)"
                 : "translate(0%, -115%)",
-            marginLeft: activeInspection.alignLeft ? "-12px" : "12px",
+            marginLeft: displayedInspection.alignLeft ? "-12px" : "12px",
           }}
         >
           <div className={styles.tooltipHeader}>
-            <ManufacturerLogo name={activeInspection.name} />
+            <ManufacturerLogo name={displayedInspection.name} />
             <span className={styles.tooltipSeason}>
-              Season {activeInspection.season}
+              Season {displayedInspection.season}
             </span>
           </div>
           <div className={styles.tooltipMetrics}>
             <div className={styles.tooltipShare}>
-              <strong>{activeInspection.pct.toFixed(1)}%</strong>
+              <strong>{displayedInspection.pct.toFixed(1)}%</strong>
               <span className={styles.tooltipShareUnit}>Share</span>
             </div>
             <div className={styles.tooltipCount}>
-              {activeInspection.count} / {activeInspection.total} entries
+              {displayedInspection.count} / {displayedInspection.total} entries
             </div>
           </div>
         </div>

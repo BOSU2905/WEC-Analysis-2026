@@ -18,7 +18,7 @@ export default function CircuitGuide() {
   return (
     <section id="circuits-guide" className={styles.guideSection} aria-labelledby="circuit-guide-heading">
       <div className={styles.sectionHeader}>
-        <div className={styles.badge}>The Paddock &bull; Circuit Guide</div>
+        <div className={styles.badge}>Tracks &bull; Circuit Guide</div>
         <h2 id="circuit-guide-heading" className={styles.heading}>
           Four Tracks. Four Challenges.
         </h2>

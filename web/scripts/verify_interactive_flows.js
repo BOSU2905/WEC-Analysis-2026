@@ -22,7 +22,7 @@ import puppeteer from 'puppeteer';
   });
 
   console.log('Navigating to preview site...');
-  await page.goto('http://127.0.0.1:4173/WEC-Analysis-2026/', { waitUntil: 'networkidle2' });
+  await page.goto('http://localhost:4173/WEC-Analysis-2026/', { waitUntil: 'networkidle2' });
 
   // 1. Verify Hero
   const heroTitle = await page.$eval('h1', el => el.textContent);
@@ -57,7 +57,7 @@ import puppeteer from 'puppeteer';
 
   // 4. Test Archive Navigation and 3D Canvas
   console.log('Navigating to #archive tab...');
-  await page.goto('http://127.0.0.1:4173/WEC-Analysis-2026/#archive', { waitUntil: 'networkidle2' });
+  await page.goto('http://localhost:4173/WEC-Analysis-2026/#archive', { waitUntil: 'networkidle2' });
   await new Promise(r => setTimeout(r, 1000));
 
   // Check Archive machines

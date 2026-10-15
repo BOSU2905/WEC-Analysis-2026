@@ -36,6 +36,7 @@ export default function EvolutionLineChart() {
   const tooltipRef = useRef<HTMLDivElement>(null);
   const hasAnimatedRef = useRef(false);
   const lastWidthRef = useRef(0);
+  const activePointKeyRef = useRef<string | null>(null);
   const isInView = useInView(containerRef, { once: true, amount: 0.2 });
 
   useEffect(() => {
@@ -172,17 +173,19 @@ export default function EvolutionLineChart() {
       // Active Hover Highlight Element (dedicated layer above lines and base dots)
       const highlightGroup = svg
         .append("g")
-        .attr("class", "active-highlight-group")
-        .style("pointer-events", "none")
-        .style("display", "none");
+        .attr("class", styles.highlightGroup)
+        .attr("opacity", 0)
+        .style("pointer-events", "none");
 
       const haloDot = highlightGroup
         .append("circle")
+        .attr("class", styles.highlightDot)
         .attr("r", 12)
         .attr("opacity", 0.25);
 
       const coreDot = highlightGroup
         .append("circle")
+        .attr("class", styles.highlightDot)
         .attr("r", 6.5)
         .attr("fill", "var(--color-surface)")
         .attr("stroke-width", 2.5);
@@ -199,22 +202,26 @@ export default function EvolutionLineChart() {
         const tooltip = tooltipRef.current;
 
         // Position active highlight dot
-        highlightGroup.style("display", "inline");
+        highlightGroup.attr("opacity", 1);
         haloDot.attr("cx", cx).attr("cy", cy).attr("fill", color);
         coreDot.attr("cx", cx).attr("cy", cy).attr("stroke", color);
 
-        // Update tooltip content
-        tooltip.innerHTML = `
-          <div class="${styles.tooltipHeader}">
-            <span class="${styles.tooltipDot}" style="background-color: ${color}"></span>
-            <span class="${styles.tooltipClass}">${key}</span>
-          </div>
-          <div class="${styles.tooltipTime}">${formatLapTimeDetailed(value)}</div>
-          <div class="${styles.tooltipMeta}">
-            <span>Season: <strong>${season}</strong></span>
-            <span class="${styles.tooltipSeconds}">${value.toFixed(3)}s</span>
-          </div>
-        `;
+        // Update tooltip content only when point changes to prevent content flickering
+        const pointId = `${season}-${key}`;
+        if (activePointKeyRef.current !== pointId) {
+          activePointKeyRef.current = pointId;
+          tooltip.innerHTML = `
+            <div class="${styles.tooltipHeader}">
+              <span class="${styles.tooltipDot}" style="background-color: ${color}"></span>
+              <span class="${styles.tooltipClass}">${key}</span>
+            </div>
+            <div class="${styles.tooltipTime}">${formatLapTimeDetailed(value)}</div>
+            <div class="${styles.tooltipMeta}">
+              <span>Season: <strong>${season}</strong></span>
+              <span class="${styles.tooltipSeconds}">${value.toFixed(3)}s</span>
+            </div>
+          `;
+        }
 
         const containerRect = containerRef.current.getBoundingClientRect();
         const svgRect = svgRef.current
@@ -255,10 +262,11 @@ export default function EvolutionLineChart() {
       };
 
       const hideTooltip = () => {
+        activePointKeyRef.current = null;
         if (tooltipRef.current) {
           tooltipRef.current.style.opacity = "0";
         }
-        highlightGroup.style("display", "none");
+        highlightGroup.attr("opacity", 0);
       };
 
       // Interactive hit targets layer (generous hit area + keyboard/touch accessibility)

@@ -1,1 +1,23 @@
-/.venvscratch/
+# Python virtual environments
+.venv/
+venv/
+env/
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Node dependencies and build outputs
+web/node_modules/
+web/dist/
+
+# OS and Editor artifacts
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Local runtime overrides
+*.local

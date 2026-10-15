@@ -7,7 +7,6 @@ import Story from "./pages/Story"; // Eager load default view for LCP
 import PhotoCreditsModal from "./components/story/PhotoCreditsModal";
 
 const Archive = lazy(() => import("./pages/Archive"));
-const Teams = lazy(() => import("./pages/Teams"));
 const About = lazy(() => import("./pages/About"));
 
 const isArchiveHash = (hash: string) => {
@@ -16,13 +15,14 @@ const isArchiveHash = (hash: string) => {
     clean === "archive" ||
     clean === "machines" ||
     clean === "paddock" ||
-    clean === "circuits"
+    clean === "circuits" ||
+    clean === "teams" ||
+    clean === "teams-dynasties"
   );
 };
 
 const resolveViewFromHash = (hash: string): ViewType => {
   const clean = hash.replace("#", "").toLowerCase().replace(/^\//, "");
-  if (clean === "teams") return "teams";
   if (clean === "about") return "about";
   if (isArchiveHash(clean)) return "archive";
   return "story";
@@ -169,7 +169,6 @@ function App() {
           }
         >
           {currentView === "story" && <Story />}
-          {currentView === "teams" && <Teams />}
           {currentView === "archive" && <Archive />}
           {currentView === "about" && <About />}
         </Suspense>

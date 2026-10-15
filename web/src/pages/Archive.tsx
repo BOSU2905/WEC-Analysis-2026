@@ -5,13 +5,17 @@ import TopographicHero from "../components/archive/TopographicHero";
 
 const MachinesExperience = lazy(() => import("../components/archive/MachinesExperience"));
 const CircuitGuide = lazy(() => import("../components/circuits/CircuitGuide"));
+const Teams = lazy(() => import("./Teams"));
 
-export type ArchiveDestination = "machines" | "paddock";
+export type ArchiveDestination = "machines" | "paddock" | "teams";
 
 export default function Archive() {
   const getSubViewFromHash = (): ArchiveDestination => {
     if (typeof window !== "undefined") {
       const hash = window.location.hash.toLowerCase().replace("#", "");
+      if (hash === "teams" || hash === "teams-dynasties") {
+        return "teams";
+      }
       if (hash === "paddock" || hash === "circuits") {
         return "paddock";
       }
@@ -24,7 +28,9 @@ export default function Archive() {
   useEffect(() => {
     const handleHash = () => {
       const hash = window.location.hash.toLowerCase().replace("#", "");
-      if (hash === "paddock" || hash === "circuits") {
+      if (hash === "teams" || hash === "teams-dynasties") {
+        setActiveSection("teams");
+      } else if (hash === "paddock" || hash === "circuits") {
         setActiveSection("paddock");
       } else if (hash === "machines" || hash === "archive") {
         setActiveSection("machines");
@@ -37,7 +43,7 @@ export default function Archive() {
 
   const navigateTo = (destination: ArchiveDestination) => {
     setActiveSection(destination);
-    window.location.hash = destination === "paddock" ? "paddock" : "machines";
+    window.location.hash = destination;
     if (destination === "machines") {
       setTimeout(() => {
         window.dispatchEvent(new Event("resize"));
@@ -75,7 +81,20 @@ export default function Archive() {
                 onClick={() => navigateTo("paddock")}
               >
                 <span className={styles.navIndicator} aria-hidden="true" />
-                <span className={styles.navLabel}>The Paddock</span>
+                <span className={styles.navLabel}>Tracks</span>
+              </button>
+
+              <button
+                id="tab-teams"
+                role="tab"
+                aria-selected={activeSection === "teams"}
+                aria-controls="panel-teams"
+                tabIndex={activeSection === "teams" ? 0 : -1}
+                className={`${styles.navButton} ${activeSection === "teams" ? styles.active : ""}`}
+                onClick={() => navigateTo("teams")}
+              >
+                <span className={styles.navIndicator} aria-hidden="true" />
+                <span className={styles.navLabel}>Teams</span>
               </button>
             </div>
           </nav>
@@ -104,6 +123,18 @@ export default function Archive() {
       >
         <Suspense fallback={<div className={styles.panelLoading}>Loading Circuit Guide...</div>}>
           <CircuitGuide />
+        </Suspense>
+      </section>
+
+      <section
+        id="panel-teams"
+        role="tabpanel"
+        aria-labelledby="tab-teams"
+        hidden={activeSection !== "teams"}
+        className={`${styles.contentPanel} ${activeSection !== "teams" ? styles.hidden : ""}`}
+      >
+        <Suspense fallback={<div className={styles.panelLoading}>Loading Teams &amp; Dynasties...</div>}>
+          <Teams />
         </Suspense>
       </section>
     </div>

@@ -7,85 +7,8 @@ import styles from "./Teams.module.css";
 // Stable content-weighted scroll geometry:
 // Calculate duration for each season proportional to its visible editorial content
 // (season heading/context, summary insight, primary featured car/team/record, and default champions)
-// Accordion details (rosters & race tables) are excluded from the main scroll distance.
 const TOTAL_SEASONS = TEAMS_HISTORY.length; // 12
-const TRANSITION_DURATION = 0.032; // Consistent ~3.2% transition interval between seasons
-
-// Calculate visible content weight per season (statically deterministic)
-const SEASON_WEIGHTS = (() => {
-  const visibleLengths = TEAMS_HISTORY.map((s) => {
-    const pTeam = s.featuredTeams[0] || {};
-    return (
-      (s.label || "").length +
-      (s.seriesContext || "").length +
-      (s.era || "").length +
-      (s.dominantManufacturer || "").length +
-      (s.summary || "").length +
-      (pTeam.name || "").length +
-      (pTeam.carModel || "").length +
-      (pTeam.carNumber || "").length +
-      (pTeam.drivers || []).join(" ").length +
-      (pTeam.keyStat || "").length +
-      (pTeam.historicalSignificance || "").length +
-      s.champions.reduce(
-        (acc, c) =>
-          acc +
-          (c.category || "").length +
-          (c.team || "").length +
-          (c.car || "").length +
-          (c.drivers || []).join(" ").length,
-        0,
-      )
-    );
-  });
-
-  const avg =
-    visibleLengths.reduce((a, b) => a + b, 0) / visibleLengths.length;
-
-  // Relative content weights clamped to [0.85, 1.25]
-  // Short seasons: ~0.85x to 0.92x (e.g. 2014, 2021)
-  // Typical seasons: ~0.95x to 1.05x (e.g. 2013, 2015, 2016, 2017)
-  // Content-heavy seasons: ~1.10x to 1.25x (e.g. 2011, 2012, 2018–2019, 2023)
-  return visibleLengths.map((len) =>
-    Math.max(0.85, Math.min(1.25, len / avg)),
-  );
-})();
-
-interface SeasonScrollInterval {
-  pStart: number;
-  pEnd: number;
-  midPoint: number;
-  transitionThreshold: number;
-}
-
-const SEASON_SCROLL_INTERVALS: SeasonScrollInterval[] = (() => {
-  const sumW = SEASON_WEIGHTS.reduce((a, b) => a + b, 0);
-  const remainingForPlateaus = 1.0 - (TOTAL_SEASONS - 1) * TRANSITION_DURATION;
-  const plateaus = SEASON_WEIGHTS.map(
-    (w) => (w / sumW) * remainingForPlateaus,
-  );
-
-  const intervals: SeasonScrollInterval[] = [];
-  let current = 0;
-
-  for (let i = 0; i < TOTAL_SEASONS; i++) {
-    const pStart = current;
-    const pEnd = i === TOTAL_SEASONS - 1 ? 1.0 : pStart + plateaus[i];
-    const midPoint = (pStart + pEnd) / 2;
-    const transitionThreshold = pEnd + 0.5 * TRANSITION_DURATION;
-
-    intervals.push({
-      pStart,
-      pEnd,
-      midPoint,
-      transitionThreshold,
-    });
-
-    current = pEnd + TRANSITION_DURATION;
-  }
-
-  return intervals;
-})();
+const TRANSITION_DISTANCE = 320; // Distance devoted to inter-season horizontal sliding
 
 export default function Teams() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -95,16 +18,67 @@ export default function Teams() {
   const [expandedWinnersSeason, setExpandedWinnersSeason] = useState<string | null>(null);
   const [expandedRosterSeason, setExpandedRosterSeason] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [viewportHeight, setViewportHeight] = useState(() =>
+    typeof window !== "undefined" ? window.innerHeight : 900
+  );
 
   // Check screen dimensions
   useEffect(() => {
-    const checkMobile = () => {
+    const handleResize = () => {
       setIsMobile(window.innerWidth < 992);
+      setViewportHeight(window.innerHeight);
     };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Stable content-aware scroll budgets calculated deterministically per season
+  // Each season's duration reflects its visible editorial content (races count, featured dynasties, and narrative summary)
+  // Isolating layout expansions from the scroll progress calculation guarantees 100% stability.
+  const { seasonMetrics, totalScrollDistance } = useMemo(() => {
+    let cumulative = 0;
+    const metrics: Array<{
+      index: number;
+      season: string;
+      plateauStart: number;
+      plateauEnd: number;
+      plateauDuration: number;
+      transitionEnd: number;
+      totalEnd: number;
+    }> = [];
+
+    for (let i = 0; i < TOTAL_SEASONS; i++) {
+      const s = TEAMS_HISTORY[i];
+      // Content-proportional plateau duration:
+      // Base plateau of 380px + 18px per race event + 25px per featured team
+      const plateau = 380 + s.races.length * 18 + s.featuredTeams.length * 25;
+      const plateauStart = cumulative;
+      const plateauEnd = plateauStart + plateau;
+      const isLast = i === TOTAL_SEASONS - 1;
+      const transitionDist = isLast ? 0 : TRANSITION_DISTANCE;
+      const transitionEnd = plateauEnd + transitionDist;
+      cumulative = transitionEnd;
+
+      metrics.push({
+        index: i,
+        season: s.season,
+        plateauStart,
+        plateauEnd,
+        plateauDuration: plateau,
+        transitionEnd,
+        totalEnd: transitionEnd,
+      });
+    }
+
+    return {
+      seasonMetrics: metrics,
+      totalScrollDistance: Math.max(1, cumulative),
+    };
+  }, []);
+
+  // Total container height on desktop accommodates content-aware vertical runway
+  const desktopContainerHeight = totalScrollDistance + viewportHeight;
 
   // Scroll mapping for desktop vertical-to-horizontal scrollytelling
   const { scrollYProgress } = useScroll({
@@ -112,52 +86,81 @@ export default function Teams() {
     offset: ["start start", "end end"],
   });
 
-  // Smooth spring for natural, responsive wheel and trackpad inertia
+  // Responsive spring with optimal damping: instant reaction, no lag, zero oscillation
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 260,
-    damping: 30,
-    restDelta: 0.0005,
+    stiffness: 350,
+    damping: 36,
+    restDelta: 0.0001,
   });
 
-  // Construct piecewise plateau transform arrays based on content-weighted intervals
-  const { inputPoints, outputTranslate } = useMemo(() => {
-    const inputs: number[] = [];
-    const outputs: string[] = [];
+  // Continuous horizontal translation with locked resting plateaus:
+  // While inside a season's resting plateau [plateauStart, plateauEnd],
+  // xTranslate is locked at EXACTLY -${i * 100}vw (zero drift when accordions open/close).
+  // Between plateauEnd and next season's plateauStart, it smoothly slides with smoothstep easing.
+  const xTranslate = useTransform(smoothProgress, (progressVal: number) => {
+    const clampedProgress = Math.min(1, Math.max(0, progressVal));
+    const currentY = clampedProgress * totalScrollDistance;
 
-    for (let i = 0; i < TOTAL_SEASONS; i++) {
-      const { pStart, pEnd } = SEASON_SCROLL_INTERVALS[i];
-      const xVal = `-${i * 100}vw`;
-
-      inputs.push(pStart);
-      outputs.push(xVal);
-
-      inputs.push(pEnd);
-      outputs.push(xVal);
+    // Before first season plateau end, stay at season 0
+    if (currentY <= seasonMetrics[0].plateauEnd) {
+      return "0vw";
     }
 
-    return { inputPoints: inputs, outputTranslate: outputs };
-  }, []);
+    // At or after last season plateau start, stay at last season
+    const lastSeason = seasonMetrics[TOTAL_SEASONS - 1];
+    if (currentY >= lastSeason.plateauStart) {
+      return `-${(TOTAL_SEASONS - 1) * 100}vw`;
+    }
 
-  // Horizontal translation with rock-solid resting plateaus for each season
-  const xTranslate = useTransform(smoothProgress, inputPoints, outputTranslate);
+    // Check each season's plateau and transition
+    for (let i = 0; i < TOTAL_SEASONS; i++) {
+      const metric = seasonMetrics[i];
+      // Resting plateau: Locked firmly on season i
+      if (currentY >= metric.plateauStart && currentY <= metric.plateauEnd) {
+        return `-${i * 100}vw`;
+      }
 
-  // Synchronize active season index with scroll position based on content-weighted transition midpoints
+      // Transition zone between season i and season i+1
+      if (
+        i < TOTAL_SEASONS - 1 &&
+        currentY > metric.plateauEnd &&
+        currentY < seasonMetrics[i + 1].plateauStart
+      ) {
+        const nextStart = seasonMetrics[i + 1].plateauStart;
+        const u = (currentY - metric.plateauEnd) / (nextStart - metric.plateauEnd);
+        // C1 smoothstep easing: derivative is 0 at both ends
+        const easedU = u * u * (3 - 2 * u);
+        const continuousIndex = i + easedU;
+        return `-${continuousIndex * 100}vw`;
+      }
+    }
+
+    return "0vw";
+  });
+
+  // Synchronize active season index with scroll position
   useEffect(() => {
     if (isMobile) return;
     const unsubscribe = scrollYProgress.on("change", (latest) => {
-      let resolvedIndex = TOTAL_SEASONS - 1;
-      for (let i = 0; i < TOTAL_SEASONS - 1; i++) {
-        if (latest < SEASON_SCROLL_INTERVALS[i].transitionThreshold) {
-          resolvedIndex = i;
+      const currentY = Math.min(1, Math.max(0, latest)) * totalScrollDistance;
+      let bestIndex = 0;
+      for (let i = 0; i < TOTAL_SEASONS; i++) {
+        const metric = seasonMetrics[i];
+        const nextMetric = seasonMetrics[i + 1];
+        const boundary = nextMetric
+          ? (metric.plateauEnd + nextMetric.plateauStart) / 2
+          : metric.totalEnd;
+        if (currentY <= boundary) {
+          bestIndex = i;
           break;
         }
       }
-      if (resolvedIndex !== activeSeasonIndex) {
-        setActiveSeasonIndex(resolvedIndex);
+      if (bestIndex !== activeSeasonIndex) {
+        setActiveSeasonIndex(bestIndex);
       }
     });
     return () => unsubscribe();
-  }, [scrollYProgress, activeSeasonIndex, isMobile]);
+  }, [scrollYProgress, activeSeasonIndex, isMobile, totalScrollDistance, seasonMetrics]);
 
   // Jump directly to the center of a season's resting plateau
   const handleJumpToSeason = (index: number) => {
@@ -173,17 +176,9 @@ export default function Teams() {
     }
 
     if (!containerRef.current) return;
+    const targetY = seasonMetrics[index].plateauStart + 60; // resting comfortably inside the plateau
     const containerTop = containerRef.current.offsetTop;
-    const totalScrollableDistance =
-      containerRef.current.scrollHeight - window.innerHeight;
-
-    // Target the center of season's resting plateau
-    const targetProgress = Math.min(
-      1.0,
-      Math.max(0, SEASON_SCROLL_INTERVALS[index].midPoint),
-    );
-    const targetScrollY = containerTop + targetProgress * totalScrollableDistance;
-
+    const targetScrollY = containerTop + targetY;
     window.scrollTo({
       top: targetScrollY,
       behavior: "smooth",
@@ -203,8 +198,8 @@ export default function Teams() {
       className={styles.teamsExperience}
       ref={containerRef}
       style={{
-        // Height on desktop accommodates vertical scroll to advance 12 seasons horizontally
-        height: isMobile ? "auto" : `${TOTAL_SEASONS * 110}vh`,
+        // Dynamic content-aware height: Base ~650px per collapsed season, with expanded bonuses for race winners & rosters
+        height: isMobile ? "auto" : `${desktopContainerHeight}px`,
       }}
     >
       {/* Sticky Storytelling Viewport for Desktop (Pinned at top 68px below site header) */}

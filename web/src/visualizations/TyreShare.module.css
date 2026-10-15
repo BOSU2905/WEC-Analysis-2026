@@ -75,6 +75,36 @@
   cursor: crosshair;
 }
 
+.layerPath {
+  cursor: crosshair;
+  transition:
+    opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    stroke 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    stroke-width 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hairline {
+  transition: opacity 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity;
+}
+
+.focusRing {
+  transition:
+    opacity 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+    cx 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+    cy 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, cx, cy;
+}
+
+.focusDot {
+  transition:
+    opacity 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+    cx 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+    cy 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, cx, cy;
+}
+
 /* Compact contextual label that tracks pointer/crosshair position */
 .trackingTooltip {
   position: absolute;
@@ -91,19 +121,35 @@
   flex-direction: column;
   gap: 0.35rem;
   min-width: 160px;
-  will-change: left, top, transform;
-  transition: opacity 0.15s ease, transform 0.08s ease-out;
-  animation: tooltipFadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0;
+  will-change: opacity, left, top, transform;
+  transition:
+    opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    left 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+    top 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes tooltipFadeIn {
+.trackingTooltip.visible {
+  opacity: 1;
+}
+
+.trackingTooltip.visible .tooltipHeader {
+  animation: tooltipItemEnter 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.trackingTooltip.visible .tooltipMetrics {
+  animation: tooltipItemEnter 0.2s cubic-bezier(0.16, 1, 0.3, 1) 0.04s both;
+}
+
+@keyframes tooltipItemEnter {
   from {
     opacity: 0;
-    transform: scale(0.96) translateY(2px);
+    transform: translateY(2px);
   }
   to {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: translateY(0);
   }
 }
 
@@ -196,5 +242,18 @@
 
   .tooltipShare {
     font-size: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trackingTooltip,
+  .layerPath,
+  .hairline,
+  .focusRing,
+  .focusDot,
+  .tooltipHeader,
+  .tooltipMetrics {
+    transition: none !important;
+    animation: none !important;
   }
 }

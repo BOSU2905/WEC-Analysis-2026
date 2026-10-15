@@ -3,13 +3,13 @@ import styles from "./Footer.module.css";
 
 interface FooterProps {
   onOpenCredits?: () => void;
-  onNavigate?: (view: "story" | "archive" | "teams" | "about") => void;
+  onNavigate?: (view: "story" | "archive" | "about") => void;
 }
 
 export default function Footer({ onOpenCredits, onNavigate }: FooterProps) {
   const handleNav = (
     e: React.MouseEvent<HTMLAnchorElement>,
-    view: "story" | "archive" | "teams" | "about",
+    view: "story" | "archive" | "about",
   ) => {
     if (onNavigate) {
       e.preventDefault();
@@ -31,7 +31,10 @@ export default function Footer({ onOpenCredits, onNavigate }: FooterProps) {
               Story
             </a>
             <span>•</span>
-            <a href="#teams" onClick={(e) => handleNav(e, "teams")}>
+            <a href="#teams" onClick={() => {
+              window.location.hash = "teams";
+              if (onNavigate) onNavigate("archive");
+            }}>
               Teams &amp; Dynasties
             </a>
             <span>•</span>

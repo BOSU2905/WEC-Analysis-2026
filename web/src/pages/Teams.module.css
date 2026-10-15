@@ -29,7 +29,7 @@
 .yearNavigator {
   position: relative;
   z-index: 30;
-  background: rgba(13, 14, 17, 0.96);
+  background: rgba(var(--color-bg-rgb), 0.94);
   background-image: var(--bg-texture);
   background-position: var(--bg-texture-position);
   background-size: var(--bg-texture-size);
@@ -489,11 +489,16 @@
   font-weight: 900;
   letter-spacing: -0.04em;
   color: var(--color-primary);
-  opacity: 0.03;
+  opacity: 0.08;
   user-select: none;
   pointer-events: none;
   text-transform: uppercase;
   line-height: 1;
+}
+
+:root[data-theme="light"] .watermarkManufacturer {
+  opacity: 0.065;
+  color: var(--color-secondary);
 }
 
 /* Expandable Secondary Controls & Panels */
@@ -691,7 +696,11 @@
 
 /* Races Table */
 .racesTableWrapper {
+  max-height: 380px;
+  overflow-y: auto;
   overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
 }
 
 .racesTable {

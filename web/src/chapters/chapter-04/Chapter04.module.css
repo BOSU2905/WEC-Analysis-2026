@@ -148,16 +148,18 @@
   padding: 1rem;
   border-radius: 8px;
   transition:
-    background-color 0.4s ease,
-    border-color 0.4s ease;
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
   border: 1px solid transparent;
 }
 
 .tyreCard:hover,
 .tyreCard:focus,
 .tyreCard:focus-within {
-  background-color: rgba(104, 124, 125, 0.05);
-  border-color: rgba(104, 124, 125, 0.2);
+  background-color: rgba(104, 124, 125, 0.06);
+  border-color: rgba(104, 124, 125, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
 .tyreIconWrapper {
@@ -180,7 +182,7 @@
   color: var(--color-primary);
   text-transform: uppercase;
   margin-bottom: 1rem;
-  transition: color 0.3s ease;
+  transition: color 0.25s ease;
 }
 
 .tyreCard:hover .tyreLabel,
@@ -191,21 +193,24 @@
 
 .tyreInfo {
   opacity: 0;
-  visibility: hidden;
-  transform: translateY(10px);
+  transform: translateY(4px);
+  pointer-events: none;
   transition:
-    opacity 0.4s ease,
-    transform 0.4s ease,
-    visibility 0.4s ease;
+    opacity 0.22s ease,
+    transform 0.22s ease;
   min-height: 100px; /* reserve space so layout does not shift on hover */
+  will-change: opacity, transform;
 }
 
 .tyreCard:hover .tyreInfo,
 .tyreCard:focus .tyreInfo,
 .tyreCard:focus-within .tyreInfo {
   opacity: 1;
-  visibility: visible;
   transform: translateY(0);
+  pointer-events: auto;
+  transition:
+    opacity 0.28s ease,
+    transform 0.28s ease;
 }
 
 .tyreType {
@@ -282,6 +287,15 @@
   .rotate3,
   .rotate4 {
     animation: none;
+  }
+
+  .tyreCard,
+  .tyreLabel,
+  .tyreInfo,
+  .tyreType,
+  .tyreDesc {
+    transition: none !important;
+    transform: none !important;
   }
 }
 

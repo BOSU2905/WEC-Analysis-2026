@@ -2,7 +2,7 @@ import styles from "./SiteHeader.module.css";
 import ThemeToggle from "./ThemeToggle";
 import BrandLogo from "./BrandLogo";
 
-export type ViewType = "story" | "archive" | "teams" | "about";
+export type ViewType = "story" | "archive" | "about";
 
 interface SiteHeaderProps {
   currentView?: ViewType;
@@ -58,13 +58,6 @@ export default function SiteHeader({
           className={`${styles.navLink} ${currentView === "story" ? styles.active : ""}`}
         >
           Story
-        </a>
-        <a
-          href="#teams"
-          onClick={(e) => handleLinkClick(e, "teams")}
-          className={`${styles.navLink} ${currentView === "teams" ? styles.active : ""}`}
-        >
-          Teams
         </a>
         <a
           href="#archive"

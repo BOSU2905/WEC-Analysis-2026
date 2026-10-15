@@ -18,6 +18,7 @@ type NodeData = {
   gridY: number;
   clusterX: number;
   clusterY: number;
+  pseudoDepth: number;
   x?: number;
   y?: number;
 };
@@ -185,6 +186,7 @@ export default function ScaleScatter({ progress }: Props) {
           gridY: 0,
           clusterX: 0,
           clusterY: 0,
+          pseudoDepth: (((i * 618) % 1000) / 1000) * 2 - 1, // Deterministic [-1, 1] pseudo-depth
         });
       }
     });
@@ -323,12 +325,9 @@ export default function ScaleScatter({ progress }: Props) {
         return;
       }
     }
-    // Clear active cluster, stimulus, and cluster intensities immediately when pointer leaves
-    stimulusRef.current.strength = 0;
-    activeClusterRef.current = null;
-    for (const key of Object.keys(clusters)) {
-      clusterIntensitiesRef.current[key] = 0;
-    }
+    // Graceful restoration: do NOT abruptly snap stimulus and intensities to 0.
+    // Setting pointerRef.current.active = false allows the animation loop to smoothly
+    // decay stimulus.strength and cluster intensities back to default appearance.
   };
 
   const handleSelectCluster = (className: string) => {
@@ -499,17 +498,25 @@ export default function ScaleScatter({ progress }: Props) {
         }
 
         const H = clusterIntensitiesRef.current[d.class] || 0;
-        const maxOp = 0.75;
-        const minOp = 0.25;
-        let opacity =
-          t === 0
-            ? maxOp
-            : maxOp - (maxOp - minOp) * (1 - H) * stimulus.strength;
+        const stim = stimulus.strength;
+        const baseOp = 0.72;
+        const activeProminence = 0.94;
+        const recedeDim = 0.40;
+
+        let opacity = baseOp;
+        if (t > 0 && stim > 0.005) {
+          // Hovered island gains brightness and prominence up to 0.94;
+          // Inactive islands gently recede to 0.40 without disappearing.
+          const targetOp = baseOp + (activeProminence - baseOp) * H - (baseOp - recedeDim) * (1 - H);
+          opacity = baseOp + (targetOp - baseOp) * stim;
+        }
 
         // Quantity-based dot sizing: Top Class has commanding presence, GT is dense constellation
         const classScale = classScaleMultipliers[d.class] ?? 1.0;
         const baseDotR = radius + (clusterLayout.baseDotRadius - radius) * easedT;
-        let currentRadius = baseDotR * classScale;
+        // Subtle visual emphasis for the active cluster: +7% radius boost
+        const focusScaleBoost = 1 + 0.07 * H * stim;
+        let currentRadius = baseDotR * classScale * focusScaleBoost;
 
         // Scroll-responsive progressive emergence
         if (!isReducedMotion) {
@@ -517,16 +524,38 @@ export default function ScaleScatter({ progress }: Props) {
           const localEmerge = Math.min(1, Math.max(0, (scrollReveal - emergeStagger * 0.25) / 0.75));
           const easedEmerge = 1 - Math.pow(1 - localEmerge, 3);
           const emergeScale = 0.55 + 0.45 * easedEmerge;
-          currentRadius = baseDotR * classScale * emergeScale;
+          currentRadius *= emergeScale;
           opacity *= (0.45 + 0.55 * easedEmerge);
         }
 
         if (opacity > 0) {
           const colorRgb = chartColors[d.class] || "85, 85, 85";
+
+          // Base dot fill with manufacturer-inspired palette
           ctx.fillStyle = `rgba(${colorRgb}, ${opacity})`;
           ctx.beginPath();
           ctx.arc(baseX, baseY, currentRadius, 0, Math.PI * 2);
           ctx.fill();
+
+          // Subtle pseudo-3D depth cue:
+          // Restrained top-left micro-highlight (tactile editorial ink / micro-lens sheen)
+          // Dots slightly in foreground receive a delicate specular accent.
+          if (currentRadius >= 2.0 && opacity > 0.25) {
+            const zNorm = (d.pseudoDepth + 1) * 0.5; // [0, 1]
+            const highlightAlpha = opacity * (0.12 + 0.08 * zNorm) * (1 + 0.25 * H * stim);
+            if (highlightAlpha > 0.02) {
+              ctx.fillStyle = `rgba(255, 255, 255, ${highlightAlpha})`;
+              ctx.beginPath();
+              ctx.arc(
+                baseX - currentRadius * 0.26,
+                baseY - currentRadius * 0.26,
+                currentRadius * 0.36,
+                0,
+                Math.PI * 2
+              );
+              ctx.fill();
+            }
+          }
         }
       }
 
@@ -591,16 +620,17 @@ export default function ScaleScatter({ progress }: Props) {
             s.strength += (1 - s.strength) * 0.28;
             activeClusterRef.current = hoveredCategory;
           } else {
-            // Pointer is in empty space or narrative text: fade out promptly
-            s.strength += (0 - s.strength) * 0.25;
-            if (s.strength < 0.05) {
+            // Pointer is in empty space or narrative text: fade out smoothly
+            s.strength += (0 - s.strength) * 0.22;
+            if (s.strength < 0.02) {
               s.strength = 0;
               activeClusterRef.current = null;
             }
           }
         } else {
-          s.strength += (0 - s.strength) * 0.25;
-          if (s.strength < 0.05) {
+          // Pointer is outside container: smoothly restore default appearance
+          s.strength += (0 - s.strength) * 0.22;
+          if (s.strength < 0.02) {
             s.strength = 0;
             activeClusterRef.current = null;
           }
@@ -612,9 +642,10 @@ export default function ScaleScatter({ progress }: Props) {
             ? sel === className
             : p.active && s.strength > 0.01 && className === activeClusterRef.current;
           const targetH = isTarget ? 1 : 0;
-          const rate = targetH > currentH ? 0.28 : 0.22;
+          const rate = targetH > currentH ? 0.26 : 0.20;
+          const nextH = currentH + (targetH - currentH) * rate;
           clusterIntensitiesRef.current[className] =
-            currentH + (targetH - currentH) * rate;
+            nextH < 0.005 ? 0 : nextH > 0.995 ? 1 : nextH;
         }
 
         syncNodes(progress.get());
